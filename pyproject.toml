@@ -1,0 +1,88 @@
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry]
+# Check https://python-poetry.org/docs/pyproject/ for all available sections
+name = "ansys-grantami-jobqueue"
+version = "0.0.dev0"
+description = "A python wrapper for the Granta MI Job Queue API"
+license = "MIT"
+authors = ["ANSYS, Inc. <pyansys.core@ansys.com>"]
+maintainers = ["ANSYS, Inc. <pyansys.core@ansys.com>"]
+readme = "README.rst"
+repository = "https://github.com/ansys/grantami-jobqueue"
+documentation = "https://jobqueue.grantami.docs.pyansys.com"
+classifiers = [
+    "Development Status :: 2 - Pre-Alpha",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+packages = [
+    { include = "ansys", from = "src" },
+]
+
+[tool.poetry.dependencies]
+python = ">=3.9,<4.0"
+ansys-openapi-common = "^1.2.2"
+ansys-grantami-serverapi-openapi = "2.0.0"
+
+# Optional documentation dependencies
+[tool.poetry.group.doc]
+optional = true
+
+[tool.poetry.group.doc.dependencies]
+Sphinx = "^7.0.1"
+numpydoc = "^1.4.0"
+ansys-sphinx-theme = "^0.13.0"
+sphinx-copybutton = "^0.5.0"
+jupytext = "^1.14.4"
+nbsphinx = "^0.9.0"
+ipykernel = "^6.21.2" # required by nbsphinx to run notebooks.
+sphinx-jinja = "^2.0.2"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^7.1.2"
+pytest-cov = "^4.1.0"
+requests-mock = "^1.10.0"
+pre-commit = "^3.2.2"
+
+[tool.black]
+line-length = 100
+
+[tool.isort]
+profile = "black"
+force_sort_within_sections = true
+line_length = 100
+default_section = "THIRDPARTY"
+src_paths = ["doc", "src", "tests"]
+
+[tool.coverage.run]
+source = ["ansys.grantami"]
+
+[tool.coverage.report]
+show_missing = true
+
+[tool.pytest.ini_options]
+markers = [
+    """integration: test requires a real database (deselect with '-m \"not integration\"')"""
+]
+
+[tool.pydocstyle]
+convention = "numpy"
+
+[tool.mypy]
+strict = true
+warn_return_any = true
+warn_unused_configs = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+disallow_untyped_defs = true
+no_implicit_optional = true
+check_untyped_defs = true
+show_error_codes = true

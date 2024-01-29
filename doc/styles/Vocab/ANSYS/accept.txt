@@ -1,0 +1,7 @@
+Granta MI
+PyGranta
+RecordLists
+API
+Makefile
+jupytext
+(?i)ansys
