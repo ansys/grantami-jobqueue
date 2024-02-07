@@ -1,0 +1,97 @@
+<Template xsi:noNamespaceSchemaLocation="Schema.xsd" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+	<General>
+		<TemplateName>Test Text Importer</TemplateName>
+		<Description>Test Text Importer</Description>
+		<Locale>en-US</Locale>
+		<Encoding>windows-1251</Encoding>
+		<FullName>
+			<Item>G_ShortText</Item>
+		</FullName>
+	</General>
+	<Files>
+		<TextFile name="FileCode0">
+			<Extension></Extension>
+			<SpecimenDelimiter>(\n)[0-9]</SpecimenDelimiter>
+		</TextFile>
+	</Files>
+	<Validation>
+		<Version>2.9</Version>
+		<ValidTableNames>
+			<TableName>Data Import Non Versioned</TableName>
+		</ValidTableNames>
+	</Validation>
+	<Data>
+		<TextReaders>
+			<RegularExpression name="G_Integer">
+				<FileCode>FileCode0</FileCode>
+				<Expression>(\n)(?&lt;ITEM1&gt;([0-9\.]+))</Expression>
+				<Multiple>true</Multiple>
+			</RegularExpression>
+
+			<RegularExpression name="G_ShortText" import="false">
+				<FileCode>FileCode0</FileCode>
+				<Expression>(\n[^\t]+\t)(?&lt;ITEM1&gt;([^\s]+))</Expression>
+				<Multiple>true</Multiple>
+			</RegularExpression>
+
+			<RegularExpression name="G_LongText">
+				<FileCode>FileCode0</FileCode>
+				<Expression>(\n[0-9]+\t)(?&lt;ITEM1&gt;([A-Za-z0-9\s_])+)\t</Expression>
+				<Multiple>true</Multiple>
+			</RegularExpression>
+
+			<RegularExpression name="G_ShortText_NotSearchable">
+				<FileCode>FileCode0</FileCode>
+				<Expression>(\n[^\t]+\t[^\t]+\t)(?&lt;ITEM1&gt;[^\t]+)\t</Expression>
+				<Multiple>true</Multiple>
+			</RegularExpression>
+
+			<RegularExpression name="G_Logical">
+				<FileCode>FileCode0</FileCode>
+				<Expression>(\n[^\t]+\t[^\t]+\t[^\t]+\t)(?&lt;ITEM1&gt;[^\t]+)\t</Expression>
+				<Multiple>true</Multiple>
+			</RegularExpression>
+
+			<RegularExpression name="G_Point_No Unit">
+				<FileCode>FileCode0</FileCode>
+				<Expression>(\n[^\t]+\t[^\t]+\t[^\t]+\t[^\t]+\t)(?&lt;ITEM1&gt;[^\t]+)\t</Expression>
+				<Multiple>true</Multiple>
+			</RegularExpression>
+
+			<RegularExpression name="G_Point_Unit">
+				<FileCode>FileCode0</FileCode>
+				<Expression>(\n[^\t]+\t[^\t]+\t[^\t]+\t[^\t]+\t[^\t]+\t\t)(?&lt;ITEM1&gt;[^\t]+)\t</Expression>
+				<Multiple>true</Multiple>
+				<Unit>km</Unit>
+			</RegularExpression>
+
+			<RegularExpression name="G_Range_Unit">
+				<FileCode>FileCode0</FileCode>
+				<Expression>(\n[^\t]+\t[^\t]+\t[^\t]+\t[^\t]+\t[^\t]+\t+[^\t]+\t)(?&lt;ITEM1&gt;[^\t]+)\t</Expression>
+				<Multiple>true</Multiple>
+				<Unit>km</Unit>
+			</RegularExpression>
+
+			<RegularExpression name="G_Range_No Unit">
+				<FileCode>FileCode0</FileCode>
+				<Expression>(\n[^\t]+\t[^\t]+\t[^\t]+\t[^\t]+\t[^\t]+\t+[^\t]+\t[^\t]+\t)(?&lt;ITEM1&gt;[^\t]+)\t</Expression>
+				<Multiple>true</Multiple>
+			</RegularExpression>
+		</TextReaders>
+		<DataBuilders />
+		<TemplateProperties />
+	</Data>
+	<Automation>
+		<AutoPlacement>
+			<DBKey>DATA_IMPORT_TEST</DBKey>
+			<TableName>Data Import Non Versioned</TableName>
+			<ForceToRoot>true</ForceToRoot>
+			<IsChild>false</IsChild>
+			<ConflictResolution>ReplaceData</ConflictResolution>
+		</AutoPlacement>
+		<TreeHierarchy>
+			<TreeLevel>Data Import Test</TreeLevel>
+		</TreeHierarchy>
+	</Automation>
+</Template>

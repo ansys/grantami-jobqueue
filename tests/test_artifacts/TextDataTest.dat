@@ -1,0 +1,5 @@
+G_Integer	G_ShortText G_LongText	 G_ShortText_NotSearchable	G_Logical	G_Point_No Unit G_Point_Unit	G_Range_Unit	G_Range_No Unit
+1   Darth_Vader Sith	How disappointing   True	259035		36,72	30,45	0,930
+2   Han_Solo Neutral	It's not wise to upset a Wookiee.	False	255592		67,42	32,94	0,764
+3   Leia_Organa Jedi	Aren't you a little short for a stormtrooper?	False	267238		27,64	37,79	0,832
+4   Luke_Skywalker Jedi	You'll Find I'm Full Of Surprises.	False	278257		16,36	38,48	0,960
