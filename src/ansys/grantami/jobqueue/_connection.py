@@ -14,12 +14,12 @@ import requests  # type: ignore[import]
 from ._logger import logger
 from ._models import AsyncJob, ImportJobRequest, JobQueueProcessingConfiguration, JobStatus, JobType
 
-PROXY_PATH = "/proxy/v1.svc"
+PROXY_PATH = "/proxy/v1.svc/mi"
 AUTH_PATH = "/Health/v2.svc"
 API_DEFINITION_PATH = "/swagger/v1/swagger.json"
 GRANTA_APPLICATION_NAME_HEADER = "PyGranta JobQueue"
 
-MINIMUM_GRANTA_MI_VERSION = (24, 1)
+MINIMUM_GRANTA_MI_VERSION = (24, 2)
 
 _ArgNotProvided = "_ArgNotProvided"
 

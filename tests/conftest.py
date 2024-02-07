@@ -3,7 +3,8 @@ import warnings
 
 import pytest
 
-from ansys.grantami.jobqueue import Connection
+from ansys.grantami.jobqueue import Connection, JobQueueApiClient
+from common import FOLDER_NAME, delete_record
 
 
 @pytest.fixture(scope="session")
@@ -39,14 +40,21 @@ def job_queue_api_client(sl_url, admin_username, admin_password):
     """
     # connection = Connection(sl_url).with_credentials(admin_username, admin_password)
     connection = Connection(sl_url).with_autologon()
-    client = connection.connect()
+    client: JobQueueApiClient = connection.connect()
     clear_job_queue(client)
-    # TODO Delete records
+    delete_record(
+        client=client,
+        name=FOLDER_NAME,
+    )
     yield client
     clear_job_queue(client)
+    delete_record(
+        client=client,
+        name=FOLDER_NAME,
+    )
 
 
-def clear_job_queue(client):
+def clear_job_queue(client: JobQueueApiClient):
     try:
         client.delete_jobs(client.jobs)
     except Exception as e:

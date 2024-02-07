@@ -13,7 +13,7 @@ from ansys.grantami.jobqueue import (
     JobStatus,
     TextImportJobRequest,
 )
-from search import search_for_records_by_name
+from common import EXCEL_IMPORT_FOLDER_NAME, search_for_records_by_name
 
 TEST_ARTIFACT_DIR = pathlib.Path("__file__").parent / "test_artifacts"
 
@@ -143,9 +143,7 @@ def test_create_job_with_schedule(job_queue_api_client):
     check_success(job.output_information)
     recs_found = search_for_records_by_name(
         client=job_queue_api_client,
-        db_key="DATA_IMPORT_TEST",
-        table_name="Data Import Non Versioned",
-        name="Excel Import Test",
+        name=EXCEL_IMPORT_FOLDER_NAME,
     )
     time.sleep(2)
     assert len(recs_found) == 1
@@ -174,9 +172,7 @@ def test_update_schedule(job_queue_api_client):
     check_success(job.output_information)
     recs_found = search_for_records_by_name(
         client=job_queue_api_client,
-        db_key="DATA_IMPORT_TEST",
-        table_name="Data Import Non Versioned",
-        name="Excel Import Test",
+        name=EXCEL_IMPORT_FOLDER_NAME,
     )
     assert len(recs_found) == 1
 
@@ -216,9 +212,7 @@ def test_queue_updates_job(job_queue_api_client):
     check_success(job.output_information)
     recs_found = search_for_records_by_name(
         client=job_queue_api_client,
-        db_key="DATA_IMPORT_TEST",
-        table_name="Data Import Non Versioned",
-        name="Excel Import Test",
+        name=EXCEL_IMPORT_FOLDER_NAME,
     )
     assert len(recs_found) == 1
 
