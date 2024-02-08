@@ -6,77 +6,64 @@
 		<Locale>en-US</Locale>
 		<Encoding>windows-1251</Encoding>
 		<FullName>
-			<Item>G_ShortText</Item>
+			<Item>Build ID</Item>
 		</FullName>
 	</General>
 	<Files>
 		<TextFile name="FileCode0">
 			<Extension></Extension>
-			<SpecimenDelimiter>(\n)[0-9]</SpecimenDelimiter>
+			<SpecimenDelimiter>\n\$</SpecimenDelimiter>
 		</TextFile>
 	</Files>
 	<Validation>
 		<Version>2.9</Version>
 		<ValidTableNames>
-			<TableName>Data Import Non Versioned</TableName>
+			<TableName>Test Data Tensile</TableName>
 		</ValidTableNames>
 	</Validation>
 	<Data>
 		<TextReaders>
-			<RegularExpression name="G_Integer">
+			<RegularExpression name="Counter">
 				<FileCode>FileCode0</FileCode>
-				<Expression>(\n)(?&lt;ITEM1&gt;([0-9\.]+))</Expression>
+				<Expression>\$([^,\$]+,){0}(?&lt;ITEM1&gt;([^,\$]+)),?</Expression>
 				<Multiple>true</Multiple>
 			</RegularExpression>
 
-			<RegularExpression name="G_ShortText" import="false">
+			<RegularExpression name="Build ID">
 				<FileCode>FileCode0</FileCode>
-				<Expression>(\n[^\t]+\t)(?&lt;ITEM1&gt;([^\s]+))</Expression>
+				<Expression>\$([^,\$]+,){1}(?&lt;ITEM1&gt;([^,\$]+)),?</Expression>
 				<Multiple>true</Multiple>
 			</RegularExpression>
 
-			<RegularExpression name="G_LongText">
+			<RegularExpression name="Additional Test Notes">
 				<FileCode>FileCode0</FileCode>
-				<Expression>(\n[0-9]+\t)(?&lt;ITEM1&gt;([A-Za-z0-9\s_])+)\t</Expression>
+				<Expression>\$([^,\$]+,){2}(?&lt;ITEM1&gt;([^,\$]+)),?</Expression>
 				<Multiple>true</Multiple>
 			</RegularExpression>
 
-			<RegularExpression name="G_ShortText_NotSearchable">
+			<RegularExpression name="Project Name">
 				<FileCode>FileCode0</FileCode>
-				<Expression>(\n[^\t]+\t[^\t]+\t)(?&lt;ITEM1&gt;[^\t]+)\t</Expression>
+				<Expression>\$([^,\$]+,){3}(?&lt;ITEM1&gt;([^,\$]+)),?</Expression>
 				<Multiple>true</Multiple>
 			</RegularExpression>
 
-			<RegularExpression name="G_Logical">
+			<RegularExpression name="Valid Test?">
 				<FileCode>FileCode0</FileCode>
-				<Expression>(\n[^\t]+\t[^\t]+\t[^\t]+\t)(?&lt;ITEM1&gt;[^\t]+)\t</Expression>
+				<Expression>\$([^,\$]+,){4}(?&lt;ITEM1&gt;([^,\$]+)),?</Expression>
 				<Multiple>true</Multiple>
 			</RegularExpression>
 
-			<RegularExpression name="G_Point_No Unit">
+			<RegularExpression name="Time Offset">
 				<FileCode>FileCode0</FileCode>
-				<Expression>(\n[^\t]+\t[^\t]+\t[^\t]+\t[^\t]+\t)(?&lt;ITEM1&gt;[^\t]+)\t</Expression>
+				<Expression>\$([^,\$]+,){5}(?&lt;ITEM1&gt;([^,\$]+)),?</Expression>
 				<Multiple>true</Multiple>
 			</RegularExpression>
 
-			<RegularExpression name="G_Point_Unit">
+			<RegularExpression name="Crosshead Speed">
 				<FileCode>FileCode0</FileCode>
-				<Expression>(\n[^\t]+\t[^\t]+\t[^\t]+\t[^\t]+\t[^\t]+\t\t)(?&lt;ITEM1&gt;[^\t]+)\t</Expression>
+				<Expression>\$([^,\$]+,){6}(?&lt;ITEM1&gt;([^,\$]+)),?</Expression>
 				<Multiple>true</Multiple>
-				<Unit>km</Unit>
-			</RegularExpression>
-
-			<RegularExpression name="G_Range_Unit">
-				<FileCode>FileCode0</FileCode>
-				<Expression>(\n[^\t]+\t[^\t]+\t[^\t]+\t[^\t]+\t[^\t]+\t+[^\t]+\t)(?&lt;ITEM1&gt;[^\t]+)\t</Expression>
-				<Multiple>true</Multiple>
-				<Unit>km</Unit>
-			</RegularExpression>
-
-			<RegularExpression name="G_Range_No Unit">
-				<FileCode>FileCode0</FileCode>
-				<Expression>(\n[^\t]+\t[^\t]+\t[^\t]+\t[^\t]+\t[^\t]+\t+[^\t]+\t[^\t]+\t)(?&lt;ITEM1&gt;[^\t]+)\t</Expression>
-				<Multiple>true</Multiple>
+				<Unit>m/s</Unit>
 			</RegularExpression>
 		</TextReaders>
 		<DataBuilders />
@@ -84,8 +71,8 @@
 	</Data>
 	<Automation>
 		<AutoPlacement>
-			<DBKey>DATA_IMPORT_TEST</DBKey>
-			<TableName>Data Import Non Versioned</TableName>
+			<DBKey>MI_TRAINING</DBKey>
+			<TableName>Tensile Test Data</TableName>
 			<ForceToRoot>true</ForceToRoot>
 			<IsChild>false</IsChild>
 			<ConflictResolution>ReplaceData</ConflictResolution>

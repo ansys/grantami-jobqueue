@@ -3,8 +3,8 @@ from typing import List, Tuple
 from ansys.grantami.serverapi_openapi import api, models
 from ansys.openapi.common import ApiClient
 
-DB_KEY = "DATA_IMPORT_TEST"
-TABLE_NAME = "Data Import Non Versioned"
+DB_KEY = "MI_Training"
+TABLE_NAME = "Tensile Test Data"
 FOLDER_NAME = "Data Import Test"
 EXCEL_IMPORT_FOLDER_NAME = "Excel Import Test"
 
