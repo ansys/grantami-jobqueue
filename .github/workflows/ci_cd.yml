@@ -10,9 +10,9 @@ on:
 
 env:
   MAIN_PYTHON_VERSION: '3.9'
-  DOCUMENTATION_CNAME: 'recordlists.grantami.docs.pyansys.com'
-  LIBRARY_NAME: 'ansys-grantami-recordlists'
-  LIBRARY_NAMESPACE: 'ansys.grantami.recordlists'
+  DOCUMENTATION_CNAME: 'jobqueue.grantami.docs.pyansys.com'
+  LIBRARY_NAME: 'ansys-grantami-jobqueue'
+  LIBRARY_NAMESPACE: 'ansys.grantami.jobqueue'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}

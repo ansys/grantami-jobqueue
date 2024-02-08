@@ -298,19 +298,6 @@ class TextImportJobRequest(ImportJobRequest):
         return JobType.Text
 
 
-# def check_job_state(check_deleted: bool = False, check_instantiated: bool = True) -> Callable[[Any], Any]:
-#     def decorator(function: Callable[[Any], Any]) -> Callable[[Any], Any]:
-#         @wraps(function)
-#         def wrapper(self: AsyncJob, *args: Any, **kwargs: Any) -> Any:
-#             if self._is_deleted and check_deleted:
-#                 raise ValueError("Job has been deleted from the Job Queue")
-#             if self._instantiated_directly and check_instantiated:
-#                 raise ValueError("Job has been deleted from the Job Queue")
-#             return function(*args, **kwargs)
-#         return decorator
-#     return check_job_state
-
-
 class AsyncJob:
     """
     Represents a Job on the server.

@@ -8,10 +8,10 @@ import shutil
 from ansys_sphinx_theme import ansys_favicon, get_version_match, pyansys_logo_black
 import jupytext
 
-from ansys.grantami.recordlists import __version__
+from ansys.grantami.jobqueue import __version__
 
 # Project information
-project = "ansys-grantami-recordlists"
+project = "ansys-grantami-jobqueue"
 project_copyright = f"(c) {datetime.now().year} ANSYS, Inc. All rights reserved"
 author = "ANSYS, Inc."
 release = version = __version__
@@ -19,15 +19,15 @@ release = version = __version__
 # Select desired logo, theme, and declare the html title
 html_logo = pyansys_logo_black
 html_theme = "ansys_sphinx_theme"
-html_short_title = html_title = "PyGranta RecordLists"
+html_short_title = html_title = "PyGranta JobQueue"
 html_favicon = ansys_favicon
 
-cname = os.getenv("DOCUMENTATION_CNAME", "recordlists.grantami.docs.pyansys.com")
+cname = os.getenv("DOCUMENTATION_CNAME", "jobqueue.grantami.docs.pyansys.com")
 """The canonical name of the webpage hosting the documentation."""
 
 # specify the location of your github repo
 html_theme_options = {
-    "github_url": "https://github.com/ansys/grantami-recordlists",
+    "github_url": "https://github.com/ansys/grantami-jobqueue",
     "show_prev_next": False,
     "show_breadcrumbs": True,
     "additional_breadcrumbs": [
@@ -48,6 +48,7 @@ extensions = [
     "sphinx_copybutton",
     "sphinx_jinja",
     "nbsphinx",
+    "enum_tools.autoenum",
 ]
 
 # sphinx
@@ -110,6 +111,9 @@ master_doc = "index"
 
 # Generate section labels up to four levels deep
 autosectionlabel_maxdepth = 4
+
+
+BUILD_EXAMPLES = False if tags.has("no_examples") else True
 
 
 # -- Examples configuration --------------------------------------------------
@@ -184,7 +188,6 @@ exclude_patterns = []
 
 EXAMPLES_SOURCE_DIR = Path(__file__).parent.parent.parent.absolute() / "examples"
 EXAMPLES_OUTPUT_DIR = Path(__file__).parent.absolute() / "examples"
-BUILD_EXAMPLES = True if os.environ.get("BUILD_EXAMPLES", "false") == "true" else False
 if BUILD_EXAMPLES:
     ipython_dir = Path("../../.ipython").absolute()
     os.environ["IPYTHONDIR"] = str(ipython_dir)

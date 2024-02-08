@@ -90,7 +90,7 @@ class JobQueueApiClient(ApiClient):  # type: ignore[misc]
 
         Returns
         -------
-        Dict[str, int]
+        JobQueueProcessingConfiguration
         """
         if self._processing_configuration is None:
             processing_config = self.job_queue_api.v1alpha_job_queue_processing_configuration_get()
@@ -262,9 +262,12 @@ class JobQueueApiClient(ApiClient):  # type: ignore[misc]
             elif job_obj is not self._jobs[job_obj.id]:
                 self._jobs[job_obj.id]._update_job(job_obj)
 
-    def create_import_job_and_wait(self, job_request: "ImportJobRequest") -> "AsyncJob":
+    def create_import_job_and_wait(
+        self, job_request: "ImportJobRequest"
+    ) -> "AsyncJob":  # noqa: D205, D400
         """
-        Create an import job from an :obj:`ImportJobRequest` object.
+        Create an import job from an :class:`~.ExcelImportJobRequest` or
+        :class:`~.TextImportJobRequest` object and block until complete.
 
         Upload files and submits a job request to the Job Queue. Block execution until the job
         has either completed or failed, then return the finished :obj:`AsyncJob` object.
@@ -301,9 +304,10 @@ class JobQueueApiClient(ApiClient):  # type: ignore[misc]
         else:
             return job
 
-    def create_import_job(self, job_request: "ImportJobRequest") -> "AsyncJob":
+    def create_import_job(self, job_request: "ImportJobRequest") -> "AsyncJob":  # noqa: D205, D400
         """
-        Create an import job from an :obj:`ImportJobRequest` object.
+        Create an import job from an :class:`~.ExcelImportJobRequest` or
+        :class:`~.TextImportJobRequest` object.
 
         Upload files and submit a job request to the Job Queue.
 
@@ -332,7 +336,7 @@ class Connection(ApiClientFactory):  # type: ignore[misc]
 
     This is a subclass of the :class:`ansys.openapi.common.ApiClientFactory` class. All methods in
     this class are documented as returning :class:`~ansys.openapi.common.ApiClientFactory` class
-    instances of the :class:`ansys.grantami.recordlists.Connection` class instead.
+    instances of the :class:`ansys.grantami.jobqueue.Connection` class instead.
 
     Parameters
     ----------
@@ -362,14 +366,14 @@ class Connection(ApiClientFactory):  # type: ignore[misc]
     --------
     >>> client = Connection("http://my_mi_server/mi_servicelayer").with_autologon().connect()
     >>> client
-    <RecordListsApiClient: url=http://my_mi_server/mi_servicelayer>
+    <JobQueueApiClient: url=http://my_mi_server/mi_servicelayer>
     >>> client = (
     ...     Connection("http://my_mi_server/mi_servicelayer")
     ...     .with_credentials(username="my_username", password="my_password")
     ...     .connect()
     ... )
     >>> client
-    <RecordListsApiClient: url: http://my_mi_server/mi_servicelayer>
+    <JobQueueApiClient: url: http://my_mi_server/mi_servicelayer>
     """
 
     def __init__(

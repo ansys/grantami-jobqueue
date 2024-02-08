@@ -1,46 +1,34 @@
-.. _ref_grantami_recordlists_models:
+.. _ref_grantami_jobqueue_models:
 
 Models
 =======
 
-Record list
-~~~~~~~~~~~~
+Job requests
+------------
 
-.. autoclass:: ansys.grantami.recordlists.RecordList
+.. autoclass:: ansys.grantami.jobqueue.ExcelImportJobRequest
    :members:
 
 
-Record list item
-~~~~~~~~~~~~~~~~~
-
-.. autoclass:: ansys.grantami.recordlists.RecordListItem
+.. autoclass:: ansys.grantami.jobqueue.TextImportJobRequest
    :members:
 
 
-User and user groups
-~~~~~~~~~~~~~~~~~~~~~
-.. autoclass:: ansys.grantami.recordlists.UserOrGroup
+AsyncJob
+--------
+
+.. autoclass:: ansys.grantami.jobqueue.AsyncJob
    :members:
 
 
-Search criteria
-~~~~~~~~~~~~~~~
+Other models
+------------
 
-.. autoclass:: ansys.grantami.recordlists.SearchCriterion
+.. autoclass:: ansys.grantami.jobqueue.JobQueueProcessingConfiguration
    :members:
 
 
-.. autoclass:: ansys.grantami.recordlists.BooleanCriterion
-   :members:
+.. autoenum:: ansys.grantami.jobqueue.JobStatus
 
 
-.. autoclass:: ansys.grantami.recordlists.UserRole
-   :members:
-   :undoc-members:
-
-
-Search results
-~~~~~~~~~~~~~~~
-
-.. autoclass:: ansys.grantami.recordlists.SearchResult
-   :members:
+.. autoenum:: ansys.grantami.jobqueue.JobType

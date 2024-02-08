@@ -8,17 +8,17 @@ General guidelines
 Overall guidance on contributing to a PyAnsys library appears in the
 `Contributing <https://dev.docs.pyansys.com/how-to/contributing.html>`_ topic
 in the *PyAnsys Developer's Guide*. Ensure that you are thoroughly familiar
-with this guide before attempting to contribute to the ``grantami-recordlists``
+with this guide before attempting to contribute to the ``grantami-jobqueue``
 repository.
 
-The following contribution information is specific to the ``grantami-recordlists``
-repository, which is for the PyGranta RecordLists library. This PyAnsys library name
+The following contribution information is specific to the ``grantami-jobqueue``
+repository, which is for the PyGranta JobQueue library. This PyAnsys library name
 is often used in place of the repository name to provide clarity and improve
 readability.
 
 Post issues
 ------------
-Use the `Issues <https://github.com/pyansys/grantami-recordlists/issues>`_ page for
+Use the `Issues <https://github.com/pyansys/grantami-jobqueue/issues>`_ page for
 this repository to submit questions, report bugs, and request new features.
 
 To reach the PyAnsys core team, email `pyansys.core@ansys.com <pyansys.core@ansys.com>`_.
@@ -26,21 +26,21 @@ To reach the PyAnsys core team, email `pyansys.core@ansys.com <pyansys.core@ansy
 Developer environment setup
 ===========================
 
-The project uses ``poetry`` for packaging and dependency management. See the `poetry`_ documentation for installation
-instructions.
+The project uses ``poetry`` for packaging and dependency management. See the `poetry`_ documentation
+for installation instructions.
 
 Clone the source repository
 ---------------------------
 
-Run the following code to clone and install the latest version of the ``grantami-recordlists``
+Run the following code to clone and install the latest version of the ``grantami-jobqueue``
 repository. It installs the package in editable mode, which ensures changes to the code
 are immediately visible in the environment. It also installs the required development
 dependencies to run the tests, build the docs and build the package.
 
 .. code:: bash
 
-    git clone https://github.com/ansys/grantami-recordlists
-    cd grantami-recordlists
+    git clone https://github.com/ansys/grantami-jobqueue
+    cd grantami-jobqueue
     poetry install --with build,doc,tests
 
 Additional tools
@@ -83,14 +83,15 @@ Server access
 Running integration tests and building the examples requires access to a valid Granta MI instance
 (see :ref:`ref_software_requirements`).
 
-External contributors may not have an instance of Granta MI at their disposal. Prior to creating a pull request with the
-desired changes, they should make sure that unit tests pass (:ref:`ref_tox`), static code validation and
-styling pass (:ref:`pre-commit <ref_precommit>`), and that the documentation can be generated successfully without the
-examples (:ref:`Documenting <ref_documenting>`).
+External contributors may not have an instance of Granta MI at their disposal. Prior to creating a
+pull request with the desired changes, they should make sure that unit tests pass (:ref:`ref_tox`),
+static code validation and styling pass (:ref:`pre-commit <ref_precommit>`), and that the
+documentation can be generated successfully without the examples
+(:ref:`Documenting <ref_documenting>`).
 
-Continuous Integration (CI) on GitHub is configured to run the integration tests and generate the full documentation on
-creation and updates of pull requests. CI is not configured to run for pull requests from forks. External contributions
-require approval from a maintainer for checks to run.
+Continuous Integration (CI) on GitHub is configured to run the integration tests and generate the
+full documentation on creation and updates of pull requests. CI is not configured to run for pull
+requests from forks. External contributions require approval from a maintainer for checks to run.
 
 
 .. _ref_precommit:
@@ -98,8 +99,8 @@ require approval from a maintainer for checks to run.
 Code formatting and styling
 ===========================
 
-This project adheres with PyAnsys recommendation of styling and formatting. The easiest way to validate changes are
-compliant is to run the following command:
+This project adheres with PyAnsys recommendation of styling and formatting. The easiest way to
+validate changes are compliant is to run the following command:
 
 .. code:: bash
 
@@ -132,7 +133,7 @@ advised to resolve any warnings/errors locally before pushing changes.
 Example notebooks
 -----------------
 Examples are included in the documentation to give you more context around
-the core capabilities described in :ref:`ref_grantami_recordlists_api_reference`.
+the core capabilities described in :ref:`ref_grantami_jobqueue_api_reference`.
 Additional examples are welcomed, especially if they cover a key use case of the
 package that has not yet been covered.
 
