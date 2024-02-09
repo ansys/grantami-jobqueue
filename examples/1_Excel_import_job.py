@@ -117,6 +117,7 @@ retrieved_job
 # -
 
 # Wait for the pending job to complete.
+
 # +
 import time
 
