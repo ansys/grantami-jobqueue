@@ -116,7 +116,7 @@ class JobQueueApiClient(ApiClient):  # type: ignore[misc]
         """
         if self._user is None:
             self._refetch_user()
-        return self._user.is_admin.is_admin  # type:ignore[no-any-return, union-attr]
+        return self._user.is_admin  # type:ignore[no-any-return, union-attr]
 
     @property
     def can_write_job(self) -> bool:
