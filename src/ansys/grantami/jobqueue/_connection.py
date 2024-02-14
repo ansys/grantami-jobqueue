@@ -1,15 +1,15 @@
 import time
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, List, Optional, Tuple, cast
 
-from ansys.grantami.serverapi_openapi import api, models  # type: ignore[import]
-from ansys.openapi.common import (  # type: ignore[import]
+from ansys.grantami.serverapi_openapi import api, models
+from ansys.openapi.common import (  # type: ignore[import-untyped]
     ApiClient,
     ApiClientFactory,
     ApiException,
     SessionConfiguration,
     generate_user_agent,
 )
-import requests  # type: ignore[import]
+import requests  # type: ignore[import-untyped]
 
 from ._logger import logger
 from ._models import AsyncJob, ImportJobRequest, JobQueueProcessingConfiguration, JobStatus, JobType
@@ -43,6 +43,7 @@ def _get_mi_server_version(client: ApiClient) -> Tuple[int, ...]:
     """
     schema_api = api.SchemaApi(client)
     server_version_response = schema_api.v1alpha_schema_mi_version_get()
+    assert server_version_response.version
     server_version_elements = server_version_response.version.split(".")
     server_version = tuple([int(e) for e in server_version_elements])
     return server_version
@@ -95,10 +96,16 @@ class JobQueueApiClient(ApiClient):  # type: ignore[misc]
         if self._processing_configuration is None:
             processing_config = self.job_queue_api.v1alpha_job_queue_processing_configuration_get()
             self._processing_configuration = JobQueueProcessingConfiguration(
-                purge_job_age_in_milliseconds=processing_config.purge_job_age_in_milliseconds,
-                purge_interval_in_milliseconds=processing_config.purge_interval_in_milliseconds,
-                polling_interval_in_milliseconds=processing_config.polling_interval_in_milliseconds,
-                concurrency=processing_config.concurrency,
+                purge_job_age_in_milliseconds=cast(
+                    int, processing_config.purge_job_age_in_milliseconds
+                ),
+                purge_interval_in_milliseconds=cast(
+                    int, processing_config.purge_interval_in_milliseconds
+                ),
+                polling_interval_in_milliseconds=cast(
+                    int, processing_config.polling_interval_in_milliseconds
+                ),
+                concurrency=cast(int, processing_config.concurrency),
             )
         return self._processing_configuration
 
@@ -116,7 +123,8 @@ class JobQueueApiClient(ApiClient):  # type: ignore[misc]
         """
         if self._user is None:
             self._refetch_user()
-        return self._user.is_admin  # type:ignore[no-any-return, union-attr]
+        assert self._user
+        return cast(bool, self._user.is_admin)
 
     @property
     def can_write_job(self) -> bool:
@@ -130,7 +138,8 @@ class JobQueueApiClient(ApiClient):  # type: ignore[misc]
         """
         if self._user is None:
             self._refetch_user()
-        return self._user.has_write_access  # type:ignore[no-any-return, union-attr]
+        assert self._user
+        return cast(bool, self._user.has_write_access)
 
     @property
     def num_jobs(self) -> int:
@@ -143,7 +152,7 @@ class JobQueueApiClient(ApiClient):  # type: ignore[misc]
             Number of jobs in the queue.
         """
         jobs = self.job_queue_api.v1alpha_job_queue_jobs_get()
-        return len(jobs.results)
+        return len(cast(List[models.GrantaServerApiAsyncJobsJob], jobs.results))
 
     def _refetch_user(self) -> None:
         self._user = self.job_queue_api.v1alpha_job_queue_current_user_get()
@@ -206,9 +215,10 @@ class JobQueueApiClient(ApiClient):  # type: ignore[misc]
         }
 
         filtered_job_resp = self.job_queue_api.v1alpha_job_queue_jobs_get(
-            **{k: v for k, v in kwargs.items() if v is not None}
+            **{k: v for k, v in kwargs.items() if v is not None}  # type: ignore[arg-type]
         )
 
+        assert filtered_job_resp.results is not None
         self._update_job_list_from_resp(job_resp=filtered_job_resp.results)
         filtered_ids = [job.id for job in filtered_job_resp.results]
         return [job for id_, job in self._jobs.items() if id_ in filtered_ids]
@@ -246,6 +256,7 @@ class JobQueueApiClient(ApiClient):  # type: ignore[misc]
 
     def _refetch_jobs(self) -> None:
         job_list = self.job_queue_api.v1alpha_job_queue_jobs_get()
+        assert job_list.results is not None
         self._update_job_list_from_resp(job_resp=job_list.results, flush_jobs=True)
 
     def _update_job_list_from_resp(
@@ -257,10 +268,11 @@ class JobQueueApiClient(ApiClient):  # type: ignore[misc]
                 if job_id not in remote_ids:
                     self._jobs.pop(job_id)
         for job_obj in job_resp:
-            if job_obj.id not in self._jobs:
-                self._jobs[job_obj.id] = AsyncJob._init_from_obj(job_obj, self)
-            elif job_obj is not self._jobs[job_obj.id]:
-                self._jobs[job_obj.id]._update_job(job_obj)
+            job_id = cast(str, job_obj.id)
+            if job_id not in self._jobs:
+                self._jobs[job_id] = AsyncJob(job_obj, self)
+            elif job_obj is not self._jobs[job_id]:
+                self._jobs[job_id]._update_job(job_obj)
 
     def create_import_job_and_wait(
         self, job_request: "ImportJobRequest"
@@ -327,7 +339,7 @@ class JobQueueApiClient(ApiClient):  # type: ignore[misc]
             body=job_request.get_job_for_import()
         )
         self._update_job_list_from_resp([job_response])
-        return self._jobs[job_response.id]
+        return self._jobs[cast(str, job_response.id)]
 
 
 class Connection(ApiClientFactory):  # type: ignore[misc]

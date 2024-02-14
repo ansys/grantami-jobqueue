@@ -17,6 +17,8 @@ from common import EXCEL_IMPORT_FOLDER_NAME, search_for_records_by_name
 
 TEST_ARTIFACT_DIR = pathlib.Path("__file__").parent / "test_artifacts"
 
+# TODO: Test wrong type of file input, e.g. file opened in text mode
+
 
 def import_text(client: JobQueueApiClient):
     template_path = TEST_ARTIFACT_DIR / "TextImportTestTemplate.xml"

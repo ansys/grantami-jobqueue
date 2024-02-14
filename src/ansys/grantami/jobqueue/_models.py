@@ -7,7 +7,7 @@ import os
 import pathlib
 from typing import TYPE_CHECKING, Any, BinaryIO, Dict, List, Optional, Union, cast
 
-from ansys.grantami.serverapi_openapi import api, models  # type: ignore[import]
+from ansys.grantami.serverapi_openapi import api, models
 
 if TYPE_CHECKING:
     from ._connection import JobQueueApiClient
@@ -93,15 +93,21 @@ class ImportJobRequest(ABC):
             if file_obj.name not in self.files[type_]:
                 self.files[type_][file_obj.name] = {}
                 self.files[type_][file_obj.name]["filePath"] = file_obj
-        else:
+        elif isinstance(file_obj, str):
             self.files[type_][file_obj] = {}
             self.files[type_][file_obj]["filePath"] = file_obj
+        else:
+            raise TypeError(
+                "file_obj must be a pathlib.Path, BinaryIO, or str object. "
+                f"Object provided was of type {type(file_obj)}."
+            )
 
     def _post_files(self, api_client: api.JobQueueApi) -> None:
         for file_type, file_list in self.files.items():
             for file_name, file_obj in file_list.items():
+                file_content = file_obj["filePath"]
                 file_id = api_client.v1alpha_job_queue_files_post(
-                    file=file_obj["filePath"],
+                    file=file_obj["filePath"],  # type: ignore[arg-type]
                 )
                 file_obj["id"] = file_id
                 try:
@@ -311,11 +317,12 @@ class AsyncJob:
         :meth:`~JobQueueApiClient.create_import_job_and_wait` methods.
     """
 
-    def __init__(self) -> None:
-        self._json_obj: Optional[models.GrantaServerApiAsyncJobsJob] = None
-        self._job_queue_api: Optional[JobQueueApiClient] = None
+    def __init__(
+        self, job_obj: models.GrantaServerApiAsyncJobsJob, client: "JobQueueApiClient"
+    ) -> None:
+        self._job_queue_api = client.job_queue_api
+        self._update_job(job_obj)
         self._is_deleted = False
-        # self._instantiated_directly = True
 
     def __repr__(self) -> str:
         """Printable representation of the object."""
@@ -330,7 +337,7 @@ class AsyncJob:
         -------
         str
         """
-        return self._json_obj.id  # type: ignore[no-any-return, union-attr]
+        return cast(str, self._json_obj.id)
 
     @property
     def name(self) -> str:
@@ -341,7 +348,7 @@ class AsyncJob:
         -------
         str
         """
-        return self._json_obj.name  # type: ignore[no-any-return, union-attr]
+        return cast(str, self._json_obj.name)
 
     def update_name(self, value: str) -> None:
         """
@@ -359,11 +366,10 @@ class AsyncJob:
         """
         if self._is_deleted:
             raise ValueError("Job has been deleted from the Job Queue")
-        patch_req = cast(models.GrantaServerApiAsyncJobsJob, self._json_obj)
+        patch_req = self._json_obj
         patch_req.name = value
-        patch_resp = self._job_queue_api.v1alpha_job_queue_jobs_id_patch(  # type: ignore[union-attr]
-            id=self.id, body=patch_req
-        )
+        patch_resp = self._job_queue_api.v1alpha_job_queue_jobs_id_patch(id=self.id, body=patch_req)
+        assert patch_resp
         self._update_job(patch_resp)
 
     @property
@@ -375,7 +381,7 @@ class AsyncJob:
         -------
         str
         """
-        return self._json_obj.description  # type: ignore[no-any-return, union-attr]
+        return cast(str, self._json_obj.description)
 
     def update_description(self, value: str) -> None:
         """
@@ -393,11 +399,10 @@ class AsyncJob:
         """
         if self._is_deleted:
             raise ValueError("Job has been deleted from the Job Queue")
-        patch_req = cast(models.GrantaServerApiAsyncJobsJob, self._json_obj)
+        patch_req = self._json_obj
         patch_req.description = value
-        patch_resp = self._job_queue_api.v1alpha_job_queue_jobs_id_patch(  # type: ignore[union-attr]
-            id=self.id, body=patch_req
-        )
+        patch_resp = self._job_queue_api.v1alpha_job_queue_jobs_id_patch(id=self.id, body=patch_req)
+        assert patch_resp
         self._update_job(patch_resp)
 
     @property
@@ -411,7 +416,9 @@ class AsyncJob:
         """
         if self._is_deleted:
             return JobStatus["Deleted"]
-        return JobStatus[self._json_obj.status.value]  # type: ignore[union-attr]
+        job_status = self._json_obj.status
+        assert job_status
+        return JobStatus[job_status.value]
 
     @property
     def type(self) -> JobType:
@@ -422,7 +429,8 @@ class AsyncJob:
         -------
         JobType
         """
-        return JobType[self._json_obj.type]  # type: ignore[union-attr]
+        job_type = cast(str, self._json_obj.type)
+        return JobType[job_type]
 
     @property
     def position(self) -> Union[int, None]:
@@ -434,11 +442,11 @@ class AsyncJob:
         int | None
             Returns ``None`` if the job is not currently pending.
         """
-        return self._json_obj.position  # type: ignore[union-attr, no-any-return]
+        return self._json_obj.position
 
     def move_to_top(self) -> None:
         """Promotes the job to the top of the Job Queue. User must have MI_ADMIN permission."""
-        self._job_queue_api.v1alpha_job_queue_jobs_idmove_to_top_post(id=self.id)  # type: ignore[union-attr]
+        self._job_queue_api.v1alpha_job_queue_jobs_idmove_to_top_post(id=self.id)
         self.update()
 
     @property
@@ -455,9 +463,9 @@ class AsyncJob:
             to which the submitter belongs indexed by name.
         """
         return {
-            "username": self._json_obj.submitter_name,  # type: ignore[union-attr]
-            "date_time": self._json_obj.submission_date,  # type: ignore[union-attr]
-            "roles": self._json_obj.submitter_roles,  # type: ignore[union-attr]
+            "username": cast(str, self._json_obj.submitter_name),
+            "date_time": cast(datetime.datetime, self._json_obj.submission_date),
+            "roles": cast(List[str], self._json_obj.submitter_roles),
         }
 
     @property
@@ -470,7 +478,7 @@ class AsyncJob:
         datetime.datetime | None
             Returns ``None`` if job is pending.
         """
-        return self._json_obj.completion_date  # type: ignore[union-attr, no-any-return]
+        return self._json_obj.completion_date
 
     @property
     def execution_date_time(self) -> Optional[datetime.datetime]:
@@ -482,7 +490,7 @@ class AsyncJob:
         datetime.datetime | None
             Returns ``None`` if job is pending.
         """
-        return self._json_obj.execution_date  # type: ignore[union-attr, no-any-return]
+        return self._json_obj.execution_date
 
     @property
     def scheduled_execution_date_time(self) -> Optional[datetime.datetime]:
@@ -494,7 +502,7 @@ class AsyncJob:
         datetime.datetime | None
             Returns ``None`` if job is not scheduled.
         """
-        return self._json_obj.scheduled_execution_date  # type: ignore[union-attr, no-any-return]
+        return self._json_obj.scheduled_execution_date
 
     def update_scheduled_execution_date_time(self, value: datetime.datetime) -> None:
         """
@@ -512,11 +520,10 @@ class AsyncJob:
         """
         if self._is_deleted:
             raise ValueError("Job has been deleted from the Job Queue")
-        patch_req = cast(models.GrantaServerApiAsyncJobsJob, self._json_obj)
-        patch_req.scheduled_execution_date = AsyncJob._format_timestamp(value)
-        patch_resp = self._job_queue_api.v1alpha_job_queue_jobs_id_patch(  # type: ignore[union-attr]
-            id=self.id, body=patch_req
-        )
+        patch_req = self._json_obj
+        patch_req.scheduled_execution_date = value
+        patch_resp = self._job_queue_api.v1alpha_job_queue_jobs_id_patch(id=self.id, body=patch_req)
+        assert patch_resp
         self._update_job(patch_resp)
 
     @property
@@ -534,6 +541,7 @@ class AsyncJob:
         """
         parsed = {}
         for k, v in self._json_obj.job_specific_outputs.items():  # type: ignore[union-attr]
+            assert isinstance(v, str)
             parsed[k] = json.loads(v)
         return parsed
 
@@ -547,7 +555,7 @@ class AsyncJob:
         List[str]
             List of file names.
         """
-        return self._json_obj.output_file_names  # type: ignore[union-attr, no-any-return]
+        return cast(List[str], self._json_obj.output_file_names)
 
     def download_file(self, remote_file_name: str, file_path: Union[str, pathlib.Path]) -> None:
         """
@@ -571,7 +579,7 @@ class AsyncJob:
             raise ValueError("Job has been deleted from the Job Queue")
         if remote_file_name not in self.output_file_names:
             raise KeyError(f"File with name {remote_file_name} does not exist for this job")
-        downloaded_file_path = self._job_queue_api.v1alpha_job_queue_jobs_id_outputsexport_get(  # type: ignore[union-attr]
+        downloaded_file_path = self._job_queue_api.v1alpha_job_queue_jobs_id_outputsexport_get(
             id=self.id, file_name=remote_file_name
         )
         if not downloaded_file_path:
@@ -608,9 +616,10 @@ class AsyncJob:
             raise ValueError("Job has been deleted from the Job Queue")
         if remote_file_name not in self.output_file_names:
             raise KeyError(f"File with name {remote_file_name} does not exist for this job")
-        local_file_name = self._job_queue_api.v1alpha_job_queue_jobs_id_outputsexport_get(  # type: ignore[union-attr]
+        local_file_name = self._job_queue_api.v1alpha_job_queue_jobs_id_outputsexport_get(
             id=self.id, file_name=remote_file_name
         )
+        assert local_file_name
         with open(local_file_name, "rb") as f:
             return f.read()
 
@@ -625,23 +634,12 @@ class AsyncJob:
         """
         if self._is_deleted:
             raise ValueError("Job has been deleted from the Job Queue")
-        job_resp = self._job_queue_api.v1alpha_job_queue_jobs_id_get(id=self.id)  # type: ignore[union-attr]
+        job_resp = self._job_queue_api.v1alpha_job_queue_jobs_id_get(id=self.id)
+        assert job_resp
         self._update_job(job_resp)
 
     def _update_job(self, job_obj: models.GrantaServerApiAsyncJobsJob) -> None:
         self._json_obj = job_obj
-
-    @classmethod
-    def _init_from_obj(
-        cls,
-        job_obj: models.GrantaServerApiAsyncJobsJob,
-        client: "JobQueueApiClient",
-    ) -> "AsyncJob":
-        new = cls()
-        new._job_queue_api = client.job_queue_api
-        new._update_job(job_obj)
-        # new._instantiated_directly = False
-        return new
 
     @staticmethod
     def _format_timestamp(date_time: datetime.datetime) -> str:
