@@ -26,8 +26,6 @@ jobs:
     steps:
       - uses: ansys/actions/code-style@feat/install-project
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          vale-version: "2.29.6"
           skip-install: false
 
 #  code-style:
