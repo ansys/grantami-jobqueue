@@ -113,8 +113,10 @@ jobs:
         run: |
           pip install poetry 'tox<4' --disable-pip-version-check
 
-      - name: "Test with tox (integration tests only)"
-        run: tox -e tests -- -m "integration"
+#      - name: "Test with tox (integration tests only)"
+#        run: tox -e tests -- -m "integration"
+      - name: "Test with tox"
+        run: tox -e tests
         env:
           TEST_SL_URL: ${{secrets.TEST_SERVER_URL_NEXT}}
           TEST_LIST_ADMIN_USER: ${{secrets.TEST_SERVER_ADMIN_USER}}

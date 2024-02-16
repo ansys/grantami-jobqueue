@@ -11,11 +11,23 @@ To run these examples, install dependencies with this code:
 
    pip install ansys-grantami-jobqueue[examples]
 
+.. jinja:: examples
 
-.. toctree::
-   :maxdepth: 2
+    {% if build_examples %}
+
+    .. toctree::
+       :maxdepth: 2
 
    0_Getting_started
    1_Excel_import_job
    2_Text_import_job
    3_Admin_functions
+
+    {% else %}
+
+    .. toctree::
+       :maxdepth: 2
+
+       test_example
+
+    {% endif %}
