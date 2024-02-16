@@ -113,9 +113,6 @@ master_doc = "index"
 autosectionlabel_maxdepth = 4
 
 
-BUILD_EXAMPLES = False if tags.has("no_examples") else True
-
-
 # -- Examples configuration --------------------------------------------------
 def _copy_examples_and_convert_to_notebooks(source_dir, output_dir, ignored_files_regex=None):
     """
@@ -188,6 +185,7 @@ exclude_patterns = []
 
 EXAMPLES_SOURCE_DIR = Path(__file__).parent.parent.parent.absolute() / "examples"
 EXAMPLES_OUTPUT_DIR = Path(__file__).parent.absolute() / "examples"
+BUILD_EXAMPLES = True if os.environ.get("BUILD_EXAMPLES", "false") == "true" else False
 if BUILD_EXAMPLES:
     ipython_dir = Path("../../.ipython").absolute()
     os.environ["IPYTHONDIR"] = str(ipython_dir)
