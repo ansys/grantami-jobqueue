@@ -109,21 +109,21 @@ jobs:
       - name: "Test with tox"
         run: tox -e tests -- -m "not integration"
 
-      - name: "Upload coverage artifacts"
-        uses: actions/upload-artifact@v4
-        if: ${{ matrix.python-version == env.MAIN_PYTHON_VERSION && matrix.os == 'ubuntu-latest' && !startsWith( github.event.pull_request.head.ref, 'dependabot/') }}
-        with:
-          name: coverage-html-unittests
-          path: .cov/html
-          retention-days: 7
-
-      - name: "Upload coverage to Codecov"
-        uses: codecov/codecov-action@v3
-        if: ${{ matrix.python-version == env.MAIN_PYTHON_VERSION && matrix.os == 'ubuntu-latest' && !startsWith( github.event.pull_request.head.ref, 'dependabot/') }}
-        with:
-          files: .cov/xml
-          flags: unittests
-          fail_ci_if_error: true
+#      - name: "Upload coverage artifacts"
+#        uses: actions/upload-artifact@v4
+#        if: ${{ matrix.python-version == env.MAIN_PYTHON_VERSION && matrix.os == 'ubuntu-latest' && !startsWith( github.event.pull_request.head.ref, 'dependabot/') }}
+#        with:
+#          name: coverage-html-unittests
+#          path: .cov/html
+#          retention-days: 7
+#
+#      - name: "Upload coverage to Codecov"
+#        uses: codecov/codecov-action@v3
+#        if: ${{ matrix.python-version == env.MAIN_PYTHON_VERSION && matrix.os == 'ubuntu-latest' && !startsWith( github.event.pull_request.head.ref, 'dependabot/') }}
+#        with:
+#          files: .cov/xml
+#          flags: unittests
+#          fail_ci_if_error: true
 
   build-library:
     name: "Build library"
