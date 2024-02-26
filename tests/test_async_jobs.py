@@ -36,8 +36,10 @@ def check_success(output_information) -> None:
     assert output_information["summary"]["FinishedSuccessfully"]
 
 
-def test_date_creation(now):
-    assert now
+def test_date_creation(now, tomorrow):
+    assert now.tzinfo is not None
+    assert tomorrow.tzinfo is not None
+    assert tomorrow > now
 
 
 @pytest.mark.integration
