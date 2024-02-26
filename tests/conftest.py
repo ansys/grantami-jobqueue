@@ -39,8 +39,12 @@ def job_queue_api_client(sl_url, admin_username, admin_password):
     Fixture providing a real ApiClient to run integration tests against an instance of Granta MI
     Server API.
     """
-    # connection = Connection(sl_url).with_credentials(admin_username, admin_password)
-    connection = Connection(sl_url).with_autologon()
+    if all([admin_username, admin_password]):
+        connection = Connection(sl_url).with_credentials(admin_username, admin_password)
+    elif not any([admin_username, admin_password]):
+        connection = Connection(sl_url).with_autologon()
+    else:
+        raise ValueError("Specify both or neither of TEST_ADMIN_USER and TEST_ADMIN_PASS.")
     client: JobQueueApiClient = connection.connect()
     return client
 
