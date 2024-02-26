@@ -10,7 +10,7 @@ on:
 
 env:
   MAIN_PYTHON_VERSION: '3.9'
-  DOCUMENTATION_CNAME: 'url.to.be.determined.pages.github.io'
+  DOCUMENTATION_CNAME: 'legendary-bassoon-p8wlmnq.pages.github.io'
   LIBRARY_NAME: 'ansys-grantami-jobqueue'
   LIBRARY_NAMESPACE: 'ansys.grantami.jobqueue'
 
