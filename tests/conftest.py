@@ -1,3 +1,4 @@
+import datetime
 import os
 import warnings
 
@@ -60,6 +61,19 @@ def empty_job_queue_api_client(job_queue_api_client):
         client=job_queue_api_client,
         name=FOLDER_NAME,
     )
+
+
+@pytest.fixture(scope="function")
+def now() -> datetime.datetime:
+    try:
+        return datetime.datetime.now(datetime.UTC)
+    except AttributeError:
+        return datetime.datetime.utcnow()
+
+
+@pytest.fixture(scope="function")
+def tomorrow(now) -> datetime.datetime:
+    return now + datetime.timedelta(days=1)
 
 
 def clear_job_queue(client: JobQueueApiClient):

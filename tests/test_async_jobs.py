@@ -36,6 +36,10 @@ def check_success(output_information) -> None:
     assert output_information["summary"]["FinishedSuccessfully"]
 
 
+def test_date_creation(now):
+    assert now
+
+
 @pytest.mark.integration
 def test_create_excel_import(empty_job_queue_api_client):
     file_path = TEST_ARTIFACT_DIR / "ExcelImportTest.xlsx"
@@ -131,14 +135,12 @@ def test_download_files_path(empty_job_queue_api_client):
 
 
 @pytest.mark.integration
-def test_create_job_with_schedule(empty_job_queue_api_client):
+def test_create_job_with_schedule(empty_job_queue_api_client, now):
     with open(TEST_ARTIFACT_DIR / "ExcelImportTest.xlsx", "rb") as f:
         job_req = ExcelImportJobRequest(
             name="ExcelImportTest", description="Import test 1", combined_files=[f]
         )
-        job_req.scheduled_execution_date = datetime.datetime.now(datetime.UTC) + datetime.timedelta(
-            seconds=6
-        )
+        job_req.scheduled_execution_date = now + datetime.timedelta(seconds=6)
         job = empty_job_queue_api_client.create_import_job(job_req)
     time.sleep(2)
     job.update()
@@ -157,19 +159,16 @@ def test_create_job_with_schedule(empty_job_queue_api_client):
 
 
 @pytest.mark.integration
-def test_update_schedule(empty_job_queue_api_client):
+def test_update_schedule(empty_job_queue_api_client, now, tomorrow):
     with open(TEST_ARTIFACT_DIR / "ExcelImportTest.xlsx", "rb") as f:
         job_req = ExcelImportJobRequest(
             name="ExcelImportTest", description="Import test 1", combined_files=[f]
         )
-        job_req.scheduled_execution_date = datetime.datetime.now(datetime.UTC) + datetime.timedelta(
-            days=1
-        )
+        job_req.scheduled_execution_date = tomorrow
         job = empty_job_queue_api_client.create_import_job(job_req)
 
     assert job.status == JobStatus.Pending
 
-    now = datetime.datetime.now(datetime.UTC).replace(microsecond=0)
     job.update_scheduled_execution_date_time(now)
     assert job.scheduled_execution_date_time - now < datetime.timedelta(seconds=5)
 
@@ -186,14 +185,12 @@ def test_update_schedule(empty_job_queue_api_client):
 
 
 @pytest.mark.integration
-def test_update_job(empty_job_queue_api_client):
+def test_update_job(empty_job_queue_api_client, tomorrow):
     with open(TEST_ARTIFACT_DIR / "ExcelImportTest.xlsx", "rb") as f:
         job_req = ExcelImportJobRequest(
             name="ExcelImportTest", description="Import test 1", combined_files=[f]
         )
-        job_req.scheduled_execution_date = datetime.datetime.now(datetime.UTC) + datetime.timedelta(
-            days=1
-        )
+        job_req.scheduled_execution_date = tomorrow
         job = empty_job_queue_api_client.create_import_job(job_req)
 
     job.update_description("Updated description")
@@ -228,14 +225,12 @@ def test_queue_updates_job(empty_job_queue_api_client):
 
 
 @pytest.mark.integration
-def test_delete_job(empty_job_queue_api_client):
+def test_delete_job(empty_job_queue_api_client, tomorrow):
     with open(TEST_ARTIFACT_DIR / "ExcelImportTest.xlsx", "rb") as f:
         job_req = ExcelImportJobRequest(
             name="ExcelImportTest", description="Import test 1", combined_files=[f]
         )
-        job_req.scheduled_execution_date = datetime.datetime.now(datetime.UTC) + datetime.timedelta(
-            days=1
-        )
+        job_req.scheduled_execution_date = tomorrow
         job = empty_job_queue_api_client.create_import_job(job_req)
 
     assert job.status == JobStatus.Pending
