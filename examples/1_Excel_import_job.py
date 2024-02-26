@@ -68,7 +68,12 @@ separate_excel_import_request
 # -
 
 # +
-tomorrow = datetime.datetime.now(datetime.UTC) + datetime.timedelta(days=1)
+try:
+    # Python 3.11+
+    tomorrow = datetime.datetime.now(datetime.UTC) + datetime.timedelta(days=1)
+except AttributeError:
+    # Python 3.9 and 3.10
+    tomorrow = datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(days=1)
 combined_excel_import_request = ExcelImportJobRequest(
     name="Excel Import (combined template and data file)",
     description="An example excel import job",
@@ -103,7 +108,13 @@ deferred_job
 
 deferred_job.update_name("Combined Excel Import (modified)")
 deferred_job.update_description("A new description for a combined Excel import job")
-deferred_job.update_scheduled_execution_date_time(datetime.datetime.now(datetime.UTC))
+try:
+    # Python 3.11+
+    now = datetime.datetime.now(datetime.UTC)
+except AttributeError:
+    # Python 3.9 and 3.10
+    now = datetime.datetime.now(datetime.timezone.utc)
+deferred_job.update_scheduled_execution_date_time(now)
 client.jobs
 
 # ## Retrieve long-running jobs
