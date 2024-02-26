@@ -69,7 +69,7 @@ f"The current user can write jobs: {client.can_write_job}"
 
 # We can also access information about how the job queue will process jobs.
 
-f"Currency enabled: {'Yes' if client.processing_configuration.concurrency else 'No'}"
+f"Concurrency enabled: {'Yes' if client.processing_configuration.concurrency else 'No'}"
 
 # Finally, we can access the current number of jobs in the job queue. Note: these are only the
 # jobs we can access, which depends on our user role. Admin users can access jobs created by

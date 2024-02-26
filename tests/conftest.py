@@ -32,7 +32,7 @@ def password_read_permissions():
     return os.getenv("TEST_READ_PASS")
 
 
-@pytest.fixture(scope="function")
+@pytest.fixture(scope="session")
 def job_queue_api_client(sl_url, admin_username, admin_password):
     """
     Fixture providing a real ApiClient to run integration tests against an instance of Granta MI
@@ -40,15 +40,24 @@ def job_queue_api_client(sl_url, admin_username, admin_password):
     """
     connection = Connection(sl_url).with_credentials(admin_username, admin_password)
     client: JobQueueApiClient = connection.connect()
-    clear_job_queue(client)
+    return client
+
+
+@pytest.fixture(scope="function")
+def empty_job_queue_api_client(job_queue_api_client):
+    """
+    Fixture providing a real ApiClient to run integration tests against an instance of Granta MI
+    Server API.
+    """
+    clear_job_queue(job_queue_api_client)
     delete_record(
-        client=client,
+        client=job_queue_api_client,
         name=FOLDER_NAME,
     )
-    yield client
-    clear_job_queue(client)
+    yield job_queue_api_client
+    clear_job_queue(job_queue_api_client)
     delete_record(
-        client=client,
+        client=job_queue_api_client,
         name=FOLDER_NAME,
     )
 

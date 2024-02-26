@@ -1,3 +1,4 @@
+import time
 from typing import List, Tuple
 
 from ansys.grantami.serverapi_openapi import api, models
@@ -7,6 +8,9 @@ DB_KEY = "MI_Training"
 TABLE_NAME = "Tensile Test Data"
 FOLDER_NAME = "Data Import Test"
 EXCEL_IMPORT_FOLDER_NAME = "Excel Import Test"
+
+DATABASE_CACHE_SLEEP = 1
+MAX_DATABASE_CACHE_ATTEMPTS = 10
 
 
 def _get_table_guid(client: ApiClient) -> str:
@@ -40,7 +44,17 @@ def delete_record(client: ApiClient, name: str) -> None:
 
 
 def search_for_records_by_name(client: ApiClient, name: str) -> List[Tuple[str, str]]:
-    table_guid = _get_table_guid(client=client)
+    database_api = api.DatabaseApi(client)
+    counter = 0
+    while not database_api.v1alpha_databases_database_keysearch_index_status_get(
+        database_key=DB_KEY
+    ).search_index_up_to_date:
+        counter += 1
+        if counter == MAX_DATABASE_CACHE_ATTEMPTS:
+            raise RuntimeError(
+                f"Database {DB_KEY} failed to cache after {MAX_DATABASE_CACHE_ATTEMPTS} attempts."
+            )
+        time.sleep(DATABASE_CACHE_SLEEP)
 
     search_criterion = models.GrantaServerApiSearchBooleanCriterion(
         any=[
@@ -65,6 +79,7 @@ def search_for_records_by_name(client: ApiClient, name: str) -> List[Tuple[str, 
     )
 
     search_api = api.SearchApi(client)
+    table_guid = _get_table_guid(client=client)
     response = search_api.v1alpha_databases_database_key_tables_table_guidsearch_post(
         database_key=DB_KEY, table_guid=table_guid, body=request
     )

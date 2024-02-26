@@ -1,12 +1,14 @@
 import time
 from typing import Dict, List, Optional, Tuple, cast
+import warnings
 
 from ansys.grantami.serverapi_openapi import api, models
-from ansys.openapi.common import (  # type: ignore[import-untyped]
+from ansys.openapi.common import (
     ApiClient,
     ApiClientFactory,
     ApiException,
     SessionConfiguration,
+    UndefinedObjectWarning,
     generate_user_agent,
 )
 import requests  # type: ignore[import-untyped]
@@ -49,7 +51,7 @@ def _get_mi_server_version(client: ApiClient) -> Tuple[int, ...]:
     return server_version
 
 
-class JobQueueApiClient(ApiClient):  # type: ignore[misc]
+class JobQueueApiClient(ApiClient):
     """
     Communicates with Granta MI.
 
@@ -151,7 +153,9 @@ class JobQueueApiClient(ApiClient):  # type: ignore[misc]
         int
             Number of jobs in the queue.
         """
-        jobs = self.job_queue_api.v1alpha_job_queue_jobs_get()
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore", UndefinedObjectWarning)
+            jobs = self.job_queue_api.v1alpha_job_queue_jobs_get()
         return len(cast(List[models.GrantaServerApiAsyncJobsJob], jobs.results))
 
     def _refetch_user(self) -> None:
@@ -214,12 +218,17 @@ class JobQueueApiClient(ApiClient):  # type: ignore[misc]
             "submitter_name_filter": submitter_name,
         }
 
-        filtered_job_resp = self.job_queue_api.v1alpha_job_queue_jobs_get(
-            **{k: v for k, v in kwargs.items() if v is not None}  # type: ignore[arg-type]
-        )
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore", UndefinedObjectWarning)
+            filtered_job_resp = self.job_queue_api.v1alpha_job_queue_jobs_get(
+                **{k: v for k, v in kwargs.items() if v is not None}  # type: ignore[arg-type]
+            )
 
-        assert filtered_job_resp.results is not None
-        self._update_job_list_from_resp(job_resp=filtered_job_resp.results)
+        job_list = filtered_job_resp.results
+        assert isinstance(job_list, list)
+        self._update_job_list_from_resp(job_resp=job_list)
+        if not filtered_job_resp.results:
+            return []
         filtered_ids = [job.id for job in filtered_job_resp.results]
         return [job for id_, job in self._jobs.items() if id_ in filtered_ids]
 
@@ -255,9 +264,12 @@ class JobQueueApiClient(ApiClient):  # type: ignore[misc]
         self._refetch_jobs()
 
     def _refetch_jobs(self) -> None:
-        job_list = self.job_queue_api.v1alpha_job_queue_jobs_get()
-        assert job_list.results is not None
-        self._update_job_list_from_resp(job_resp=job_list.results, flush_jobs=True)
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore", UndefinedObjectWarning)
+            job_resp = self.job_queue_api.v1alpha_job_queue_jobs_get()
+        job_list = job_resp.results
+        assert isinstance(job_list, list)
+        self._update_job_list_from_resp(job_resp=job_list, flush_jobs=True)
 
     def _update_job_list_from_resp(
         self, job_resp: List[models.GrantaServerApiAsyncJobsJob], flush_jobs: bool = False
@@ -296,7 +308,7 @@ class JobQueueApiClient(ApiClient):  # type: ignore[misc]
         """
         job = self.create_import_job(job_request=job_request)
         request_count = 0
-        last_exception = None
+        last_exception: Optional[Exception] = None
         time.sleep(1)
         while request_count < self._wait_retries:
             try:
@@ -342,7 +354,7 @@ class JobQueueApiClient(ApiClient):  # type: ignore[misc]
         return self._jobs[cast(str, job_response.id)]
 
 
-class Connection(ApiClientFactory):  # type: ignore[misc]
+class Connection(ApiClientFactory):
     """
     Connects to a Granta MI ServerAPI instance.
 
