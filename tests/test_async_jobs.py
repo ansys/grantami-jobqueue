@@ -15,7 +15,7 @@ from ansys.grantami.jobqueue import (
 )
 from common import EXCEL_IMPORT_FOLDER_NAME, search_for_records_by_name
 
-TEST_ARTIFACT_DIR = pathlib.Path("__file__").parent / "test_artifacts"
+TEST_ARTIFACT_DIR = pathlib.Path(__file__).parent / "test_artifacts"
 
 # TODO: Test nullable or required fields on job update
 
