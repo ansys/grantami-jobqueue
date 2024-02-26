@@ -1,5 +1,5 @@
 """Sphinx documentation configuration file."""
-from datetime import datetime
+import datetime
 import os
 from pathlib import Path
 import re
@@ -12,7 +12,11 @@ from ansys.grantami.jobqueue import __version__
 
 # Project information
 project = "ansys-grantami-jobqueue"
-project_copyright = f"(c) {datetime.now().year} ANSYS, Inc. All rights reserved"
+try:
+    now = datetime.datetime.now(datetime.datetime.UTC)
+except AttributeError:
+    now = datetime.datetime.now()
+project_copyright = f"(c) {now.year} ANSYS, Inc. All rights reserved"
 author = "ANSYS, Inc."
 release = version = __version__
 
