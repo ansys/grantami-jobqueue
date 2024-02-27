@@ -15,7 +15,7 @@ from ansys.grantami.jobqueue import (
 )
 from common import EXCEL_IMPORT_FOLDER_NAME, TEST_ARTIFACT_DIR, search_for_records_by_name
 
-pytest.mark = pytest.mark.integration
+pytestmark = pytest.mark.integration
 
 
 def import_text(client: JobQueueApiClient):
