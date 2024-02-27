@@ -1,8 +1,12 @@
+import datetime
+import pathlib
 import time
 from typing import List, Tuple
 
 from ansys.grantami.serverapi_openapi import api, models
 from ansys.openapi.common import ApiClient
+
+TEST_ARTIFACT_DIR = pathlib.Path(__file__).parent / "test_artifacts"
 
 DB_KEY = "MI_Training"
 TABLE_NAME = "Tensile Test Data"
@@ -11,6 +15,13 @@ EXCEL_IMPORT_FOLDER_NAME = "Excel Import Test"
 
 DATABASE_CACHE_SLEEP = 1
 MAX_DATABASE_CACHE_ATTEMPTS = 10
+
+
+def generate_now():
+    try:
+        return datetime.datetime.now(datetime.UTC)
+    except AttributeError:
+        return datetime.datetime.now(datetime.timezone.utc)
 
 
 def _get_table_guid(client: ApiClient) -> str:

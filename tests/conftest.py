@@ -5,7 +5,7 @@ import warnings
 import pytest
 
 from ansys.grantami.jobqueue import Connection, JobQueueApiClient
-from common import FOLDER_NAME, delete_record
+from common import FOLDER_NAME, delete_record, generate_now
 
 
 @pytest.fixture(scope="session")
@@ -70,10 +70,7 @@ def empty_job_queue_api_client(job_queue_api_client):
 
 @pytest.fixture(scope="function")
 def now() -> datetime.datetime:
-    try:
-        return datetime.datetime.now(datetime.UTC)
-    except AttributeError:
-        return datetime.datetime.now(datetime.timezone.utc)
+    return generate_now()
 
 
 @pytest.fixture(scope="function")

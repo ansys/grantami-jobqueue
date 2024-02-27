@@ -13,11 +13,9 @@ from ansys.grantami.jobqueue import (
     JobStatus,
     TextImportJobRequest,
 )
-from common import EXCEL_IMPORT_FOLDER_NAME, search_for_records_by_name
+from common import EXCEL_IMPORT_FOLDER_NAME, TEST_ARTIFACT_DIR, search_for_records_by_name
 
-TEST_ARTIFACT_DIR = pathlib.Path(__file__).parent / "test_artifacts"
-
-# TODO: Test nullable or required fields on job update
+pytest.mark = pytest.mark.integration
 
 
 def import_text(client: JobQueueApiClient):
@@ -36,13 +34,6 @@ def check_success(output_information) -> None:
     assert output_information["summary"]["FinishedSuccessfully"]
 
 
-def test_date_creation(now, tomorrow):
-    assert now.tzinfo is not None
-    assert tomorrow.tzinfo is not None
-    assert tomorrow > now
-
-
-@pytest.mark.integration
 def test_create_excel_import(empty_job_queue_api_client):
     file_path = TEST_ARTIFACT_DIR / "ExcelImportTest.xlsx"
     job_req = ExcelImportJobRequest(
@@ -58,23 +49,6 @@ def test_create_excel_import(empty_job_queue_api_client):
     assert output_info["NumberOfRecordsCreated"] == 1 or output_info["NumberOfRecordsUpdated"] == 1
 
 
-def test_no_data_combined():
-    with pytest.raises(ValueError, match="Excel import jobs must contain either"):
-        ExcelImportJobRequest(name="ExcelImportTest", description="Import test no data")
-
-
-def test_both_combined_and_template():
-    with pytest.raises(ValueError) as excinfo:
-        _ = ExcelImportJobRequest(
-            name="ExcelImportTest",
-            description="Import test with too much data",
-            combined_files=[TEST_ARTIFACT_DIR / "TextDataTest.dat"],
-            template_files=[TEST_ARTIFACT_DIR / "TextDataTest.dat"],
-        )
-    assert "Cannot create Excel import job with both" in str(excinfo.value)
-
-
-@pytest.mark.integration
 def test_create_text_import(empty_job_queue_api_client):
     with open(TEST_ARTIFACT_DIR / "TextDataTest.dat", "rb") as fd:
         template_path = pathlib.Path(TEST_ARTIFACT_DIR / "TextImportTestTemplate.xml")
@@ -92,7 +66,6 @@ def test_create_text_import(empty_job_queue_api_client):
     assert output_info["NumberOfRecordsCreated"] == 4 or output_info["NumberOfRecordsUpdated"] == 4
 
 
-@pytest.mark.integration
 def test_output_files(empty_job_queue_api_client):
     job = import_text(empty_job_queue_api_client)
     assert job.status == JobStatus.Succeeded
@@ -107,7 +80,6 @@ def test_output_files(empty_job_queue_api_client):
     assert parsed_summary["NumberOfErrors"] == 0
 
 
-@pytest.mark.integration
 def test_download_files_name(empty_job_queue_api_client):
     job = import_text(empty_job_queue_api_client)
     assert job.status == JobStatus.Succeeded
@@ -121,7 +93,6 @@ def test_download_files_name(empty_job_queue_api_client):
         assert os.path.exists(output_file)
 
 
-@pytest.mark.integration
 def test_download_files_path(empty_job_queue_api_client):
     job = import_text(empty_job_queue_api_client)
     assert job.status == JobStatus.Succeeded
@@ -136,7 +107,6 @@ def test_download_files_path(empty_job_queue_api_client):
         assert os.path.exists(output_file)
 
 
-@pytest.mark.integration
 def test_create_job_with_schedule(empty_job_queue_api_client, now):
     with open(TEST_ARTIFACT_DIR / "ExcelImportTest.xlsx", "rb") as f:
         job_req = ExcelImportJobRequest(
@@ -160,7 +130,6 @@ def test_create_job_with_schedule(empty_job_queue_api_client, now):
     assert len(recs_found) == 1
 
 
-@pytest.mark.integration
 def test_update_schedule(empty_job_queue_api_client, now, tomorrow):
     with open(TEST_ARTIFACT_DIR / "ExcelImportTest.xlsx", "rb") as f:
         job_req = ExcelImportJobRequest(
@@ -173,6 +142,7 @@ def test_update_schedule(empty_job_queue_api_client, now, tomorrow):
 
     job.update_scheduled_execution_date_time(now)
     assert job.scheduled_execution_date_time - now < datetime.timedelta(seconds=5)
+    assert job.description == "Import test 1"
 
     time.sleep(10)
     job.update()
@@ -186,7 +156,6 @@ def test_update_schedule(empty_job_queue_api_client, now, tomorrow):
     assert len(recs_found) == 1
 
 
-@pytest.mark.integration
 def test_update_job(empty_job_queue_api_client, tomorrow):
     with open(TEST_ARTIFACT_DIR / "ExcelImportTest.xlsx", "rb") as f:
         job_req = ExcelImportJobRequest(
@@ -195,16 +164,15 @@ def test_update_job(empty_job_queue_api_client, tomorrow):
         job_req.scheduled_execution_date = tomorrow
         job = empty_job_queue_api_client.create_import_job(job_req)
 
-    job.update_description("Updated description")
+    job.update_description("Some random string")
     job.update_name("UpdatedExcelImportTest")
 
     time.sleep(10)
 
     assert len(empty_job_queue_api_client.jobs_where(name="UpdatedExcelImportTest")) == 1
-    assert len(empty_job_queue_api_client.jobs_where(description="Updated")) == 1
+    assert empty_job_queue_api_client.jobs[0].description == "Some random string"
 
 
-@pytest.mark.integration
 def test_queue_updates_job(empty_job_queue_api_client):
     with open(TEST_ARTIFACT_DIR / "ExcelImportTest.xlsx", "rb") as f:
         job_req = ExcelImportJobRequest(
@@ -226,7 +194,6 @@ def test_queue_updates_job(empty_job_queue_api_client):
     assert len(recs_found) == 1
 
 
-@pytest.mark.integration
 def test_delete_job(empty_job_queue_api_client, tomorrow):
     with open(TEST_ARTIFACT_DIR / "ExcelImportTest.xlsx", "rb") as f:
         job_req = ExcelImportJobRequest(

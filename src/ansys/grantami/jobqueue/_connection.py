@@ -282,7 +282,7 @@ class JobQueueApiClient(ApiClient):
         for job_obj in job_resp:
             job_id = cast(str, job_obj.id)
             if job_id not in self._jobs:
-                self._jobs[job_id] = AsyncJob(job_obj, self)
+                self._jobs[job_id] = AsyncJob(job_obj, self.job_queue_api)
             elif job_obj is not self._jobs[job_id]:
                 self._jobs[job_id]._update_job(job_obj)
 

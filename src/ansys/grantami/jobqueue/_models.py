@@ -6,15 +6,11 @@ from io import BufferedIOBase, RawIOBase
 import json
 import os
 import pathlib
-from typing import TYPE_CHECKING, Any, BinaryIO, Dict, List, Optional, Union
+from typing import Any, BinaryIO, Dict, List, Optional, Union
 import warnings
 
 from ansys.grantami.serverapi_openapi import api, models
-from ansys.openapi.common import UndefinedObjectWarning
-
-if TYPE_CHECKING:
-    from ._connection import JobQueueApiClient
-
+from ansys.openapi.common import UndefinedObjectWarning, Unset
 
 File_Type = Union[str, pathlib.Path, BinaryIO]
 
@@ -42,9 +38,9 @@ class JobStatus(Enum):
 class JobType(Enum):
     """Provides possible job types."""
 
-    Excel_Import = "ExcelImportJob"
-    Excel_Export = "ExcelExportJob"
-    Text = "TextImportJob"
+    ExcelImportJob = "ExcelImportJob"
+    ExcelExportJob = "ExcelExportJob"
+    TextImportJob = "TextImportJob"
 
 
 class ImportJobRequest(ABC):
@@ -243,7 +239,7 @@ class ExcelImportJobRequest(ImportJobRequest):
 
     @property
     def _import_type(self) -> JobType:
-        return JobType.Excel_Import
+        return JobType.ExcelImportJob
 
 
 class TextImportJobRequest(ImportJobRequest):
@@ -304,7 +300,7 @@ class TextImportJobRequest(ImportJobRequest):
 
     @property
     def _import_type(self) -> JobType:
-        return JobType.Text
+        return JobType.TextImportJob
 
 
 class AsyncJob:
@@ -321,14 +317,14 @@ class AsyncJob:
     """
 
     def __init__(
-        self, job_obj: models.GrantaServerApiAsyncJobsJob, client: "JobQueueApiClient"
+        self, job_obj: models.GrantaServerApiAsyncJobsJob, job_queue_api: api.JobQueueApi
     ) -> None:
-        self._job_queue_api = client.job_queue_api
+        self._job_queue_api = job_queue_api
         self._is_deleted = False
 
         self._id: str
         self._name: str
-        self._description: Optional[str]
+        self._description: str
         self._status: models.GrantaServerApiAsyncJobsJobStatus
         self._type: str
         self._position: Optional[int]
@@ -346,7 +342,7 @@ class AsyncJob:
     def _update_job(self, job_obj: models.GrantaServerApiAsyncJobsJob) -> None:
         self._id = self._get_property(job_obj, name="id", required=True)
         self._name = self._get_property(job_obj, name="name", required=True)
-        self._description = self._get_property(job_obj, name="description")
+        self._description = self._get_property(job_obj, name="description", required=True)
         self._status = self._get_property(job_obj, name="status", required=True)
         self._type = self._get_property(job_obj, name="type", required=True)
         self._position = self._get_property(job_obj, name="position")
@@ -365,9 +361,9 @@ class AsyncJob:
     ) -> Any:
         value = job_obj.__getattribute__(name)
         if not required:
-            return value if value else None
+            return value if value not in [None, Unset] else None
         elif not value:
-            raise ValueError(f"Job with ID {job_obj.id} has no required field {name}")
+            raise ValueError(f'Job with id: "{job_obj.id}" has no required field "{name}"')
         return value
 
     def __repr__(self) -> str:
@@ -430,7 +426,7 @@ class AsyncJob:
         """
         return self._description
 
-    def update_description(self, value: Optional[str]) -> None:
+    def update_description(self, value: str) -> None:
         """
         Update the job description on the server.
 
