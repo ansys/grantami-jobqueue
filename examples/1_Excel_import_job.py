@@ -29,7 +29,7 @@
 # ## Connecting to Granta MI
 
 # Import the ``Connection`` class and create the connection. See the
-# [Getting started](0_Getting_started.html) example for more detail.
+# [Getting started](0_Getting_started.ipynb) example for more detail.
 
 # + tags=[]
 from ansys.grantami.jobqueue import Connection
