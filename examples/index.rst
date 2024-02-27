@@ -18,10 +18,10 @@ To run these examples, install dependencies with this code:
     .. toctree::
        :maxdepth: 2
 
-   0_Getting_started
-   1_Excel_import_job
-   2_Text_import_job
-   3_Admin_functions
+       0_Getting_started
+       1_Excel_import_job
+       2_Text_import_job
+       3_Admin_functions
 
     {% else %}
 
