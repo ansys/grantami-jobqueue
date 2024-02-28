@@ -66,9 +66,9 @@ class TestUpdateAsyncJob:
         modified_values = {} if not modified_values else modified_values
         unset_values = {arg for arg in type(self).ALL_FIELDS if arg not in modified_values.keys()}
         for arg, val in modified_values.items():
-            assert patch_obj.__getattribute__(arg) == val
+            assert getattr(patch_obj, arg) == val
         for arg in unset_values:
-            assert patch_obj.__getattribute__(arg) is Unset
+            assert getattr(patch_obj, arg) is Unset
 
     @staticmethod
     @pytest.fixture
