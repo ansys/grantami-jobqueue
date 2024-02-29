@@ -74,10 +74,8 @@ class TestUpdateAsyncJob:
     @pytest.fixture
     def mocked_patch_method(asyncjob, job_model, monkeypatch):
         mocked_method = Mock(return_value=job_model)
-        monkeypatch.setattr(
-            asyncjob._job_queue_api, "v1alpha_job_queue_jobs_id_patch", mocked_method
-        )
-        patched_method: Mock = asyncjob._job_queue_api.v1alpha_job_queue_jobs_id_patch  # type: ignore
+        monkeypatch.setattr(asyncjob._job_queue_api, "update_job", mocked_method)
+        patched_method: Mock = asyncjob._job_queue_api.update_job  # type: ignore
         return patched_method
 
     def test_update_name(self, mocked_patch_method, asyncjob):
