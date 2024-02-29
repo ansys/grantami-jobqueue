@@ -37,7 +37,7 @@ server_url = "http://my_grantami_server/mi_servicelayer"
 
 
 def __repr__(self: JobQueueApiClient) -> str:
-    return f"<RecordListsApiClient url: {server_url}>"
+    return f"<JobQueueApiClient url: {server_url}>"
 
 
 JobQueueApiClient.__repr__ = __repr__

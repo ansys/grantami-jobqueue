@@ -32,10 +32,10 @@ on:
       AZURE_RESOURCE_GROUP:
         required: true
 
-      AZURE_VM_NAME:
+      AZURE_VM_NAME_NEXT:
         required: true
 
-      TEST_SERVER_URL:
+      TEST_SERVER_URL_NEXT:
         required: true
 
       TEST_SERVER_ADMIN_USER:
@@ -44,10 +44,10 @@ on:
       TEST_SERVER_ADMIN_PASS:
         required: true
 
-      TEST_SERVER_USER:
+      TEST_SERVER_READ_USER:
         required: true
 
-      TEST_SERVER_PASS:
+      TEST_SERVER_READ_PASS:
         required: true
 
   workflow_dispatch:
@@ -73,7 +73,7 @@ jobs:
           azcliversion: 2.32.0
           inlineScript: |
             az login --service-principal -u ${{ secrets.AZURE_APP_ID }} -p ${{ secrets.AZURE_SECRET }} --tenant ${{ secrets.AZURE_TENANT_ID }}
-            az vm start -g ${{ secrets.AZURE_RESOURCE_GROUP }} -n ${{ secrets.AZURE_VM_NAME }}
+            az vm start -g ${{ secrets.AZURE_RESOURCE_GROUP }} -n ${{ secrets.AZURE_VM_NAME_NEXT }}
 
       - name: "Set up Python ${{ inputs.python-version }}"
         uses: actions/setup-python@v5
@@ -88,7 +88,7 @@ jobs:
           pip freeze
           python .github/scripts/check_server.py
         env:
-          TEST_SL_URL: ${{secrets.TEST_SERVER_URL}}
+          TEST_SL_URL: ${{secrets.TEST_SERVER_URL_NEXT}}
           TEST_USER: ${{secrets.TEST_SERVER_ADMIN_USER}}
           TEST_PASS: ${{secrets.TEST_SERVER_ADMIN_PASS}}
 
@@ -116,27 +116,27 @@ jobs:
       - name: "Test with tox (integration tests only)"
         run: tox -e tests -- -m "integration"
         env:
-          TEST_SL_URL: ${{secrets.TEST_SERVER_URL}}
-          TEST_LIST_ADMIN_USER: ${{secrets.TEST_SERVER_ADMIN_USER}}
-          TEST_LIST_ADMIN_PASS: ${{secrets.TEST_SERVER_ADMIN_PASS}}
-          TEST_LIST_USER: ${{secrets.TEST_SERVER_USER}}
-          TEST_LIST_PASS: ${{secrets.TEST_SERVER_PASS}}
+          TEST_SL_URL: ${{secrets.TEST_SERVER_URL_NEXT}}
+          TEST_ADMIN_USER: ${{secrets.TEST_SERVER_ADMIN_USER}}
+          TEST_ADMIN_PASS: ${{secrets.TEST_SERVER_ADMIN_PASS}}
+          TEST_READ_USER: ${{secrets.TEST_SERVER_READ_USER}}
+          TEST_READ_PASS: ${{secrets.TEST_SERVER_READ_PASS}}
 
-      - name: "Upload coverage artifacts"
-        uses: actions/upload-artifact@v4
-        if: ${{ matrix.os  == 'ubuntu-latest' }}
-        with:
-          name: coverage-html-integrationtests
-          path: .cov/html
-          retention-days: 7
-
-      - name: "Upload coverage to Codecov"
-        uses: codecov/codecov-action@v3
-        if: ${{ matrix.os  == 'ubuntu-latest' }}
-        with:
-          files: .cov/xml
-          flags: integration
-          fail_ci_if_error: true
+#      - name: "Upload coverage artifacts"
+#        uses: actions/upload-artifact@v4
+#        if: ${{ matrix.os  == 'ubuntu-latest' }}
+#        with:
+#          name: coverage-html-integrationtests
+#          path: .cov/html
+#          retention-days: 7
+#
+#      - name: "Upload coverage to Codecov"
+#        uses: codecov/codecov-action@v3
+#        if: ${{ matrix.os  == 'ubuntu-latest' }}
+#        with:
+#          files: .cov/xml
+#          flags: integration
+#          fail_ci_if_error: true
 
   doc-build:
     name: "Build documentation"
@@ -165,7 +165,7 @@ jobs:
       - name: "Build HTML documentation"
         run: poetry run -- make -C doc html SPHINXOPTS="-n -W --keep-going"
         env:
-          TEST_SL_URL: ${{secrets.TEST_SERVER_URL}}
+          TEST_SL_URL: ${{secrets.TEST_SERVER_URL_NEXT}}
           TEST_USER: ${{secrets.TEST_SERVER_ADMIN_USER}}
           TEST_PASS: ${{secrets.TEST_SERVER_ADMIN_PASS}}
           BUILD_EXAMPLES: "true"
@@ -173,7 +173,7 @@ jobs:
       - name: "Build PDF documentation"
         run: poetry run -- make -C doc latexpdf
         env:
-          TEST_SL_URL: ${{secrets.TEST_SERVER_URL}}
+          TEST_SL_URL: ${{secrets.TEST_SERVER_URL_NEXT}}
           TEST_USER: ${{secrets.TEST_SERVER_ADMIN_USER}}
           TEST_PASS: ${{secrets.TEST_SERVER_ADMIN_PASS}}
           BUILD_EXAMPLES: "true"
@@ -203,4 +203,4 @@ jobs:
           azcliversion: 2.32.0
           inlineScript: |
             az login --service-principal -u ${{ secrets.AZURE_APP_ID }} -p ${{ secrets.AZURE_SECRET }} --tenant ${{ secrets.AZURE_TENANT_ID }}
-            az vm deallocate -g ${{ secrets.AZURE_RESOURCE_GROUP }} -n ${{ secrets.AZURE_VM_NAME }} --no-wait
+            az vm deallocate -g ${{ secrets.AZURE_RESOURCE_GROUP }} -n ${{ secrets.AZURE_VM_NAME_NEXT }} --no-wait

@@ -1,25 +1,27 @@
-from typing import Dict, List, Optional, Tuple, Union
 import time
+from typing import Dict, List, Optional, Tuple, cast
+import warnings
 
-from ansys.grantami.serverapi_openapi import api, models  # type: ignore[import]
-from ansys.openapi.common import (  # type: ignore[import]
+from ansys.grantami.serverapi_openapi import api, models
+from ansys.openapi.common import (
     ApiClient,
     ApiClientFactory,
     ApiException,
     SessionConfiguration,
+    UndefinedObjectWarning,
     generate_user_agent,
 )
-import requests  # type: ignore[import]
+import requests  # type: ignore[import-untyped]
 
 from ._logger import logger
-from ._models import AsyncJob, ImportJobRequest
+from ._models import AsyncJob, ImportJobRequest, JobQueueProcessingConfiguration, JobStatus, JobType
 
-PROXY_PATH = "/proxy/v1.svc"
+PROXY_PATH = "/proxy/v1.svc/mi"
 AUTH_PATH = "/Health/v2.svc"
 API_DEFINITION_PATH = "/swagger/v1/swagger.json"
 GRANTA_APPLICATION_NAME_HEADER = "PyGranta JobQueue"
 
-MINIMUM_GRANTA_MI_VERSION = (24, 1)
+MINIMUM_GRANTA_MI_VERSION = (24, 2)
 
 _ArgNotProvided = "_ArgNotProvided"
 
@@ -42,19 +44,19 @@ def _get_mi_server_version(client: ApiClient) -> Tuple[int, ...]:
         Granta MI version number.
     """
     schema_api = api.SchemaApi(client)
-    server_version_response = schema_api.v1alpha_schema_mi_version_get()
+    server_version_response = schema_api.get_version()
+    assert server_version_response.version
     server_version_elements = server_version_response.version.split(".")
     server_version = tuple([int(e) for e in server_version_elements])
     return server_version
 
 
-class JobQueueApiClient(ApiClient):  # type: ignore[misc]
+class JobQueueApiClient(ApiClient):
     """
     Communicates with Granta MI.
 
-    This class is instantiated by the
-    :class:`Connection` class and should not be instantiated
-    directly.
+    This class is instantiated by the :class:`Connection` class
+    and should not be instantiated directly.
     """
 
     def __init__(
@@ -62,7 +64,7 @@ class JobQueueApiClient(ApiClient):  # type: ignore[misc]
         session: requests.Session,
         service_layer_url: str,
         configuration: SessionConfiguration,
-    ):
+    ) -> None:
         self._service_layer_url = service_layer_url
         api_url = service_layer_url + PROXY_PATH
 
@@ -73,24 +75,10 @@ class JobQueueApiClient(ApiClient):  # type: ignore[misc]
         super().__init__(session, api_url, configuration)
         self.job_queue_api = api.JobQueueApi(self)
 
-        self._user = None
-        self._processing_configuration = None
+        self._user: Optional[models.GrantaServerApiAsyncJobsCurrentUser] = None
+        self._processing_configuration: Optional[JobQueueProcessingConfiguration] = None
 
-        self._jobs = {}
-
-        self.__import_job_type_map = {
-            "Excel": "ExcelImportJob",
-            "Text": "TextImportJob",
-        }
-
-        self.__valid_status_ids = [
-            "Pending",
-            "Running",
-            "Succeeded",
-            "Failed",
-            "Cancelled",
-            "Corrupted",
-        ]
+        self._jobs: Dict[str, AsyncJob] = {}
 
         self._wait_retries = 5
 
@@ -99,164 +87,234 @@ class JobQueueApiClient(ApiClient):  # type: ignore[misc]
         return f"<{self.__class__.__name__} url: {self._service_layer_url}>"
 
     @property
-    def processing_configuration(self) -> Dict[str, int]:
+    def processing_configuration(self) -> JobQueueProcessingConfiguration:
         """
-        Gets the current job queue configuration information from the server.
+        Get the current job queue configuration information from the server.
 
-        :return: dict
+        Returns
+        -------
+        JobQueueProcessingConfiguration
         """
         if self._processing_configuration is None:
-            self._processing_configuration = self.job_queue_api.v1alpha_job_queue_processing_configuration_get()
+            processing_config = self.job_queue_api.get_processing_config()
+            self._processing_configuration = JobQueueProcessingConfiguration(
+                purge_job_age_in_milliseconds=cast(
+                    int, processing_config.purge_job_age_in_milliseconds
+                ),
+                purge_interval_in_milliseconds=cast(
+                    int, processing_config.purge_interval_in_milliseconds
+                ),
+                polling_interval_in_milliseconds=cast(
+                    int, processing_config.polling_interval_in_milliseconds
+                ),
+                concurrency=cast(int, processing_config.concurrency),
+            )
         return self._processing_configuration
 
     @property
     def is_admin_user(self) -> bool:
         """
-        Checks whether the current user is a Job Queue admin (returns ``True`` if the user is an admin). Admin users
-        can promote jobs to the top of the queue and interact with other users' jobs.
+        Checks whether the current user is a Job Queue admin.
 
-        :return: bool
+        Admin users can promote jobs to the top of the queue and interact with other users' jobs.
+
+        Returns
+        -------
+        bool
+            ``True`` if the user is an admin, ``False`` otherwise.
         """
         if self._user is None:
             self._refetch_user()
-        return self._user.is_admin
+        assert self._user
+        return cast(bool, self._user.is_admin)
 
     @property
     def can_write_job(self) -> bool:
         """
-        Checks whether the current user can create new jobs (returns ``True`` if they can).
+        Check whether the current user can create new jobs.
 
-        :return: bool
+        Returns
+        -------
+        bool
+            ``True`` if the user can create new jobs, ``False`` otherwise.
         """
         if self._user is None:
             self._refetch_user()
-        return self._user.has_write_access
+        assert self._user
+        return cast(bool, self._user.has_write_access)
 
     @property
     def num_jobs(self) -> int:
         """
-        Returns the number of jobs in the Job Queue, including completed and failed jobs.
+        Return the number of jobs in the Job Queue, including completed and failed jobs.
 
-        :return: int
+        Returns
+        -------
+        int
+            Number of jobs in the queue.
         """
-        jobs = self.job_queue_api.v1alpha_job_queue_jobs_get()
-        return len(jobs.results)
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore", UndefinedObjectWarning)
+            jobs = self.job_queue_api.get_jobs()
+        return len(cast(List[models.GrantaServerApiAsyncJobsJob], jobs.results))
 
     def _refetch_user(self) -> None:
-        self._user = self.job_queue_api.get_currentuser()
+        self._user = self.job_queue_api.get_current_user()
+        assert self._user
 
     @property
     def jobs(self) -> "List[AsyncJob]":
         """
-        Returns a list of all jobs visible on the server. Running or pending jobs are sorted according to
-        their position in the queue, completed or failed jobs are returned last.
+        Returns a list of all jobs on the server visible to the current user.
 
-        :return: List[:class:`AsyncJob`]
+        Running or pending jobs are sorted according to their position in the queue.
+        Completed or failed jobs are returned last.
+
+        Returns
+        -------
+        List[AsyncJob]
+            A list of AsyncJob objects.
         """
         self._refetch_jobs()
         return sorted(self._jobs.values(), key=lambda x: (x.position is None, x.position))
 
     def jobs_where(
-            self,
-            name: str = None,
-            type_: str = None,
-            description: str = None,
-            submitter_name: str = None,
-            status: str = None,
+        self,
+        name: Optional[str] = None,
+        job_type: Optional[JobType] = None,
+        description: Optional[str] = None,
+        submitter_name: Optional[str] = None,
+        status: Optional[JobStatus] = None,
     ) -> "List[AsyncJob]":
         """
-        Returns a list of jobs on the server matching a query. Running or queued jobs are sorted according to
-        their position in the queue, completed or failed jobs are returned last.
+        Return a list of jobs on the server matching a query.
 
-        :param name: str (Job name must contain)
-        :param type_: str (``Excel``, ``Text``)
-        :param description: str (Job description must contain)
-        :param submitter_name: str (Name of user who submitted the job must equal)
-        :param status: str (``Pending``, ``Running``, ``Succeeded``, ``Failed``, ``Cancelled``, ``Corrupted``)
+        Running or queued jobs are sorted according to their position in the queue, completed or
+        failed jobs are returned last.
 
-        :return: List[:class:`AsyncJob`]
+        Parameters
+        ----------
+        name
+            Text which must appear in the job name.
+        job_type
+            The type of job to search for.
+        description
+            Text which must appear in the job description.
+        submitter_name
+            Text which must equal the name of the user who submitted the job.
+        status
+            The status of the job.
+
+        Returns
+        -------
+        List[AsyncJob]
+            A list of AsyncJob objects.
         """
-        if type_ is not None and type_ not in self.__import_job_type_map:
-            valid_job_types = ", ".join(self.__import_job_type_map.keys())
-            raise ValueError(f"Invalid job type '{type_}', must be one of: {valid_job_types}")
-        if status is not None and status not in self.__valid_status_ids:
-            valid_status_ids = ", ".join(self.__valid_status_ids)
-            raise ValueError(f"Invalid status '{status}', must be one of: {valid_status_ids}")
-
         kwargs = {
             "name_filter": name,
-            "job_type": type_,
-            "status": status,
+            "job_type": job_type.value if job_type else None,
+            "status": status.value if status else None,
             "description_filter": description,
             "submitter_name_filter": submitter_name,
         }
 
-        filtered_job_resp = self.job_queue_api.v1alpha_job_queue_jobs_get(
-            **{k: v for k, v in kwargs.items() if v is not None})
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore", UndefinedObjectWarning)
+            filtered_job_resp = self.job_queue_api.get_jobs(
+                **{k: v for k, v in kwargs.items() if v is not None}  # type: ignore[arg-type]
+            )
 
-        self._update_job_list_from_resp(job_resp=filtered_job_resp.results)
+        job_list = filtered_job_resp.results
+        assert isinstance(job_list, list)
+        self._update_job_list_from_resp(job_resp=job_list)
+        if not filtered_job_resp.results:
+            return []
         filtered_ids = [job.id for job in filtered_job_resp.results]
         return [job for id_, job in self._jobs.items() if id_ in filtered_ids]
 
     def get_job_by_id(self, job_id: str) -> "AsyncJob":
         """
-        Gets the job with unique identifier ``job_id`` from the server.
+        Get the job with a specified job id.
 
-        :param job_id: str
+        Parameters
+        ----------
+        job_id
+            The job id for the job to be retrieved.
 
-        :return: :class:`AsyncJob` object
+        Returns
+        -------
+        AsyncJob
+            An AsyncJob object.
         """
         return next(job for id_, job in self._jobs.items() if id_ == job_id)
 
     def delete_jobs(self, jobs: "List[AsyncJob]") -> None:
         """
-        Deletes jobs from the server.
+        Delete one or more jobs from the server.
 
-        :param jobs: List[:class:`AsyncJob`]
-
-        :return: None
+        Parameters
+        ----------
+        jobs
+            A list of AsyncJob objects to be deleted from the server.
         """
         for job in jobs:
-            self.job_queue_api.v1alpha_job_queue_jobs_id_delete(id=job.id)
+            self.job_queue_api.delete_job(id=job.id)
             self._jobs.pop(job.id, None)
-            job._AsyncJob__is_deleted = True
+            job._is_deleted = True
         self._refetch_jobs()
 
     def _refetch_jobs(self) -> None:
-        job_list = self.job_queue_api.v1alpha_job_queue_jobs_get()
-        self._update_job_list_from_resp(job_resp=job_list.results, flush_jobs=True)
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore", UndefinedObjectWarning)
+            job_resp = self.job_queue_api.get_jobs()
+        job_list = job_resp.results
+        assert isinstance(job_list, list)
+        self._update_job_list_from_resp(job_resp=job_list, flush_jobs=True)
 
-    def _update_job_list_from_resp(self, job_resp, flush_jobs=False) -> None:
+    def _update_job_list_from_resp(
+        self, job_resp: List[models.GrantaServerApiAsyncJobsJob], flush_jobs: bool = False
+    ) -> None:
         remote_ids = [remote_job.id for remote_job in job_resp]
         if flush_jobs:
             for job_id in self._jobs:
                 if job_id not in remote_ids:
                     self._jobs.pop(job_id)
         for job_obj in job_resp:
-            if job_obj.id not in self._jobs:
-                self._jobs[job_obj.id] = AsyncJob._init_from_obj(job_obj, self)
-            elif job_obj is not self._jobs[job_obj.id]:
-                self._jobs[job_obj.id]._update_job(job_obj)
+            job_id = cast(str, job_obj.id)
+            if job_id not in self._jobs:
+                self._jobs[job_id] = AsyncJob(job_obj, self.job_queue_api)
+            elif job_obj is not self._jobs[job_id]:
+                self._jobs[job_id]._update_job(job_obj)
 
-    def create_import_job_and_wait(self, job_request: "ImportJobRequest") -> "AsyncJob":
+    def create_import_job_and_wait(
+        self, job_request: "ImportJobRequest"
+    ) -> "AsyncJob":  # noqa: D205, D400
         """
-        Creates an import job from an :obj:`ImportJobRequest` object. Uploads files and submits a job request
-        to the Job Queue. Blocks execution until the job has either completed or failed, then returns the finished
-        :obj:`AsyncJob` object.
+        Create an import job from an :class:`~.ExcelImportJobRequest` or
+        :class:`~.TextImportJobRequest` object and block until complete.
 
-        :param job_request: :obj:`ImportJobRequest` object
+        Upload files and submits a job request to the Job Queue. Block execution until the job
+        has either completed or failed, then return the finished :obj:`AsyncJob` object.
 
-        :return: :obj:`AsyncJob` object
+        Parameters
+        ----------
+        job_request
+            The ImportJobRequest to be imported.
+
+        Returns
+        -------
+        AsyncJob
+            A AsyncJob object representing the completed job.
         """
         job = self.create_import_job(job_request=job_request)
         request_count = 0
-        last_exception = None
+        last_exception: Optional[Exception] = None
         time.sleep(1)
         while request_count < self._wait_retries:
             try:
                 job.update()
                 status = job.status
-                if status not in ["Pending", "Running"]:
+                if status not in [JobStatus.Pending, JobStatus.Running]:
                     return job
             except ApiException as exception_info:
                 request_count += 1
@@ -265,31 +323,42 @@ class JobQueueApiClient(ApiClient):  # type: ignore[misc]
                 last_exception = exception_info
                 break
             time.sleep(1)
-        raise last_exception
+        if last_exception:
+            raise last_exception
+        else:
+            return job
 
-    def create_import_job(self, job_request: "ImportJobRequest") -> "AsyncJob":
+    def create_import_job(self, job_request: "ImportJobRequest") -> "AsyncJob":  # noqa: D205, D400
         """
-        Creates an import job from an :obj:`ImportJobRequest` object. Uploads files and submits a job request
-        to the Job Queue, then returns an in-progress :obj:`AsyncJob` object for later use.
+        Create an import job from an :class:`~.ExcelImportJobRequest` or
+        :class:`~.TextImportJobRequest` object.
 
-        :param job_request: :obj:`ImportJobRequest` object
+        Upload files and submit a job request to the Job Queue.
 
-        :return: :obj:`AsyncJob` object
+        Parameters
+        ----------
+        job_request
+            The ImportJobRequest to be imported.
+
+        Returns
+        -------
+        AsyncJob
+            An AsyncJob object representing the in-progress job.
         """
         job_request._post_files(api_client=self.job_queue_api)
 
-        job_response = self.job_queue_api.v1alpha_job_queue_jobs_post(body=job_request.get_job_for_import())
+        job_response = self.job_queue_api.create_job(body=job_request.get_job_for_import())
         self._update_job_list_from_resp([job_response])
-        return self._jobs[job_response.id]
+        return self._jobs[cast(str, job_response.id)]
 
 
-class Connection(ApiClientFactory):  # type: ignore[misc]
+class Connection(ApiClientFactory):
     """
     Connects to a Granta MI ServerAPI instance.
 
     This is a subclass of the :class:`ansys.openapi.common.ApiClientFactory` class. All methods in
     this class are documented as returning :class:`~ansys.openapi.common.ApiClientFactory` class
-    instances of the :class:`ansys.grantami.recordlists.Connection` class instead.
+    instances of the :class:`ansys.grantami.jobqueue.Connection` class instead.
 
     Parameters
     ----------
@@ -319,14 +388,14 @@ class Connection(ApiClientFactory):  # type: ignore[misc]
     --------
     >>> client = Connection("http://my_mi_server/mi_servicelayer").with_autologon().connect()
     >>> client
-    <RecordListsApiClient: url=http://my_mi_server/mi_servicelayer>
+    <JobQueueApiClient: url=http://my_mi_server/mi_servicelayer>
     >>> client = (
     ...     Connection("http://my_mi_server/mi_servicelayer")
     ...     .with_credentials(username="my_username", password="my_password")
     ...     .connect()
     ... )
     >>> client
-    <RecordListsApiClient: url: http://my_mi_server/mi_servicelayer>
+    <JobQueueApiClient: url: http://my_mi_server/mi_servicelayer>
     """
 
     def __init__(

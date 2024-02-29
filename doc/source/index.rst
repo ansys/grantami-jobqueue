@@ -1,5 +1,5 @@
-PyGranta RecordLists |version|
-==============================
+PyGranta JobQueue |version|
+===========================
 
 .. include:: ../../README.rst
    :start-after: after-badges

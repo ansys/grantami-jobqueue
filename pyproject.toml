@@ -30,7 +30,7 @@ packages = [
 [tool.poetry.dependencies]
 python = ">=3.9,<4.0"
 ansys-openapi-common = "^1.2.2"
-ansys-grantami-serverapi-openapi = "2.0.0"
+ansys-grantami-serverapi-openapi = "3.0.0a1"
 
 # Optional documentation dependencies
 [tool.poetry.group.doc]
@@ -45,12 +45,15 @@ jupytext = "^1.14.4"
 nbsphinx = "^0.9.0"
 ipykernel = "^6.21.2" # required by nbsphinx to run notebooks.
 sphinx-jinja = "^2.0.2"
+enum-tools = "^0.11.0"
+sphinx-toolbox = "^3.5.0"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^7.1.2"
 pytest-cov = "^4.1.0"
 requests-mock = "^1.10.0"
 pre-commit = "^3.2.2"
+mypy = "^1.8.0"
 
 [tool.black]
 line-length = 100
@@ -69,6 +72,7 @@ source = ["ansys.grantami"]
 show_missing = true
 
 [tool.pytest.ini_options]
+filterwarnings = "error"
 markers = [
     """integration: test requires a real database (deselect with '-m \"not integration\"')"""
 ]
@@ -86,3 +90,7 @@ disallow_untyped_defs = true
 no_implicit_optional = true
 check_untyped_defs = true
 show_error_codes = true
+files = "src"
+explicit_package_bases = true
+mypy_path = "$MYPY_CONFIG_FILE_DIR/src"
+namespace_packages = true
