@@ -1,4 +1,4 @@
-.. _ref_grantami_recordlists_connection:
+.. _ref_grantami_jobqueue_connection:
 
 Granta MI connection
 ====================
@@ -6,7 +6,7 @@ Granta MI connection
 Connection builder
 ~~~~~~~~~~~~~~~~~~
 
-.. autoclass:: ansys.grantami.recordlists.Connection
+.. autoclass:: ansys.grantami.jobqueue.Connection
     :members:
 
     .. automethod:: with_autologon
@@ -14,9 +14,9 @@ Connection builder
     .. automethod:: with_oidc
     .. automethod:: with_anonymous
 
-RecordLists client
-~~~~~~~~~~~~~~~~~~~~
+JobQueue client
+~~~~~~~~~~~~~~~
 
-.. autoclass:: ansys.grantami.recordlists.RecordListsApiClient
+.. autoclass:: ansys.grantami.jobqueue.JobQueueApiClient
    :members:
 

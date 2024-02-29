@@ -1,5 +1,5 @@
 """Sphinx documentation configuration file."""
-from datetime import datetime
+import datetime
 import os
 from pathlib import Path
 import re
@@ -8,26 +8,27 @@ import shutil
 from ansys_sphinx_theme import ansys_favicon, get_version_match, pyansys_logo_black
 import jupytext
 
-from ansys.grantami.recordlists import __version__
+from ansys.grantami.jobqueue import __version__
 
 # Project information
-project = "ansys-grantami-recordlists"
-project_copyright = f"(c) {datetime.now().year} ANSYS, Inc. All rights reserved"
+project = "ansys-grantami-jobqueue"
+now = datetime.datetime.now()
+project_copyright = f"(c) {now.year} ANSYS, Inc. All rights reserved"
 author = "ANSYS, Inc."
 release = version = __version__
 
 # Select desired logo, theme, and declare the html title
 html_logo = pyansys_logo_black
 html_theme = "ansys_sphinx_theme"
-html_short_title = html_title = "PyGranta RecordLists"
+html_short_title = html_title = "PyGranta JobQueue"
 html_favicon = ansys_favicon
 
-cname = os.getenv("DOCUMENTATION_CNAME", "recordlists.grantami.docs.pyansys.com")
+cname = os.getenv("DOCUMENTATION_CNAME", "legendary-bassoon-p8wlmnq.pages.github.io")
 """The canonical name of the webpage hosting the documentation."""
 
 # specify the location of your github repo
 html_theme_options = {
-    "github_url": "https://github.com/ansys/grantami-recordlists",
+    "github_url": "https://github.com/ansys/grantami-jobqueue",
     "show_prev_next": False,
     "show_breadcrumbs": True,
     "additional_breadcrumbs": [
@@ -48,6 +49,7 @@ extensions = [
     "sphinx_copybutton",
     "sphinx_jinja",
     "nbsphinx",
+    "enum_tools.autoenum",
 ]
 
 # sphinx

@@ -10,9 +10,9 @@ on:
 
 env:
   MAIN_PYTHON_VERSION: '3.9'
-  DOCUMENTATION_CNAME: 'recordlists.grantami.docs.pyansys.com'
-  LIBRARY_NAME: 'ansys-grantami-recordlists'
-  LIBRARY_NAMESPACE: 'ansys.grantami.recordlists'
+  DOCUMENTATION_CNAME: 'legendary-bassoon-p8wlmnq.pages.github.io'
+  LIBRARY_NAME: 'ansys-grantami-jobqueue'
+  LIBRARY_NAMESPACE: 'ansys.grantami.jobqueue'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -24,9 +24,9 @@ jobs:
     name: "Code style"
     runs-on: ubuntu-latest
     steps:
-      - uses: ansys/actions/code-style@v5
+      - uses: ansys/actions/code-style@v5.1
         with:
-          python-version: ${{ env.MAIN_PYTHON_VERSION }}
+          skip-install: false
 
   doc-style:
     name: "Documentation style"
@@ -109,21 +109,21 @@ jobs:
       - name: "Test with tox"
         run: tox -e tests -- -m "not integration"
 
-      - name: "Upload coverage artifacts"
-        uses: actions/upload-artifact@v4
-        if: ${{ matrix.python-version == env.MAIN_PYTHON_VERSION && matrix.os == 'ubuntu-latest' && !startsWith( github.event.pull_request.head.ref, 'dependabot/') }}
-        with:
-          name: coverage-html-unittests
-          path: .cov/html
-          retention-days: 7
-
-      - name: "Upload coverage to Codecov"
-        uses: codecov/codecov-action@v3
-        if: ${{ matrix.python-version == env.MAIN_PYTHON_VERSION && matrix.os == 'ubuntu-latest' && !startsWith( github.event.pull_request.head.ref, 'dependabot/') }}
-        with:
-          files: .cov/xml
-          flags: unittests
-          fail_ci_if_error: true
+#      - name: "Upload coverage artifacts"
+#        uses: actions/upload-artifact@v4
+#        if: ${{ matrix.python-version == env.MAIN_PYTHON_VERSION && matrix.os == 'ubuntu-latest' && !startsWith( github.event.pull_request.head.ref, 'dependabot/') }}
+#        with:
+#          name: coverage-html-unittests
+#          path: .cov/html
+#          retention-days: 7
+#
+#      - name: "Upload coverage to Codecov"
+#        uses: codecov/codecov-action@v3
+#        if: ${{ matrix.python-version == env.MAIN_PYTHON_VERSION && matrix.os == 'ubuntu-latest' && !startsWith( github.event.pull_request.head.ref, 'dependabot/') }}
+#        with:
+#          files: .cov/xml
+#          flags: unittests
+#          fail_ci_if_error: true
 
   build-library:
     name: "Build library"
@@ -137,7 +137,7 @@ jobs:
 
   server-checks:
     name: "Server checks"
-    needs: [tests]
+    needs: [ smoke-tests ]
     if: ${{ !startsWith( github.event.pull_request.head.ref, 'dependabot/') }}
     uses: ./.github/workflows/server_checks.yml
     with:
