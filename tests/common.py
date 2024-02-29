@@ -26,7 +26,7 @@ def generate_now():
 
 def _get_table_guid(client: ApiClient) -> str:
     schema_tables_api = api.SchemaTablesApi(client)
-    all_tables = schema_tables_api.v1alpha_databases_database_key_tables_get(
+    all_tables = schema_tables_api.get_tables(
         database_key=DB_KEY,
     )
     table_guid = next(t.guid for t in all_tables.tables if t.name == TABLE_NAME)
@@ -46,7 +46,7 @@ def delete_record(client: ApiClient, name: str) -> None:
     record_history_guid, record_guid = records[0]
 
     record_version_api = api.RecordsRecordVersionsApi(client)
-    record_version_api.v1alpha_databases_database_key_tables_table_guid_record_histories_record_history_guid_record_versions_record_version_guid_delete(
+    record_version_api.delete_record_version(
         database_key=DB_KEY,
         table_guid=table_guid,
         record_history_guid=record_history_guid,
@@ -57,9 +57,7 @@ def delete_record(client: ApiClient, name: str) -> None:
 def search_for_records_by_name(client: ApiClient, name: str) -> List[Tuple[str, str]]:
     database_api = api.DatabaseApi(client)
     counter = 0
-    while not database_api.v1alpha_databases_database_keysearch_index_status_get(
-        database_key=DB_KEY
-    ).search_index_up_to_date:
+    while not database_api.get_status(database_key=DB_KEY).search_index_up_to_date:
         counter += 1
         if counter == MAX_DATABASE_CACHE_ATTEMPTS:
             raise RuntimeError(
@@ -91,7 +89,7 @@ def search_for_records_by_name(client: ApiClient, name: str) -> List[Tuple[str, 
 
     search_api = api.SearchApi(client)
     table_guid = _get_table_guid(client=client)
-    response = search_api.v1alpha_databases_database_key_tables_table_guidsearch_post(
+    response = search_api.database_search_in_table_with_guid(
         database_key=DB_KEY, table_guid=table_guid, body=request
     )
     return [(r.record_history_guid, r.record_guid) for r in response.results]
