@@ -105,7 +105,7 @@ class ImportJobRequest(ABC):
         for file_type, file_list in self.files.items():
             for file_name, file_obj in file_list.items():
                 file_content = file_obj["filePath"]
-                file_id = api_client.v1alpha_job_queue_files_post(
+                file_id = api_client.upload_file(
                     file=file_obj["filePath"],  # type: ignore[arg-type]
                 )
                 file_obj["id"] = file_id
@@ -411,7 +411,7 @@ class AsyncJob:
         patch_req = models.GrantaServerApiAsyncJobsUpdateJobRequest(
             name=value,
         )
-        patch_resp = self._job_queue_api.v1alpha_job_queue_jobs_id_patch(id=self.id, body=patch_req)
+        patch_resp = self._job_queue_api.update_job(id=self.id, body=patch_req)
         assert patch_resp
         self._name = self._get_property(patch_resp, name="name", required=True)
 
@@ -445,7 +445,7 @@ class AsyncJob:
         patch_req = models.GrantaServerApiAsyncJobsUpdateJobRequest(
             description=value,
         )
-        patch_resp = self._job_queue_api.v1alpha_job_queue_jobs_id_patch(id=self.id, body=patch_req)
+        patch_resp = self._job_queue_api.update_job(id=self.id, body=patch_req)
         assert patch_resp
         self._description = self._get_property(patch_resp, name="description")
 
@@ -487,7 +487,7 @@ class AsyncJob:
 
     def move_to_top(self) -> None:
         """Promotes the job to the top of the Job Queue. User must have MI_ADMIN permission."""
-        self._job_queue_api.v1alpha_job_queue_jobs_idmove_to_top_post(id=self.id)
+        self._job_queue_api.move_to_top(id=self.id)
         self.update()
 
     @property
@@ -564,7 +564,7 @@ class AsyncJob:
         patch_req = models.GrantaServerApiAsyncJobsUpdateJobRequest(
             scheduled_execution_date=value,
         )
-        patch_resp = self._job_queue_api.v1alpha_job_queue_jobs_id_patch(id=self.id, body=patch_req)
+        patch_resp = self._job_queue_api.update_job(id=self.id, body=patch_req)
         assert patch_resp
         self._scheduled_exec_datetime = (
             patch_resp.scheduled_execution_date if patch_resp.scheduled_execution_date else None
@@ -625,7 +625,7 @@ class AsyncJob:
             raise ValueError("Job has no output files")
         if remote_file_name not in self.output_file_names:
             raise KeyError(f"File with name {remote_file_name} does not exist for this job")
-        downloaded_file_path = self._job_queue_api.v1alpha_job_queue_jobs_id_outputsexport_get(
+        downloaded_file_path = self._job_queue_api.get_job_output_file(
             id=self.id, file_name=remote_file_name
         )
         if not downloaded_file_path:
@@ -664,7 +664,7 @@ class AsyncJob:
             raise ValueError("Job has no output files")
         if remote_file_name not in self.output_file_names:
             raise KeyError(f"File with name {remote_file_name} does not exist for this job")
-        local_file_name = self._job_queue_api.v1alpha_job_queue_jobs_id_outputsexport_get(
+        local_file_name = self._job_queue_api.get_job_output_file(
             id=self.id, file_name=remote_file_name
         )
         assert local_file_name
@@ -684,7 +684,7 @@ class AsyncJob:
             raise ValueError("Job has been deleted from the Job Queue")
         with warnings.catch_warnings():
             warnings.simplefilter("ignore", UndefinedObjectWarning)
-            job_obj = self._job_queue_api.v1alpha_job_queue_jobs_id_get(id=self.id)
+            job_obj = self._job_queue_api.get_job(id=self.id)
         assert job_obj
         self._update_job(job_obj)
 

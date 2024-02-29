@@ -44,7 +44,7 @@ def _get_mi_server_version(client: ApiClient) -> Tuple[int, ...]:
         Granta MI version number.
     """
     schema_api = api.SchemaApi(client)
-    server_version_response = schema_api.v1alpha_schema_mi_version_get()
+    server_version_response = schema_api.get_version()
     assert server_version_response.version
     server_version_elements = server_version_response.version.split(".")
     server_version = tuple([int(e) for e in server_version_elements])
@@ -96,7 +96,7 @@ class JobQueueApiClient(ApiClient):
         JobQueueProcessingConfiguration
         """
         if self._processing_configuration is None:
-            processing_config = self.job_queue_api.v1alpha_job_queue_processing_configuration_get()
+            processing_config = self.job_queue_api.get_processing_config()
             self._processing_configuration = JobQueueProcessingConfiguration(
                 purge_job_age_in_milliseconds=cast(
                     int, processing_config.purge_job_age_in_milliseconds
@@ -155,11 +155,11 @@ class JobQueueApiClient(ApiClient):
         """
         with warnings.catch_warnings():
             warnings.simplefilter("ignore", UndefinedObjectWarning)
-            jobs = self.job_queue_api.v1alpha_job_queue_jobs_get()
+            jobs = self.job_queue_api.get_jobs()
         return len(cast(List[models.GrantaServerApiAsyncJobsJob], jobs.results))
 
     def _refetch_user(self) -> None:
-        self._user = self.job_queue_api.v1alpha_job_queue_current_user_get()
+        self._user = self.job_queue_api.get_current_user()
         assert self._user
 
     @property
@@ -220,7 +220,7 @@ class JobQueueApiClient(ApiClient):
 
         with warnings.catch_warnings():
             warnings.simplefilter("ignore", UndefinedObjectWarning)
-            filtered_job_resp = self.job_queue_api.v1alpha_job_queue_jobs_get(
+            filtered_job_resp = self.job_queue_api.get_jobs(
                 **{k: v for k, v in kwargs.items() if v is not None}  # type: ignore[arg-type]
             )
 
@@ -258,7 +258,7 @@ class JobQueueApiClient(ApiClient):
             A list of AsyncJob objects to be deleted from the server.
         """
         for job in jobs:
-            self.job_queue_api.v1alpha_job_queue_jobs_id_delete(id=job.id)
+            self.job_queue_api.delete_job(id=job.id)
             self._jobs.pop(job.id, None)
             job._is_deleted = True
         self._refetch_jobs()
@@ -266,7 +266,7 @@ class JobQueueApiClient(ApiClient):
     def _refetch_jobs(self) -> None:
         with warnings.catch_warnings():
             warnings.simplefilter("ignore", UndefinedObjectWarning)
-            job_resp = self.job_queue_api.v1alpha_job_queue_jobs_get()
+            job_resp = self.job_queue_api.get_jobs()
         job_list = job_resp.results
         assert isinstance(job_list, list)
         self._update_job_list_from_resp(job_resp=job_list, flush_jobs=True)
@@ -347,9 +347,7 @@ class JobQueueApiClient(ApiClient):
         """
         job_request._post_files(api_client=self.job_queue_api)
 
-        job_response = self.job_queue_api.v1alpha_job_queue_jobs_post(
-            body=job_request.get_job_for_import()
-        )
+        job_response = self.job_queue_api.create_job(body=job_request.get_job_for_import())
         self._update_job_list_from_resp([job_response])
         return self._jobs[cast(str, job_response.id)]
 
