@@ -11,8 +11,6 @@ import warnings
 from ansys.grantami.serverapi_openapi import api, models
 from ansys.openapi.common import UndefinedObjectWarning, Unset
 
-File_Type = Union[str, pathlib.Path]
-
 
 class JobStatus(Enum):
     """Provides possible states of a job in the job queue."""
@@ -42,6 +40,15 @@ class JobType(Enum):
     TextImportJob = "TextImportJob"
 
 
+class _FileType(Enum):
+    """Provides possible file types."""
+
+    Attachment = "Attachment"
+    Combined = "Combined"
+    Data = "Data"
+    Template = "Template"
+
+
 @dataclass(frozen=True)
 class ExportRecord:
     """Defines a record to be included in an Export job."""
@@ -58,21 +65,21 @@ class ExportRecord:
 
 
 class _JobFile:
-    def __init__(self, type_: str):
+    def __init__(self, file_type: _FileType):
+        self.file_type = file_type
         self._path: Union[pathlib.Path, None] = None
-        self.type_ = type_
         self._id: Optional[str] = None
 
     @classmethod
-    def from_pathlib_path(cls, path: pathlib.Path, type_: str) -> "_JobFile":
-        new_obj = cls(type_)
+    def from_pathlib_path(cls, path: pathlib.Path, file_type: _FileType) -> "_JobFile":
+        new_obj = cls(file_type)
         new_obj.path = path
         return new_obj
 
     @classmethod
-    def from_string(cls, file_path: str, type_: str) -> "_JobFile":
+    def from_string(cls, file_path: str, file_type: _FileType) -> "_JobFile":
         path = pathlib.Path(file_path)
-        new_obj = cls.from_pathlib_path(path, type_)
+        new_obj = cls.from_pathlib_path(path, file_type)
         return new_obj
 
     @property
@@ -132,28 +139,27 @@ class JobRequest(ABC):
         self.name = name
         self.description = description
         self.scheduled_execution_date = scheduled_execution_date
-        # e.g. Dict["Template", Dict["My_template.xlsx", Dict["filePath", "C:\my_template.xlsx"]]]
-        # self.files: Dict[str, Dict[str, Dict[str, File_Type]]] = {}
         self.files: List[_JobFile] = []
-        # self._file_ids: List[str] = []
 
     @abstractmethod
     def __repr__(self) -> str:
         """Printable representation of the object."""
         pass
 
-    def _process_files(self, file_struct: Dict[str, Optional[List[File_Type]]]) -> None:
+    def _process_files(
+        self, file_struct: Dict[_FileType, Optional[List[Union[str, pathlib.Path]]]]
+    ) -> None:
         for file_type, file_list in file_struct.items():
             if file_list is None:
                 continue
             for file in file_list:
                 self._add_file(file, file_type)
 
-    def _add_file(self, file_obj: File_Type, type_: str) -> None:
+    def _add_file(self, file_obj: Union[str, pathlib.Path], type_: _FileType) -> None:
         if isinstance(file_obj, pathlib.Path):
-            new_file = _JobFile.from_pathlib_path(type_=type_, path=file_obj)
+            new_file = _JobFile.from_pathlib_path(file_type=type_, path=file_obj)
         elif isinstance(file_obj, str):
-            new_file = _JobFile.from_string(type_=type_, file_path=file_obj)
+            new_file = _JobFile.from_string(file_type=type_, file_path=file_obj)
         else:
             raise TypeError(
                 "file_obj must be a pathlib.Path, BinaryIO, or str object. "
@@ -201,6 +207,10 @@ class JobRequest(ABC):
     def _job_type(self) -> JobType:
         pass
 
+    @property
+    def _file_types(self) -> List[_FileType]:
+        return [file.file_type for file in self.files]
+
 
 class ImportJobRequest(JobRequest, ABC):
     """
@@ -210,7 +220,9 @@ class ImportJobRequest(JobRequest, ABC):
     process. They also add additional file types and properties as required.
     """
 
-    def _process_files(self, file_struct: Dict[str, Optional[List[File_Type]]]) -> None:
+    def _process_files(
+        self, file_struct: Dict[_FileType, Optional[List[Union[str, pathlib.Path]]]]
+    ) -> None:
         """Check the validity of the file structure for importing.
 
         Required since only certain combinations of file types are permitted, and these combinations
@@ -235,7 +247,9 @@ class ImportJobRequest(JobRequest, ABC):
     def _generate_file_list_for_import(self) -> List[Dict[str, str]]:
         file_params = []
         for file in self.files:
-            file_params.append({"fileType": file.type_, "filePath": file.serializable_path})
+            file_params.append(
+                {"fileType": file.file_type.value, "filePath": file.serializable_path}
+            )
         return file_params
 
     def _render_job_parameters(self) -> str:
@@ -276,13 +290,13 @@ class ExcelExportJobRequest(JobRequest):
         description: str,
         database_key: str,
         records: List[ExportRecord],
-        template_file: File_Type,
+        template_file: Union[str, pathlib.Path],
         scheduled_execution_date: Optional[datetime.datetime] = None,
     ):
         super().__init__(name, description, scheduled_execution_date)
         self._database_key = database_key
         self._records = records
-        self._process_files({"Template": [template_file]})
+        self._process_files({_FileType.Template: [template_file]})
 
     def __repr__(self) -> str:
         """Printable representation of the object."""
@@ -295,6 +309,7 @@ class ExcelExportJobRequest(JobRequest):
         Includes references to the records to be exported and the name of the template file.
         """
         record_references = [r.to_dict() for r in self._records]
+        assert self._file_types == [_FileType.Template]
         template_file = self.files[0].serializable_path
         parameters = {
             "DatabaseKey": self._database_key,
@@ -338,18 +353,18 @@ class ExcelImportJobRequest(ImportJobRequest):
         name: str,
         description: str,
         scheduled_execution_date: Optional[datetime.datetime] = None,
-        data_files: Optional[List[File_Type]] = None,
-        template_files: Optional[List[File_Type]] = None,
-        combined_files: Optional[List[File_Type]] = None,
-        attachment_files: Optional[List[File_Type]] = None,
+        data_files: Optional[List[Union[str, pathlib.Path]]] = None,
+        template_files: Optional[List[Union[str, pathlib.Path]]] = None,
+        combined_files: Optional[List[Union[str, pathlib.Path]]] = None,
+        attachment_files: Optional[List[Union[str, pathlib.Path]]] = None,
     ):
         super().__init__(name, description, scheduled_execution_date)
         self._process_files(
             {
-                "Data": data_files,
-                "Template": template_files,
-                "Combined": combined_files,
-                "Attachment": attachment_files,
+                _FileType.Data: data_files,
+                _FileType.Template: template_files,
+                _FileType.Combined: combined_files,
+                _FileType.Attachment: attachment_files,
             }
         )
 
@@ -370,15 +385,12 @@ class ExcelImportJobRequest(ImportJobRequest):
             If not enough files have been provided for the job to successfully complete.
 
         """
-        if any(f.type_ == "Combined" for f in self.files):
-            if any(f.type_ in {"Data", "Template"} for f in self.files):
+        if _FileType.Combined in self._file_types:
+            if _FileType.Data in self._file_types or _FileType.Template in self._file_types:
                 raise ValueError(
                     "Cannot create Excel import job with both combined and template/data files specified"
                 )
-        elif not (
-            any(f.type_ == "Data" for f in self.files)
-            and any(f.type_ == "Template" for f in self.files)
-        ):
+        elif not (_FileType.Data in self._file_types and _FileType.Template in self._file_types):
             raise ValueError(
                 "Excel import jobs must contain either a 'Combined' file or 'Data' files and a 'Template' file."
             )
@@ -413,16 +425,16 @@ class TextImportJobRequest(ImportJobRequest):
         name: str,
         description: str,
         scheduled_execution_date: Optional[datetime.datetime] = None,
-        data_files: Optional[List[File_Type]] = None,
-        template_files: Optional[List[File_Type]] = None,
-        attachment_files: Optional[List[File_Type]] = None,
+        data_files: Optional[List[Union[str, pathlib.Path]]] = None,
+        template_files: Optional[List[Union[str, pathlib.Path]]] = None,
+        attachment_files: Optional[List[Union[str, pathlib.Path]]] = None,
     ):
         super().__init__(name, description, scheduled_execution_date)
         self._process_files(
             {
-                "Data": data_files,
-                "Template": template_files,
-                "Attachment": attachment_files,
+                _FileType.Data: data_files,
+                _FileType.Template: template_files,
+                _FileType.Attachment: attachment_files,
             }
         )
 
@@ -442,11 +454,10 @@ class TextImportJobRequest(ImportJobRequest):
             If not enough files have been provided for the job to successfully complete.
 
         """
-        if not (
-            any(f.type_ == "Data" for f in self.files)
-            and any(f.type_ == "Template" for f in self.files)
-        ):
-            raise ValueError("Text import jobs must contain 'Data' files and a 'Template' file")
+        if not (_FileType.Data in self._file_types and _FileType.Template in self._file_types):
+            raise ValueError(
+                "Text import jobs must contain one or more 'Data' files and a 'Template' file"
+            )
 
     @property
     def _job_type(self) -> JobType:
