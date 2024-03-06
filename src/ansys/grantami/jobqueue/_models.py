@@ -43,11 +43,11 @@ class JobType(Enum):
     TextImportJob = "TextImportJob"
 
 
-class ImportJobRequest(ABC):
+class JobRequest(ABC):
     """
-    Abstract base class representing an import job request.
+    Abstract base class representing an job request.
 
-    Each subclass represents a specific import type and may override some steps of the import
+    Each subclass represents a specific job type and may override some steps of the submission
     process. They also add additional file types and properties as required.
 
     Parameters
@@ -126,9 +126,9 @@ class ImportJobRequest(ABC):
         file_params = self._generate_file_list_for_import()
         return json.dumps(file_params)
 
-    def get_job_for_import(self) -> models.GrantaServerApiAsyncJobsCreateJobRequest:
+    def get_job_for_submission(self) -> models.GrantaServerApiAsyncJobsCreateJobRequest:
         """
-        Create an AsyncJobs ``JobRequest`` object ready for import.
+        Create an AsyncJobs ``JobRequest`` object ready for submission to the job queue.
 
         Should be called after uploading files to the service.
 
@@ -139,7 +139,7 @@ class ImportJobRequest(ABC):
         """
         job_parameters = self._render_file_parameters()
         job_request = models.GrantaServerApiAsyncJobsCreateJobRequest(
-            type=self._import_type.value,
+            type=self._job_type.value,
             name=self.name,
             description=self.description,
             scheduled_execution_date=self.scheduled_execution_date,
@@ -149,25 +149,25 @@ class ImportJobRequest(ABC):
         return job_request
 
     @abstractmethod
-    def check_valid_for_import(self) -> None:
+    def check_valid_for_submission(self) -> None:
         """
-        Verify that the import job can run.
+        Verify that the job can run.
 
         Raises
         ------
         ValueError
-            If not enough files have been provided for the import to successfully complete.
+            If not enough files have been provided for the job to successfully complete.
 
         """
         pass
 
     @property
     @abstractmethod
-    def _import_type(self) -> JobType:
+    def _job_type(self) -> JobType:
         pass
 
 
-class ExcelImportJobRequest(ImportJobRequest):
+class ExcelImportJobRequest(JobRequest):
     """
     Represents an Excel import job request.
 
@@ -211,20 +211,20 @@ class ExcelImportJobRequest(ImportJobRequest):
                 "Attachment": attachment_files,
             }
         )
-        self.check_valid_for_import()
+        self.check_valid_for_submission()
 
     def __repr__(self) -> str:
         """Printable representation of the object."""
         return f"<ExcelImportJobRequest '{self.name}'>"
 
-    def check_valid_for_import(self) -> None:
+    def check_valid_for_submission(self) -> None:
         """
-        Verify that the import job can run.
+        Verify that the job can run.
 
         Raises
         ------
         ValueError
-            If not enough files have been provided for the import to successfully complete.
+            If not enough files have been provided for the job to successfully complete.
 
         """
         if "Combined" in self.files:
@@ -238,11 +238,86 @@ class ExcelImportJobRequest(ImportJobRequest):
             )
 
     @property
-    def _import_type(self) -> JobType:
+    def _job_type(self) -> JobType:
         return JobType.ExcelImportJob
 
 
-class TextImportJobRequest(ImportJobRequest):
+class ExcelExportJobRequest(JobRequest):
+    """
+    Represents an Excel import job request.
+
+    Supports either combined imports (with template and data in the same file), or separate data
+    and template imports.
+
+    Parameters
+    ----------
+    name
+        The name of the job as displayed in the job queue.
+    description
+        The description of the job as displayed in the job queue.
+    scheduled_execution_date
+        The earliest date and time the job should be executed.
+    data_files
+        Excel files containing data to be imported.
+    template_files
+        Excel template files.
+    combined_files
+        Excel files containing data and template information.
+    attachment_files
+        Any other files referenced in the data or combined files.
+    """
+
+    def __init__(
+        self,
+        name: str,
+        description: str,
+        scheduled_execution_date: Optional[datetime.datetime] = None,
+        data_files: Optional[List[File_Type]] = None,
+        template_files: Optional[List[File_Type]] = None,
+        combined_files: Optional[List[File_Type]] = None,
+        attachment_files: Optional[List[File_Type]] = None,
+    ):
+        super().__init__(name, description, scheduled_execution_date)
+        self._process_files(
+            {
+                "Data": data_files,
+                "Template": template_files,
+                "Combined": combined_files,
+                "Attachment": attachment_files,
+            }
+        )
+        self.check_valid_for_submission()
+
+    def __repr__(self) -> str:
+        """Printable representation of the object."""
+        return f"<ExcelExportJobRequest '{self.name}'>"
+
+    def check_valid_for_submission(self) -> None:
+        """
+        Verify that the job can run.
+
+        Raises
+        ------
+        ValueError
+            If not enough files have been provided for the job to successfully complete.
+
+        """
+        if "Combined" in self.files:
+            if "Data" in self.files or "Template" in self.files:
+                raise ValueError(
+                    "Cannot create Excel import job with both combined and template/data files specified"
+                )
+        elif not ("Data" in self.files and "Template" in self.files):
+            raise ValueError(
+                "Excel import jobs must contain either a 'Combined' file or 'Data' files and a 'Template' file."
+            )
+
+    @property
+    def _job_type(self) -> JobType:
+        return JobType.ExcelExportJob
+
+
+class TextImportJobRequest(JobRequest):
     """
     Represents a Text import job request. Requires a template file and one or more data files.
 
@@ -279,27 +354,27 @@ class TextImportJobRequest(ImportJobRequest):
                 "Attachment": attachment_files,
             }
         )
-        self.check_valid_for_import()
+        self.check_valid_for_submission()
 
     def __repr__(self) -> str:
         """Printable representation of the object."""
         return f"<TextImportJobRequest '{self.name}'>"
 
-    def check_valid_for_import(self) -> None:
+    def check_valid_for_submission(self) -> None:
         """
-        Verify that the import job can run.
+        Verify that the job can run.
 
         Raises
         ------
         ValueError
-            If not enough files have been provided for the import to successfully complete.
+            If not enough files have been provided for the job to successfully complete.
 
         """
         if not ("Data" in self.files and "Template" in self.files):
             raise ValueError("Text import jobs must contain 'Data' files and a 'Template' file")
 
     @property
-    def _import_type(self) -> JobType:
+    def _job_type(self) -> JobType:
         return JobType.TextImportJob
 
 
@@ -312,8 +387,8 @@ class AsyncJob:
 
     .. note::
         Do not instantiate this class directly. Objects of this type will be returned from
-        :meth:`~JobQueueApiClient.create_import_job` and
-        :meth:`~JobQueueApiClient.create_import_job_and_wait` methods.
+        :meth:`~JobQueueApiClient.create_job` and
+        :meth:`~JobQueueApiClient.create_job_and_wait` methods.
     """
 
     def __init__(

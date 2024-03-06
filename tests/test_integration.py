@@ -26,7 +26,7 @@ def import_text(client: JobQueueApiClient):
         data_files=[TEST_ARTIFACT_DIR / "TextDataTest.dat"],
         template_files=[template_path],
     )
-    job = client.create_import_job_and_wait(job_req)
+    job = client.create_job_and_wait(job_req)
     return job
 
 
@@ -40,7 +40,7 @@ def test_create_excel_import(empty_job_queue_api_client):
         name="ExcelImportTest", description="Import test 1", combined_files=[str(file_path)]
     )
 
-    job = empty_job_queue_api_client.create_import_job_and_wait(job_req)
+    job = empty_job_queue_api_client.create_job_and_wait(job_req)
 
     assert job.status == JobStatus.Succeeded
     check_success(job.output_information)
@@ -58,7 +58,7 @@ def test_create_text_import(empty_job_queue_api_client):
             data_files=[fd],
             template_files=[template_path],
         )
-        job = empty_job_queue_api_client.create_import_job_and_wait(job_req)
+        job = empty_job_queue_api_client.create_job_and_wait(job_req)
     assert job.status == JobStatus.Succeeded
     check_success(job.output_information)
 
@@ -113,7 +113,7 @@ def test_create_job_with_schedule(empty_job_queue_api_client, now):
             name="ExcelImportTest", description="Import test 1", combined_files=[f]
         )
         job_req.scheduled_execution_date = now + datetime.timedelta(seconds=6)
-        job = empty_job_queue_api_client.create_import_job(job_req)
+        job = empty_job_queue_api_client.create_job(job_req)
     time.sleep(2)
     job.update()
     assert job.status == JobStatus.Pending
@@ -136,7 +136,7 @@ def test_update_schedule(empty_job_queue_api_client, now, tomorrow):
             name="ExcelImportTest", description="Import test 1", combined_files=[f]
         )
         job_req.scheduled_execution_date = tomorrow
-        job = empty_job_queue_api_client.create_import_job(job_req)
+        job = empty_job_queue_api_client.create_job(job_req)
 
     assert job.status == JobStatus.Pending
 
@@ -162,7 +162,7 @@ def test_update_job(empty_job_queue_api_client, tomorrow):
             name="ExcelImportTest", description="Import test 1", combined_files=[f]
         )
         job_req.scheduled_execution_date = tomorrow
-        job = empty_job_queue_api_client.create_import_job(job_req)
+        job = empty_job_queue_api_client.create_job(job_req)
 
     job.update_description("Some random string")
     job.update_name("UpdatedExcelImportTest")
@@ -178,7 +178,7 @@ def test_queue_updates_job(empty_job_queue_api_client):
         job_req = ExcelImportJobRequest(
             name="ExcelImportTest", description="Import test 1", combined_files=[f]
         )
-        job = empty_job_queue_api_client.create_import_job(job_req)
+        job = empty_job_queue_api_client.create_job(job_req)
 
     assert job.status == JobStatus.Pending
     time.sleep(10)
@@ -200,7 +200,7 @@ def test_delete_job(empty_job_queue_api_client, tomorrow):
             name="ExcelImportTest", description="Import test 1", combined_files=[f]
         )
         job_req.scheduled_execution_date = tomorrow
-        job = empty_job_queue_api_client.create_import_job(job_req)
+        job = empty_job_queue_api_client.create_job(job_req)
 
     assert job.status == JobStatus.Pending
     assert len(empty_job_queue_api_client.jobs) == 1
