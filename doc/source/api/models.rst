@@ -14,6 +14,10 @@ Job requests
    :members:
 
 
+.. autoclass:: ansys.grantami.jobqueue.ExcelExportJobRequest
+   :members:
+
+
 AsyncJob
 --------
 
