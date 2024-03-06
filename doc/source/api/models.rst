@@ -36,3 +36,7 @@ Other models
 
 
 .. autoenum:: ansys.grantami.jobqueue.JobType
+
+
+.. autoclass:: ansys.grantami.jobqueue.ExportRecord
+   :members:
