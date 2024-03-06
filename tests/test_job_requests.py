@@ -72,9 +72,6 @@ def test_excel_invalid_files_raise_exception(combined, data, template, attachmen
         )
 
 
-TEXT_ERROR_MESSAGE = "Text import jobs must contain one or more 'Data' files and a 'Template' file"
-
-
 @pytest.mark.parametrize(
     "data, template",
     [
@@ -85,7 +82,10 @@ TEXT_ERROR_MESSAGE = "Text import jobs must contain one or more 'Data' files and
 )
 @pytest.mark.parametrize("attachment", [[ATTACHMENT], None])
 def test_text_invalid_files_raise_exception(data, template, attachment):
-    with pytest.raises(ValueError, match=TEXT_ERROR_MESSAGE):
+    with pytest.raises(
+        ValueError,
+        match="Text import jobs must contain one or more 'Data' files and a 'Template' file",
+    ):
         TextImportJobRequest(
             name="ExcelImportTest",
             description="Import test 1",
