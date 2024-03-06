@@ -59,12 +59,12 @@ client = Connection(server_url).with_credentials("user_name", "password").connec
 from ansys.grantami.jobqueue import ExcelExportJobRequest, ExportRecord
 
 export_records = [
-    ExportRecord(record_history_identity=12345),
-    ExportRecord(record_history_identity=23456),
+    ExportRecord(record_history_identity=120732),
+    ExportRecord(record_history_identity=120733),
 ]
 excel_export_request = ExcelExportJobRequest(
-    name="Excel Import (separate template and data files)",
-    description="An example excel import job",
+    name="Excel Export",
+    description="An example excel export job",
     database_key="MI_Training",
     records=export_records,
     template_file="export_template.xlsx",
@@ -81,7 +81,7 @@ excel_export_request
 #    either completes or fails. Return an ``AsyncJob`` object in the 'succeeded' or 'failed' state.
 
 # +
-completed_job = client.create_import_job_and_wait(excel_export_request)
+completed_job = client.create_job_and_wait(excel_export_request)
 # -
 
 # ## Access output files
@@ -93,23 +93,28 @@ completed_job = client.create_import_job_and_wait(excel_export_request)
 
 completed_job.output_file_names
 
-# The following cell shows accessing the file content as ``bytes`` using the
+# The following cell shows accessing the content of the log file as ``bytes`` using the
 # ``AsyncJob.get_file_content`` method.
 
 # +
-file_1_name = completed_job.output_file_names[0]
-file_1_content = completed_job.get_file_content(file_1_name)
-file_1_string = file_1_content.decode("utf-8")
-print(f"{file_1_name} (first 200 characters):")
-print(f"{file_1_string[:500]}...")
+log_file_name = next(name for name in completed_job.output_file_names if "log" in name)
+log_file_content = completed_job.get_file_content(log_file_name)
+log_file_string = log_file_content.decode("utf-8")
+print(f"{log_file_name} (first 200 characters):")
+print(f"{log_file_string[:500]}...")
 # -
 
-# The following cell shows , or downloading the file to disk with the ``AsyncJob.download_file``
-# method.
+# The following cell shows downloading the Excel file and export summary file to disk with the
+# ``AsyncJob.download_file`` method.
 
 # +
-file_2_name = completed_job.output_file_names[1]
-output_path = f"./{file_2_name}"
-completed_job.download_file(file_2_name, output_path)
-f"{file_2_name} saved to disk"
+output_file_name = next(name for name in completed_job.output_file_names if "xlsx" in name)
+output_path = f"./{output_file_name}"
+completed_job.download_file(output_file_name, output_path)
+f"{output_file_name} saved to disk"
+
+summary_file_name = next(name for name in completed_job.output_file_names if name == "summary.json")
+output_path = f"./{summary_file_name}"
+completed_job.download_file(summary_file_name, output_path)
+f"{summary_file_name} saved to disk"
 # -
