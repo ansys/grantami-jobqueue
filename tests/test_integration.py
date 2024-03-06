@@ -51,6 +51,16 @@ def completed_excel_export_job(job_queue_api_client: JobQueueApiClient) -> Async
     return job
 
 
+@pytest.fixture(scope="module")
+def combined_excel_import_file() -> pathlib.Path:
+    return TEST_ARTIFACT_DIR / "ExcelImportTest.xlsx"
+
+
+@pytest.fixture(scope="module")
+def excel_export_template() -> pathlib.Path:
+    return TEST_ARTIFACT_DIR / "ExcelExportTest.xlsx"
+
+
 def check_success(output_information, job_type: JobType) -> None:
     if job_type in (JobType.TextImportJob, JobType.ExcelImportJob):
         assert output_information["summary"]["FinishedSuccessfully"]
@@ -61,10 +71,11 @@ def check_success(output_information, job_type: JobType) -> None:
 
 
 class TestImportJob:
-    def test_create_excel_import(self, empty_job_queue_api_client):
-        file_path = TEST_ARTIFACT_DIR / "ExcelImportTest.xlsx"
+    def test_create_excel_import(self, empty_job_queue_api_client, combined_excel_import_file):
         job_req = ExcelImportJobRequest(
-            name="ExcelImportTest", description="Import test 1", combined_files=[str(file_path)]
+            name="ExcelImportTest",
+            description="Import test 1",
+            combined_files=[str(combined_excel_import_file)],
         )
 
         job = empty_job_queue_api_client.create_job_and_wait(job_req)
@@ -78,15 +89,15 @@ class TestImportJob:
         )
 
     def test_create_text_import(self, empty_job_queue_api_client):
-        with open(TEST_ARTIFACT_DIR / "TextDataTest.dat", "rb") as fd:
-            template_path = pathlib.Path(TEST_ARTIFACT_DIR / "TextImportTestTemplate.xml")
-            job_req = TextImportJobRequest(
-                name="TextImportTest",
-                description="Import test with text",
-                data_files=[fd],
-                template_files=[template_path],
-            )
-            job = empty_job_queue_api_client.create_job_and_wait(job_req)
+        file_path = TEST_ARTIFACT_DIR / "TextDataTest.dat"
+        template_path = pathlib.Path(TEST_ARTIFACT_DIR / "TextImportTestTemplate.xml")
+        job_req = TextImportJobRequest(
+            name="TextImportTest",
+            description="Import test with text",
+            data_files=[file_path],
+            template_files=[template_path],
+        )
+        job = empty_job_queue_api_client.create_job_and_wait(job_req)
         assert job.status == JobStatus.Succeeded
         check_success(job.output_information, JobType.TextImportJob)
 
@@ -95,13 +106,14 @@ class TestImportJob:
             output_info["NumberOfRecordsCreated"] == 4 or output_info["NumberOfRecordsUpdated"] == 4
         )
 
-    def test_update_job(self, empty_job_queue_api_client, tomorrow):
-        with open(TEST_ARTIFACT_DIR / "ExcelImportTest.xlsx", "rb") as f:
-            job_req = ExcelImportJobRequest(
-                name="ExcelImportTest", description="Import test 1", combined_files=[f]
-            )
-            job_req.scheduled_execution_date = tomorrow
-            job = empty_job_queue_api_client.create_job(job_req)
+    def test_update_job(self, combined_excel_import_file, empty_job_queue_api_client, tomorrow):
+        job_req = ExcelImportJobRequest(
+            name="ExcelImportTest",
+            description="Import test 1",
+            combined_files=[combined_excel_import_file],
+        )
+        job_req.scheduled_execution_date = tomorrow
+        job = empty_job_queue_api_client.create_job(job_req)
 
         job.update_description("Some random string")
         job.update_name("UpdatedExcelImportTest")
@@ -111,12 +123,13 @@ class TestImportJob:
         assert len(empty_job_queue_api_client.jobs_where(name="UpdatedExcelImportTest")) == 1
         assert empty_job_queue_api_client.jobs[0].description == "Some random string"
 
-    def test_queue_updates_job(self, empty_job_queue_api_client):
-        with open(TEST_ARTIFACT_DIR / "ExcelImportTest.xlsx", "rb") as f:
-            job_req = ExcelImportJobRequest(
-                name="ExcelImportTest", description="Import test 1", combined_files=[f]
-            )
-            job = empty_job_queue_api_client.create_job(job_req)
+    def test_queue_updates_job(self, combined_excel_import_file, empty_job_queue_api_client):
+        job_req = ExcelImportJobRequest(
+            name="ExcelImportTest",
+            description="Import test 1",
+            combined_files=[combined_excel_import_file],
+        )
+        job = empty_job_queue_api_client.create_job(job_req)
 
         assert job.status == JobStatus.Pending
         time.sleep(10)
@@ -131,10 +144,12 @@ class TestImportJob:
         )
         assert len(recs_found) == 1
 
-    def test_delete_job(self, empty_job_queue_api_client, tomorrow):
+    def test_delete_job(self, combined_excel_import_file, empty_job_queue_api_client, tomorrow):
         with open(TEST_ARTIFACT_DIR / "ExcelImportTest.xlsx", "rb") as f:
             job_req = ExcelImportJobRequest(
-                name="ExcelImportTest", description="Import test 1", combined_files=[f]
+                name="ExcelImportTest",
+                description="Import test 1",
+                combined_files=[combined_excel_import_file],
             )
             job_req.scheduled_execution_date = tomorrow
             job = empty_job_queue_api_client.create_job(job_req)
@@ -154,26 +169,29 @@ class TestImportJob:
 
 
 class TestExportJob:
-    def test_excel_export_job_single_record(self, empty_job_queue_api_client):
+    def test_excel_export_job_single_record(
+        self, excel_export_template, empty_job_queue_api_client
+    ):
         record = ExportRecord(
             record_history_identity=123222,
         )
-        with open(TEST_ARTIFACT_DIR / "ExcelExportTest.xlsx", "rb") as f:
-            job_req = ExcelExportJobRequest(
-                name="ExcelImportTest",
-                description="Import test 1",
-                database_key="MI_Training",
-                records=[record],
-                template_file=f,
-            )
-            job = empty_job_queue_api_client.create_job_and_wait(job_req)
+        job_req = ExcelExportJobRequest(
+            name="ExcelImportTest",
+            description="Import test 1",
+            database_key="MI_Training",
+            records=[record],
+            template_file=excel_export_template,
+        )
+        job = empty_job_queue_api_client.create_job_and_wait(job_req)
         assert job.status == JobStatus.Succeeded
         check_success(job.output_information, JobType.ExcelExportJob)
 
         output_info = job.output_information["summary"]
         assert output_info["ExportedRecords"] == 1
 
-    def test_excel_export_job_multiple_records_multiple_outputs(self, empty_job_queue_api_client):
+    def test_excel_export_job_multiple_records_multiple_outputs(
+        self, excel_export_template, empty_job_queue_api_client
+    ):
         record_1 = ExportRecord(record_history_identity=123222)
         record_2 = ExportRecord(record_history_identity=123224)
         with open(TEST_ARTIFACT_DIR / "ExcelExportTest.xlsx", "rb") as f:
@@ -182,7 +200,7 @@ class TestExportJob:
                 description="Import test 1",
                 database_key="MI_Training",
                 records=[record_1, record_2],
-                template_file=f,
+                template_file=excel_export_template,
             )
             job = empty_job_queue_api_client.create_job_and_wait(job_req)
             assert job.status == JobStatus.Succeeded
@@ -246,10 +264,14 @@ class TestFileOutputs:
 
 
 class TestSchedule:
-    def test_create_job_with_schedule(self, empty_job_queue_api_client, now):
+    def test_create_job_with_schedule(
+        self, combined_excel_import_file, empty_job_queue_api_client, now
+    ):
         with open(TEST_ARTIFACT_DIR / "ExcelImportTest.xlsx", "rb") as f:
             job_req = ExcelImportJobRequest(
-                name="ExcelImportTest", description="Import test 1", combined_files=[f]
+                name="ExcelImportTest",
+                description="Import test 1",
+                combined_files=[combined_excel_import_file],
             )
             job_req.scheduled_execution_date = now + datetime.timedelta(seconds=6)
             job = empty_job_queue_api_client.create_job(job_req)
@@ -268,13 +290,16 @@ class TestSchedule:
         time.sleep(2)
         assert len(recs_found) == 1
 
-    def test_update_schedule(self, empty_job_queue_api_client, now, tomorrow):
-        with open(TEST_ARTIFACT_DIR / "ExcelImportTest.xlsx", "rb") as f:
-            job_req = ExcelImportJobRequest(
-                name="ExcelImportTest", description="Import test 1", combined_files=[f]
-            )
-            job_req.scheduled_execution_date = tomorrow
-            job = empty_job_queue_api_client.create_job(job_req)
+    def test_update_schedule(
+        self, combined_excel_import_file, empty_job_queue_api_client, now, tomorrow
+    ):
+        job_req = ExcelImportJobRequest(
+            name="ExcelImportTest",
+            description="Import test 1",
+            combined_files=[combined_excel_import_file],
+        )
+        job_req.scheduled_execution_date = tomorrow
+        job = empty_job_queue_api_client.create_job(job_req)
 
         assert job.status == JobStatus.Pending
 
