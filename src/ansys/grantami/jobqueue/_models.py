@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass
 import datetime
 from enum import Enum
-from io import BufferedIOBase, RawIOBase
+from io import BufferedReader
 import json
 import os
 import pathlib
@@ -43,6 +43,21 @@ class JobType(Enum):
     TextImportJob = "TextImportJob"
 
 
+@dataclass(frozen=True)
+class ExportRecord:
+    """Defines a record to be included in an Export job."""
+
+    record_history_identity: int
+    record_version: Optional[int] = None
+
+    def to_dict(self) -> Dict[str, Union[int, None]]:
+        """Serialize this object to a dictionary."""
+        return {
+            "RecordHistoryIdentity": self.record_history_identity,
+            "RecordVersion": self.record_version,
+        }
+
+
 class JobRequest(ABC):
     """
     Abstract base class representing an job request.
@@ -72,7 +87,7 @@ class JobRequest(ABC):
         self.scheduled_execution_date = scheduled_execution_date
         # e.g. Dict["Template", Dict["My_template.xlsx", Dict["filePath", "C:\my_template.xlsx"]]]
         self.files: Dict[str, Dict[str, Dict[str, File_Type]]] = {}
-        self.__file_ids: List[str] = []
+        self._file_ids: List[str] = []
 
     @abstractmethod
     def __repr__(self) -> str:
@@ -88,13 +103,19 @@ class JobRequest(ABC):
     def _add_file(self, file_obj: File_Type, type_: str) -> None:
         if type_ not in self.files:
             self.files[type_] = {}
-        if isinstance(file_obj, (pathlib.Path, BufferedIOBase, RawIOBase)):
+        if isinstance(file_obj, (pathlib.Path, BufferedReader)):
             if file_obj.name not in self.files[type_]:
                 self.files[type_][file_obj.name] = {}
                 self.files[type_][file_obj.name]["filePath"] = file_obj
+                if isinstance(file_obj, pathlib.Path):
+                    file_name = file_obj.name
+                else:
+                    file_name = pathlib.Path(file_obj.name).name
+                self.files[type_][file_obj.name]["fileName"] = file_name
         elif isinstance(file_obj, str):
             self.files[type_][file_obj] = {}
             self.files[type_][file_obj]["filePath"] = file_obj
+            self.files[type_][file_obj]["fileName"] = pathlib.Path(file_obj).name
         else:
             raise TypeError(
                 "file_obj must be a pathlib.Path, BinaryIO, or str object. "
@@ -104,7 +125,6 @@ class JobRequest(ABC):
     def _post_files(self, api_client: api.JobQueueApi) -> None:
         for file_type, file_list in self.files.items():
             for file_name, file_obj in file_list.items():
-                file_content = file_obj["filePath"]
                 file_id = api_client.upload_file(
                     file=file_obj["filePath"],  # type: ignore[arg-type]
                 )
@@ -113,18 +133,22 @@ class JobRequest(ABC):
                     file_obj["name"] = os.path.basename(file_name)
                 except TypeError:
                     file_obj["name"] = file_name.name  # type: ignore[attr-defined]
-                self.__file_ids.append(file_id)
+                self._file_ids.append(file_id)
 
-    def _generate_file_list_for_import(self) -> List[Dict[str, File_Type]]:
+    def _generate_file_list_for_submission(self) -> List[Dict[str, File_Type]]:
         file_params = []
         for file_type, files in self.files.items():
             for file_obj in files.values():
                 file_params.append({"fileType": file_type, "filePath": file_obj["name"]})
         return file_params
 
-    def _render_file_parameters(self) -> str:
-        file_params = self._generate_file_list_for_import()
-        return json.dumps(file_params)
+    @abstractmethod
+    def _render_job_parameters(self) -> str:
+        """Serialize the parameters required to create the job.
+
+        These are undocumented and vary depending on the specific job type.
+        """
+        pass
 
     def get_job_for_submission(self) -> models.GrantaServerApiAsyncJobsCreateJobRequest:
         """
@@ -137,21 +161,44 @@ class JobRequest(ABC):
         JobRequest
             The JobRequest object to be submitted to the server.
         """
-        job_parameters = self._render_file_parameters()
+        job_parameters = self._render_job_parameters()
         job_request = models.GrantaServerApiAsyncJobsCreateJobRequest(
             type=self._job_type.value,
             name=self.name,
             description=self.description,
             scheduled_execution_date=self.scheduled_execution_date,
-            input_file_ids=self.__file_ids,
+            input_file_ids=self._file_ids,
             parameters=job_parameters,
         )
         return job_request
 
+    @property
     @abstractmethod
-    def check_valid_for_submission(self) -> None:
+    def _job_type(self) -> JobType:
+        pass
+
+
+class ImportJobRequest(JobRequest, ABC):
+    """
+    Abstract base class representing an import job request.
+
+    Each subclass represents a specific import job type and may override some steps of the submission
+    process. They also add additional file types and properties as required.
+    """
+
+    def _process_files(self, file_struct: Dict[str, Optional[List[File_Type]]]) -> None:
+        """Check the validity of the file structure for importing.
+
+        Required since only certain combinations of file types are permitted, and these combinations
+        vary based on job type.
         """
-        Verify that the job can run.
+        super()._process_files(file_struct=file_struct)
+        self._check_files_valid_for_import()
+
+    @abstractmethod
+    def _check_files_valid_for_import(self) -> None:
+        """
+        Verify that the import job can run based on the combination of file types.
 
         Raises
         ------
@@ -161,13 +208,83 @@ class JobRequest(ABC):
         """
         pass
 
+    def _generate_file_list_for_import(self) -> List[Dict[str, File_Type]]:
+        file_params = []
+        for file_type, files in self.files.items():
+            for file_obj in files.values():
+                file_params.append({"fileType": file_type, "filePath": file_obj["name"]})
+        return file_params
+
+    def _render_job_parameters(self) -> str:
+        file_params = self._generate_file_list_for_import()
+        return json.dumps(file_params)
+
     @property
     @abstractmethod
     def _job_type(self) -> JobType:
         pass
 
 
-class ExcelImportJobRequest(JobRequest):
+class ExcelExportJobRequest(JobRequest):
+    """
+    Represents an Excel export job request.
+
+    Requires an Excel export template to be provided, alongside the GUID of the records) to be exported.
+
+    Parameters
+    ----------
+    name
+        The name of the job as displayed in the job queue.
+    description
+        The description of the job as displayed in the job queue.
+    database_key
+        The database key for the records to be exported.
+    records
+        The list of `ExportRecord` objects representing the records to be exported.
+    template_file
+        Excel template file.
+    scheduled_execution_date (optional)
+        The earliest date and time the job should be executed.
+    """
+
+    def __init__(
+        self,
+        name: str,
+        description: str,
+        database_key: str,
+        records: List[ExportRecord],
+        template_file: File_Type,
+        scheduled_execution_date: Optional[datetime.datetime] = None,
+    ):
+        super().__init__(name, description, scheduled_execution_date)
+        self._database_key = database_key
+        self._records = records
+        self._process_files({"Template": [template_file]})
+
+    def __repr__(self) -> str:
+        """Printable representation of the object."""
+        return f"<ExcelExportJobRequest '{self.name}'>"
+
+    def _render_job_parameters(self) -> str:
+        """
+        Generate a serialized representation of the parameters required to create the export job.
+
+        Includes references to the records to be exported and the name of the template file.
+        """
+        record_references = [r.to_dict() for r in self._records]
+        parameters = {
+            "DatabaseKey": self._database_key,
+            "InputRecords": record_references,
+            "TemplateFileName": list(self.files["Template"].keys())[0],
+        }
+        return json.dumps(parameters)
+
+    @property
+    def _job_type(self) -> JobType:
+        return JobType.ExcelExportJob
+
+
+class ExcelImportJobRequest(ImportJobRequest):
     """
     Represents an Excel import job request.
 
@@ -211,15 +328,17 @@ class ExcelImportJobRequest(JobRequest):
                 "Attachment": attachment_files,
             }
         )
-        self.check_valid_for_submission()
 
     def __repr__(self) -> str:
         """Printable representation of the object."""
         return f"<ExcelImportJobRequest '{self.name}'>"
 
-    def check_valid_for_submission(self) -> None:
+    def _check_files_valid_for_import(self) -> None:
         """
-        Verify that the job can run.
+        Verify that the import job can run based on the provided files.
+
+        If "Combined" files are provided, "Data" and "Template" files are not permitted. Otherwise,
+        both "Data" and "Template" files must be provided.
 
         Raises
         ------
@@ -242,82 +361,7 @@ class ExcelImportJobRequest(JobRequest):
         return JobType.ExcelImportJob
 
 
-class ExcelExportJobRequest(JobRequest):
-    """
-    Represents an Excel import job request.
-
-    Supports either combined imports (with template and data in the same file), or separate data
-    and template imports.
-
-    Parameters
-    ----------
-    name
-        The name of the job as displayed in the job queue.
-    description
-        The description of the job as displayed in the job queue.
-    scheduled_execution_date
-        The earliest date and time the job should be executed.
-    data_files
-        Excel files containing data to be imported.
-    template_files
-        Excel template files.
-    combined_files
-        Excel files containing data and template information.
-    attachment_files
-        Any other files referenced in the data or combined files.
-    """
-
-    def __init__(
-        self,
-        name: str,
-        description: str,
-        scheduled_execution_date: Optional[datetime.datetime] = None,
-        data_files: Optional[List[File_Type]] = None,
-        template_files: Optional[List[File_Type]] = None,
-        combined_files: Optional[List[File_Type]] = None,
-        attachment_files: Optional[List[File_Type]] = None,
-    ):
-        super().__init__(name, description, scheduled_execution_date)
-        self._process_files(
-            {
-                "Data": data_files,
-                "Template": template_files,
-                "Combined": combined_files,
-                "Attachment": attachment_files,
-            }
-        )
-        self.check_valid_for_submission()
-
-    def __repr__(self) -> str:
-        """Printable representation of the object."""
-        return f"<ExcelExportJobRequest '{self.name}'>"
-
-    def check_valid_for_submission(self) -> None:
-        """
-        Verify that the job can run.
-
-        Raises
-        ------
-        ValueError
-            If not enough files have been provided for the job to successfully complete.
-
-        """
-        if "Combined" in self.files:
-            if "Data" in self.files or "Template" in self.files:
-                raise ValueError(
-                    "Cannot create Excel import job with both combined and template/data files specified"
-                )
-        elif not ("Data" in self.files and "Template" in self.files):
-            raise ValueError(
-                "Excel import jobs must contain either a 'Combined' file or 'Data' files and a 'Template' file."
-            )
-
-    @property
-    def _job_type(self) -> JobType:
-        return JobType.ExcelExportJob
-
-
-class TextImportJobRequest(JobRequest):
+class TextImportJobRequest(ImportJobRequest):
     """
     Represents a Text import job request. Requires a template file and one or more data files.
 
@@ -354,15 +398,16 @@ class TextImportJobRequest(JobRequest):
                 "Attachment": attachment_files,
             }
         )
-        self.check_valid_for_submission()
 
     def __repr__(self) -> str:
         """Printable representation of the object."""
         return f"<TextImportJobRequest '{self.name}'>"
 
-    def check_valid_for_submission(self) -> None:
+    def _check_files_valid_for_import(self) -> None:
         """
-        Verify that the job can run.
+        Verify that the import job can run based on the provided files.
+
+        Both "Data" and "Template" files must be provided.
 
         Raises
         ------
