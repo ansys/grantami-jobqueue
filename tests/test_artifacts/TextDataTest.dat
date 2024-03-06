@@ -1,5 +1,0 @@
-Counter,Build ID,Additional Test Notes,Project Name,Valid Test?,Time Offset,Crosshead Speed
-$1,Build-1,Some additional notes,Test Data A,true,259035,36.72
-$2,Build-2,Some additional notes,Test Data B,false,255592,67.42
-$3,Build-3,Some additional notes,Test Data C,true,267238,27.64
-$4,Build-4,Some additional notes,Test Data D,false,278257,16.36
