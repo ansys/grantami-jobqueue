@@ -266,7 +266,7 @@ class ExcelExportJobRequest(JobRequest):
     """
     Represents an Excel export job request.
 
-    Requires an Excel export template to be provided, alongside the GUID of the records) to be exported.
+    Requires both an Excel template and references to the records to be exported.
 
     Parameters
     ----------
@@ -277,7 +277,7 @@ class ExcelExportJobRequest(JobRequest):
     database_key
         The database key for the records to be exported.
     records
-        The list of `ExportRecord` objects representing the records to be exported.
+        The list of :class:`~.ExportRecord` objects representing the records to be exported.
     template_file
         Excel template file.
     scheduled_execution_date (optional)
