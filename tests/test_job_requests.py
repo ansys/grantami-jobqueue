@@ -1,20 +1,95 @@
 import pytest
 
-from ansys.grantami.jobqueue import ExcelImportJobRequest
-from common import TEST_ARTIFACT_DIR
+from ansys.grantami.jobqueue import ExcelImportJobRequest, TextImportJobRequest
+from common import (
+    ATTACHMENT,
+    EXCEL_IMPORT_COMBINED_FILE,
+    EXCEL_IMPORT_DATA_FILE,
+    EXCEL_IMPORT_TEMPLATE_FILE,
+    TEXT_IMPORT_DATA_FILE,
+    TEXT_IMPORT_TEMPLATE_FILE,
+)
+
+EXCEL_TOO_MANY_FILES_ERROR_MESSAGE = (
+    "Cannot create Excel import job with both combined and template/data files specified"
+)
+EXCEL_MISSING_FILES_ERROR_MESSAGE = (
+    "Excel import jobs must contain either a 'Combined' file or 'Data' files and a 'Template' file."
+)
 
 
-def test_no_data_combined():
-    with pytest.raises(ValueError, match="Excel import jobs must contain either"):
-        ExcelImportJobRequest(name="ExcelImportTest", description="Import test no data")
-
-
-def test_both_combined_and_template():
-    with pytest.raises(ValueError) as excinfo:
-        _ = ExcelImportJobRequest(
+@pytest.mark.parametrize(
+    "combined, data, template, message",
+    [
+        (
+            [EXCEL_IMPORT_COMBINED_FILE],
+            [EXCEL_IMPORT_DATA_FILE],
+            [EXCEL_IMPORT_TEMPLATE_FILE],
+            EXCEL_TOO_MANY_FILES_ERROR_MESSAGE,
+        ),
+        (
+            [EXCEL_IMPORT_COMBINED_FILE],
+            None,
+            [EXCEL_IMPORT_TEMPLATE_FILE],
+            EXCEL_TOO_MANY_FILES_ERROR_MESSAGE,
+        ),
+        (
+            [EXCEL_IMPORT_COMBINED_FILE],
+            [EXCEL_IMPORT_DATA_FILE],
+            None,
+            EXCEL_TOO_MANY_FILES_ERROR_MESSAGE,
+        ),
+        (
+            None,
+            None,
+            None,
+            EXCEL_MISSING_FILES_ERROR_MESSAGE,
+        ),
+        (
+            None,
+            [EXCEL_IMPORT_DATA_FILE],
+            None,
+            EXCEL_MISSING_FILES_ERROR_MESSAGE,
+        ),
+        (
+            None,
+            None,
+            [EXCEL_IMPORT_TEMPLATE_FILE],
+            EXCEL_MISSING_FILES_ERROR_MESSAGE,
+        ),
+    ],
+)
+@pytest.mark.parametrize("attachment", [[ATTACHMENT], None])
+def test_excel_invalid_files_raise_exception(combined, data, template, attachment, message):
+    with pytest.raises(ValueError, match=message):
+        ExcelImportJobRequest(
             name="ExcelImportTest",
-            description="Import test with too much data",
-            combined_files=[TEST_ARTIFACT_DIR / "TextDataTest.dat"],
-            template_files=[TEST_ARTIFACT_DIR / "TextDataTest.dat"],
+            description="Import test 1",
+            data_files=data,
+            template_files=template,
+            combined_files=combined,
+            attachment_files=attachment,
         )
-    assert "Cannot create Excel import job with both" in str(excinfo.value)
+
+
+@pytest.mark.parametrize(
+    "data, template",
+    [
+        (None, None),
+        ([TEXT_IMPORT_DATA_FILE], None),
+        (None, [TEXT_IMPORT_TEMPLATE_FILE]),
+    ],
+)
+@pytest.mark.parametrize("attachment", [[ATTACHMENT], None])
+def test_text_invalid_files_raise_exception(data, template, attachment):
+    with pytest.raises(
+        ValueError,
+        match="Text import jobs must contain one or more 'Data' files and a 'Template' file",
+    ):
+        TextImportJobRequest(
+            name="ExcelImportTest",
+            description="Import test 1",
+            data_files=data,
+            template_files=template,
+            attachment_files=attachment,
+        )

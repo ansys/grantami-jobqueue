@@ -48,8 +48,7 @@ client = Connection(server_url).with_credentials("user_name", "password").connec
 # Different job types require different input files. For example, an Excel import can use a
 # 'template' and one or more 'data' files, or a single 'combined' file. Any additional files
 # to be imported as file attributes should be specified as 'attachment' files. These can be provided
-# as relative or absolute paths, as `pathlib.Path` objects, or as IO buffers (`fileIO` or
-# `stringIO` for example).
+# as relative or absolute paths or as `pathlib.Path` objects.
 
 # +
 import datetime
@@ -57,12 +56,11 @@ import pathlib
 
 from ansys.grantami.jobqueue import ExcelImportJobRequest
 
-template_file = open("import_template.xlsx", "rb")
 separate_excel_import_request = ExcelImportJobRequest(
     name="Excel Import (separate template and data files)",
     description="An example excel import job",
     data_files=["data_file_1.xlsx", "data_file_2.xlsx"],
-    template_files=[template_file],
+    template_files=["import_template.xlsx"],
 )
 separate_excel_import_request
 # -
@@ -88,16 +86,15 @@ combined_excel_import_request
 # ## Submit jobs
 # Next, submit the jobs to the server. There are two ways to submit the job:
 #
-# * ``create_import_job()``: Submit the job request to the server and immediately return an
+# * ``create_job()``: Submit the job request to the server and immediately return an
 #   ``AsyncJob`` object in the 'pending' state.
-# * ``create_import_job_and_wait()``: Submit the job request to the server and block until the job
+# * ``create_job_and_wait()``: Submit the job request to the server and block until the job
 #    either completes or fails. Return an ``AsyncJob`` object in the 'succeeded' or 'failed' state.
 
 # +
-completed_job = client.create_import_job_and_wait(separate_excel_import_request)
-template_file.close()
+completed_job = client.create_job_and_wait(separate_excel_import_request)
 
-deferred_job = client.create_import_job(combined_excel_import_request)
+deferred_job = client.create_job(combined_excel_import_request)
 deferred_job
 # -
 
@@ -151,23 +148,23 @@ deferred_job.status
 
 deferred_job.output_file_names
 
-# The following cell shows accessing the file content as ``bytes`` using the
+# The following cell shows accessing the content of the log file as ``bytes`` using the
 # ``AsyncJob.get_file_content`` method.
 
 # +
-file_1_name = deferred_job.output_file_names[0]
-file_1_content = deferred_job.get_file_content(file_1_name)
-file_1_string = file_1_content.decode("utf-8")
-print(f"{file_1_name} (first 200 characters):")
-print(f"{file_1_string[:500]}...")
+log_file_name = next(name for name in deferred_job.output_file_names if "log" in name)
+log_file_content = deferred_job.get_file_content(log_file_name)
+log_file_string = log_file_content.decode("utf-8")
+print(f"{log_file_name} (first 200 characters):")
+print(f"{log_file_string[:500]}...")
 # -
 
-# The following cell shows , or downloading the file to disk with the ``AsyncJob.download_file``
-# method.
+# The following cell shows downloading the import summary file to disk with the
+# `AsyncJob.download_file`` method.
 
 # +
-file_2_name = deferred_job.output_file_names[1]
-output_path = f"./{file_2_name}"
-deferred_job.download_file(file_2_name, output_path)
-f"{file_2_name} saved to disk"
+summary_file_name = next(name for name in deferred_job.output_file_names if name == "summary.json")
+output_path = f"./{summary_file_name}"
+deferred_job.download_file(summary_file_name, output_path)
+f"{summary_file_name} saved to disk"
 # -
