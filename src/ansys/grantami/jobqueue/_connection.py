@@ -14,7 +14,7 @@ from ansys.openapi.common import (
 import requests  # type: ignore[import-untyped]
 
 from ._logger import logger
-from ._models import AsyncJob, ImportJobRequest, JobQueueProcessingConfiguration, JobStatus, JobType
+from ._models import AsyncJob, JobQueueProcessingConfiguration, JobRequest, JobStatus, JobType
 
 PROXY_PATH = "/proxy/v1.svc/mi"
 AUTH_PATH = "/Health/v2.svc"
@@ -286,11 +286,9 @@ class JobQueueApiClient(ApiClient):
             elif job_obj is not self._jobs[job_id]:
                 self._jobs[job_id]._update_job(job_obj)
 
-    def create_import_job_and_wait(
-        self, job_request: "ImportJobRequest"
-    ) -> "AsyncJob":  # noqa: D205, D400
+    def create_job_and_wait(self, job_request: "JobRequest") -> "AsyncJob":  # noqa: D205, D400
         """
-        Create an import job from an :class:`~.ExcelImportJobRequest` or
+        Create a job from an :class:`~.ExcelImportJobRequest`, :class:`~.ExcelExportJobRequest`, or
         :class:`~.TextImportJobRequest` object and block until complete.
 
         Upload files and submits a job request to the Job Queue. Block execution until the job
@@ -299,14 +297,14 @@ class JobQueueApiClient(ApiClient):
         Parameters
         ----------
         job_request
-            The ImportJobRequest to be imported.
+            The JobRequest to be submitted to the job queue.
 
         Returns
         -------
         AsyncJob
             A AsyncJob object representing the completed job.
         """
-        job = self.create_import_job(job_request=job_request)
+        job = self.create_job(job_request=job_request)
         request_count = 0
         last_exception: Optional[Exception] = None
         time.sleep(1)
@@ -328,9 +326,9 @@ class JobQueueApiClient(ApiClient):
         else:
             return job
 
-    def create_import_job(self, job_request: "ImportJobRequest") -> "AsyncJob":  # noqa: D205, D400
+    def create_job(self, job_request: "JobRequest") -> "AsyncJob":  # noqa: D205, D400
         """
-        Create an import job from an :class:`~.ExcelImportJobRequest` or
+        Create a job from an :class:`~.ExcelImportJobRequest`, :class:`~.ExcelExportJobRequest`, or
         :class:`~.TextImportJobRequest` object.
 
         Upload files and submit a job request to the Job Queue.
@@ -338,7 +336,7 @@ class JobQueueApiClient(ApiClient):
         Parameters
         ----------
         job_request
-            The ImportJobRequest to be imported.
+            The JobRequest to be submitted to the server.
 
         Returns
         -------
@@ -347,7 +345,7 @@ class JobQueueApiClient(ApiClient):
         """
         job_request._post_files(api_client=self.job_queue_api)
 
-        job_response = self.job_queue_api.create_job(body=job_request.get_job_for_import())
+        job_response = self.job_queue_api.create_job(body=job_request.get_job_for_submission())
         self._update_job_list_from_resp([job_response])
         return self._jobs[cast(str, job_response.id)]
 

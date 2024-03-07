@@ -16,6 +16,23 @@ EXCEL_IMPORT_FOLDER_NAME = "Excel Import Test"
 DATABASE_CACHE_SLEEP = 1
 MAX_DATABASE_CACHE_ATTEMPTS = 10
 
+EXCEL_IMPORT_COMBINED_FILE = TEST_ARTIFACT_DIR / "ExcelImportCombinedFile.xlsx"
+EXCEL_IMPORT_DATA_FILE = TEST_ARTIFACT_DIR / "ExcelImportDataFile.xlsx"
+EXCEL_IMPORT_TEMPLATE_FILE = TEST_ARTIFACT_DIR / "ExcelImportTemplateFile.xlsx"
+
+EXCEL_IMPORT_COMBINED_FILE_WITH_ATTACHMENT = (
+    TEST_ARTIFACT_DIR / "ExcelImportCombinedFileWithAttachment.xlsx"
+)
+EXCEL_IMPORT_DATA_FILE_WITH_ATTACHMENT = (
+    TEST_ARTIFACT_DIR / "ExcelImportDataFileWithAttachment.xlsx"
+)
+ATTACHMENT = TEST_ARTIFACT_DIR / "Attachment.bmp"
+
+EXCEL_EXPORT_TEMPLATE_FILE = TEST_ARTIFACT_DIR / "ExcelExportTemplateFile.xlsx"
+
+TEXT_IMPORT_DATA_FILE = TEST_ARTIFACT_DIR / "TextImportDataFile.dat"
+TEXT_IMPORT_TEMPLATE_FILE = TEST_ARTIFACT_DIR / "TextImportTemplateFile.xml"
+
 
 def generate_now():
     try:
