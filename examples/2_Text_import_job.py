@@ -42,13 +42,13 @@ client = Connection(server_url).with_credentials("user_name", "password").connec
 # ## Create a Text import job request object
 
 # The first step in importing a text file with the job queue is to create a
-# ``TExtImportJobRequest`` object. When creating this object, specify the name of the job and the
+# ``TextImportJobRequest`` object. When creating this object, specify the name of the job and the
 # file(s) to be imported. You can also specify an optional description and the scheduled execution
 # date, if the import should be deferred until that date and time.
 #
 # A text import job requires data files, template files, and optionally additional files to be
-# uploaded as attachments. These can be provided as relative or absolute paths, as `pathlib.Path`
-# objects, or as IO buffers (`fileIO` or `stringIO` for example).
+# uploaded as attachments. These can be provided as relative or absolute paths or as `pathlib.Path`
+# objects.
 
 # +
 import pathlib
@@ -68,15 +68,15 @@ text_import_request
 # ## Submit jobs
 # Next, submit the jobs to the server. There are two ways to submit the job:
 #
-# * ``create_import_job()``: Submit the job request to the server and immediately return an
+# * ``create_job()``: Submit the job request to the server and immediately return an
 #   ``AsyncJob`` object in the 'pending' state.
-# * ``create_import_job_and_wait()``: Submit the job request to the server and block until the job
+# * ``create_job_and_wait()``: Submit the job request to the server and block until the job
 #    either completes or fails. Return an ``AsyncJob`` object in the 'succeeded' or 'failed' state.
 #
 # This example submits the job and waits for a response.
 
 # +
-text_import_job = client.create_import_job_and_wait(text_import_request)
+text_import_job = client.create_job_and_wait(text_import_request)
 text_import_job
 # -
 
@@ -90,23 +90,25 @@ text_import_job
 
 text_import_job.output_file_names
 
-# The following cell shows accessing the content of the first file as ``bytes`` using the
+# The following cell shows accessing the content of the log file as ``bytes`` using the
 # ``AsyncJob.get_file_content`` method.
 
 # +
-file_1_name = text_import_job.output_file_names[0]
-file_1_content = text_import_job.get_file_content(file_1_name)
-file_1_string = file_1_content.decode("utf-8")
-print(f"{file_1_name} (first 200 characters):")
-print(f"{file_1_string[:500]}...")
+log_file_name = next(name for name in text_import_job.output_file_names if "log" in name)
+log_file_content = text_import_job.get_file_content(log_file_name)
+log_file_string = log_file_content.decode("utf-8")
+print(f"{log_file_name} (first 200 characters):")
+print(f"{log_file_string[:500]}...")
 # -
 
-# The following cell shows , or downloading the file to disk with the ``AsyncJob.download_file``
-# method.
+# The following cell shows downloading the import summary file to disk with the
+# `AsyncJob.download_file`` method.
 
 # +
-file_2_name = text_import_job.output_file_names[1]
-output_path = f"./{file_2_name}"
-text_import_job.download_file(file_2_name, output_path)
-f"{file_2_name} saved to disk"
+summary_file_name = next(
+    name for name in text_import_job.output_file_names if name == "summary.json"
+)
+output_path = f"./{summary_file_name}"
+text_import_job.download_file(summary_file_name, output_path)
+f"{summary_file_name} saved to disk"
 # -
