@@ -73,9 +73,8 @@ text_import_request
 # * ``create_job_and_wait()``: Submit the job request to the server and block until the job
 #    either completes or fails. Return an ``AsyncJob`` object in the 'succeeded' or 'failed' state.
 #
-# This example uses the ``create_job_and_wait()`` method. See [Scheduling and modifying jobs]
-# (4_scheduling_and_modifying_jobs.ipynb) for an example of creating a job and returning
-# asynchronously.
+# This example uses the ``create_job_and_wait()`` method. See [Scheduling and modifying jobs](4_scheduling_and_modifying_jobs.ipynb)
+# for an example of creating a job and allowing it to run asynchronously.
 
 # +
 text_import_job = client.create_job_and_wait(text_import_request)
@@ -94,7 +93,7 @@ text_import_job.output_file_names
 
 # In general, a text import job will return two files:
 #
-# 1. <job name>.log: the log file of the import operation on the server
+# 1. \<job name>.log: the log file of the import operation on the server
 # 2. summary.json: a data file which summarizes the number of records impacted by the import
 #    job
 
@@ -110,7 +109,7 @@ print(f"{log_file_string[:500]}...")
 # -
 
 # The following cell shows downloading the import summary file to disk with the
-# `AsyncJob.download_file`` method.
+# ``AsyncJob.download_file`` method.
 
 # +
 summary_file_name = next(

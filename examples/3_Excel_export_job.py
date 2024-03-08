@@ -80,9 +80,8 @@ excel_export_request
 # * ``create_job_and_wait()``: Submit the job request to the server and block until the job
 #    either completes or fails. Return an ``AsyncJob`` object in the 'succeeded' or 'failed' state.
 #
-# This example uses the ``create_job_and_wait()`` method. See [Scheduling and modifying jobs]
-# (4_scheduling_and_modifying_jobs.ipynb) for an example of creating a job and returning
-# asynchronously.
+# This example uses the ``create_job_and_wait()`` method. See [Scheduling and modifying jobs](4_scheduling_and_modifying_jobs.ipynb)
+# for an example of creating a job and allowing it to run asynchronously.
 
 # +
 completed_job = client.create_job_and_wait(excel_export_request)
@@ -99,7 +98,7 @@ completed_job.output_file_names
 
 # In general, an Excel export job will return three files:
 #
-# 1. <job name>.log: the log file of the import operation on the server
+# 1. \<job name>.log: the log file of the import operation on the server
 # 2. summary.json: a data file which summarizes the number of records exported by the job
 # 3. A file containing the data exported from Granta MI
 #

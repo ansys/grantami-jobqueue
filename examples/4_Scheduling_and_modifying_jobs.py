@@ -47,7 +47,6 @@ import pathlib
 
 from ansys.grantami.jobqueue import ExcelImportJobRequest
 
-# +
 try:
     # Python 3.11+
     tomorrow = datetime.datetime.now(datetime.UTC) + datetime.timedelta(days=1)
@@ -95,8 +94,10 @@ client.jobs
 # object. The cell below shows updating the name and description of the job, and changing the
 # scheduled execution to occur immediately.
 
+# +
 deferred_job.update_name("Combined Excel Import (modified)")
 deferred_job.update_description("A new description for a combined Excel import job")
+
 try:
     # Python 3.11+
     now = datetime.datetime.now(datetime.UTC)
@@ -104,7 +105,9 @@ except AttributeError:
     # Python 3.9 and 3.10
     now = datetime.datetime.now(datetime.timezone.utc)
 deferred_job.update_scheduled_execution_date_time(now)
+
 client.jobs
+# -
 
 # ## Retrieve long-running jobs
 # If the job is expected to take a long time to complete, the Job ID could be saved to disk and
@@ -139,10 +142,10 @@ log_file_content = deferred_job.get_file_content(log_file_name)
 log_file_string = log_file_content.decode("utf-8")
 print(f"{log_file_name} (first 200 characters):")
 print(f"{log_file_string[:500]}...")
-# -
 
 # ## Deleting a job
 # Jobs can be deleted from the job queue by using the ``.delete_jobs()`` method. This method
 # accepts a list of jobs, so multiple jobs can be deleted with a single request if required.
 
 client.delete_jobs([deferred_job])
+client.jobs

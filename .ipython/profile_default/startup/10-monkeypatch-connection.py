@@ -36,6 +36,12 @@ Connection.with_autologon = with_autologon
 server_url = "http://my_grantami_server/mi_servicelayer"
 
 
+def __init__(self: JobQueueApiClient, *args, **kwargs) -> None:
+    super().__init__(*args, **kwargs)
+    # Clear job queue as soon as client is created
+    self.delete_jobs(self.jobs)
+
+
 def __repr__(self: JobQueueApiClient) -> str:
     return f"<JobQueueApiClient url: {server_url}>"
 
