@@ -177,6 +177,10 @@ def _copy_examples_and_convert_to_notebooks(source_dir, output_dir, ignored_file
         if file_source_path.suffix == ".py":
             try:
                 ntbk = jupytext.read(file_source_path)
+
+                # Filter out cleanup cells
+                ntbk.cells = [c for c in ntbk.cells if "cleanup" not in c.metadata.get("tags", [])]
+
                 jupytext.write(ntbk, file_output_path.with_suffix(".ipynb"))
             except Exception as e:
                 raise RuntimeError(f"Failed to convert {file_source_path} to notebook: {e}")
