@@ -155,10 +155,13 @@ def _copy_examples_and_convert_to_notebooks(source_dir, output_dir, ignored_file
 
     ignored_files_re = re.compile(ignored_files_regex) if ignored_files_regex else None
 
-    server_url = os.getenv("TEST_SL_URL")
-    user_name = os.getenv("TEST_USER")
-    password = os.getenv("TEST_PASS")
-    client = Connection(server_url).with_credentials(user_name, password).connect()
+    if os.environ.get("BUILD_EXAMPLES", "false"):
+        server_url = os.getenv("TEST_SL_URL")
+        user_name = os.getenv("TEST_USER")
+        password = os.getenv("TEST_PASS")
+        client = Connection(server_url).with_credentials(user_name, password).connect()
+    else:
+        client = None
 
     for file_source_path in source_dir.rglob("*"):
         if not file_source_path.is_file():
@@ -187,7 +190,8 @@ def _copy_examples_and_convert_to_notebooks(source_dir, output_dir, ignored_file
                 raise RuntimeError(f"Failed to convert {file_source_path} to notebook: {e}")
 
             # Clear job queue after file has been processed
-            client.delete_jobs(client.jobs)
+            if client:
+                client.delete_jobs(client.jobs)
 
 
 exclude_patterns = []
