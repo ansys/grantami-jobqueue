@@ -124,7 +124,7 @@ print(f"{log_file_string[:500]}...")
 # ``AsyncJob.download_file`` method.
 
 # +
-output_file_name = next(name for name in completed_job.output_file_names if name.endswidth("xlsx"))
+output_file_name = next(name for name in completed_job.output_file_names if name.endswith("xlsx"))
 output_path = f"./{output_file_name}"
 completed_job.download_file(output_file_name, output_path)
 f"{output_file_name} saved to disk"
@@ -133,8 +133,4 @@ summary_file_name = next(name for name in completed_job.output_file_names if nam
 output_path = f"./{summary_file_name}"
 completed_job.download_file(summary_file_name, output_path)
 f"{summary_file_name} saved to disk"
-# -
-
-# + tags=["cleanup"]
-client.delete_jobs([client.jobs])
 # -

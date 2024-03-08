@@ -120,7 +120,3 @@ output_path = f"./{summary_file_name}"
 text_import_job.download_file(summary_file_name, output_path)
 f"{summary_file_name} saved to disk"
 # -
-
-# + tags=["cleanup"]
-client.delete_jobs([client.jobs])
-# -

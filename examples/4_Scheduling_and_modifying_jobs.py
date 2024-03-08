@@ -146,7 +146,3 @@ print(f"{log_file_string[:500]}...")
 # accepts a list of jobs, so multiple jobs can be deleted with a single request if required.
 
 client.delete_jobs([deferred_job])
-
-# + tags=["cleanup"]
-client.delete_jobs([client.jobs])
-# -

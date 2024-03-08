@@ -8,7 +8,7 @@ import shutil
 from ansys_sphinx_theme import ansys_favicon, get_version_match, pyansys_logo_black
 import jupytext
 
-from ansys.grantami.jobqueue import __version__
+from ansys.grantami.jobqueue import Connection, __version__
 
 # Project information
 project = "ansys-grantami-jobqueue"
@@ -155,6 +155,11 @@ def _copy_examples_and_convert_to_notebooks(source_dir, output_dir, ignored_file
 
     ignored_files_re = re.compile(ignored_files_regex) if ignored_files_regex else None
 
+    server_url = os.getenv("TEST_SL_URL")
+    user_name = os.getenv("TEST_USER")
+    password = os.getenv("TEST_PASS")
+    client = Connection(server_url).with_credentials(user_name, password).connect()
+
     for file_source_path in source_dir.rglob("*"):
         if not file_source_path.is_file():
             continue
@@ -177,13 +182,12 @@ def _copy_examples_and_convert_to_notebooks(source_dir, output_dir, ignored_file
         if file_source_path.suffix == ".py":
             try:
                 ntbk = jupytext.read(file_source_path)
-
-                # Filter out cleanup cells
-                ntbk.cells = [c for c in ntbk.cells if "cleanup" not in c.metadata.get("tags", [])]
-
                 jupytext.write(ntbk, file_output_path.with_suffix(".ipynb"))
             except Exception as e:
                 raise RuntimeError(f"Failed to convert {file_source_path} to notebook: {e}")
+
+            # Clear job queue after file has been processed
+            client.delete_jobs(client.jobs)
 
 
 exclude_patterns = []
