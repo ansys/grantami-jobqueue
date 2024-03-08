@@ -22,7 +22,6 @@ To run these examples, install dependencies with this code:
        1_Excel_import_job
        2_Text_import_job
        3_Excel_export_job
-       4_Admin_functions
 
     {% else %}
 
