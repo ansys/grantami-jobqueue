@@ -40,4 +40,10 @@ def __repr__(self: JobQueueApiClient) -> str:
     return f"<JobQueueApiClient url: {server_url}>"
 
 
+def __del__(self: JobQueueApiClient) -> None:
+    # Clear job queue after script completes
+    self.delete_jobs(self.jobs)
+
+
 JobQueueApiClient.__repr__ = __repr__
+JobQueueApiClient.__del__ = __del__
