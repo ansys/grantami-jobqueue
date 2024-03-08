@@ -44,3 +44,10 @@ repos:
     types: [python]
     require_serial: true
     files: "^(src/)"
+
+  - id: localhost-examples
+    name: "Notebook localhost URL check"
+    entry: "(?i)localhost"
+    language: "pygrep"
+    types: [text]
+    files: "^examples/.*"
