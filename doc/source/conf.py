@@ -155,7 +155,7 @@ def _copy_examples_and_convert_to_notebooks(source_dir, output_dir, ignored_file
 
     ignored_files_re = re.compile(ignored_files_regex) if ignored_files_regex else None
 
-    if os.environ.get("BUILD_EXAMPLES", "false"):
+    if os.getenv("BUILD_EXAMPLES"):
         server_url = os.getenv("TEST_SL_URL")
         user_name = os.getenv("TEST_USER")
         password = os.getenv("TEST_PASS")
