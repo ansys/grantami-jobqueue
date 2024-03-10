@@ -71,10 +71,11 @@ f"The current user can write jobs: {client.can_write_job}"
 
 f"Concurrency enabled: {'Yes' if client.processing_configuration.concurrency else 'No'}"
 
-# Finally, we can access the job queue itself (the job queue may be empty if you have not
-# submitted a job recently):
+# Finally, we can access the job queue itself (the job queue may be empty if the current user
+# has not submitted a job recently):
 
 client.jobs
 
-# Note: these are only the jobs we can access, which depends on our user role. Admin users can
-# access jobs created by all users.
+# Note: these are only the jobs accessible to the current user, which depends on the user's role.
+# Standard users can only access their own jobs, whereas admin users can access jobs created by
+# all users.
