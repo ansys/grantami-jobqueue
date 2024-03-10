@@ -70,8 +70,9 @@ separate_excel_import_request
 # * ``create_job_and_wait()``: Submit the job request to the server and block until the job
 #    either completes or fails. Return an ``AsyncJob`` object in the 'succeeded' or 'failed' state.
 #
-# This example uses the ``create_job_and_wait()`` method. See [Scheduling and modifying jobs](4_scheduling_and_modifying_jobs.ipynb)
-# for an example of creating a job and allowing it to run asynchronously.
+# This example uses the ``create_job_and_wait()`` method. See
+# [Scheduling and modifying jobs](4_Scheduling_and_modifying_jobs.ipynb) for an example that shows
+# how to create and submit a job that runs asynchronously.
 
 # +
 completed_job = client.create_job_and_wait(separate_excel_import_request)
