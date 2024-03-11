@@ -36,14 +36,15 @@ PyGranta Job Queue
    _after-badges
 
 
-A Python wrapper for the Granta MI Job Queue API.
+This package allows users to import and export correctly formatted Excel and text files to and from
+Granta MI.
 
 
 Dependencies
 ------------
 .. readme_software_requirements
 
-To use the ``ansys.grantami.jobqueue`` package you must have access to a Granta MI 2024 R1 deployment.
+To use the ``ansys.grantami.jobqueue`` package you must have access to a Granta MI 2024 R2 deployment.
 
 The ``ansys.grantami.jobqueue`` package currently supports Python from version 3.9 to version 3.12.
 
@@ -67,7 +68,7 @@ To install a release compatible with a specific version of Granta MI, use the
 
 .. code::
 
-    pip install pygranta==2023.2.0
+    pip install pygranta==2024.2.0
 
 Alternatively, to install the latest from ``ansys-grantami-jobqueue`` `GitHub <https://github.com/ansys/grantami-jobqueue>`_,
 use this code:

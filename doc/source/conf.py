@@ -117,7 +117,7 @@ autosectionlabel_maxdepth = 4
 # -- Examples configuration --------------------------------------------------
 def _copy_examples_and_convert_to_notebooks(source_dir, output_dir, ignored_files_regex=None):
     """
-    Recursively copies all files from the source directory to the output directory.
+    Recursively copies all _files from the source directory to the output directory.
 
     Creates any necessary subfolders in the process. Python scripts with the ".py" extension
     are also converted to Jupyter notebooks with the ".ipynb" extension using Jupytext.
@@ -125,12 +125,12 @@ def _copy_examples_and_convert_to_notebooks(source_dir, output_dir, ignored_file
     Parameters
     ----------
     source_dir : Path
-        The source directory to copy files from.
+        The source directory to copy _files from.
     output_dir : Path
-        The output directory to copy files to and convert Python scripts.
+        The output directory to copy _files to and convert Python scripts.
     ignored_files_regex : str, optional
-        A regular expression pattern to match ignored files. Files whose names match
-        the pattern will be skipped. If None (default), no files are ignored.
+        A regular expression pattern to match ignored _files. Files whose names match
+        the pattern will be skipped. If None (default), no _files are ignored.
 
     Raises
     ------
@@ -140,7 +140,7 @@ def _copy_examples_and_convert_to_notebooks(source_dir, output_dir, ignored_file
     Notes
     -----
     - This function uses pathlib.Path methods for working with file paths.
-    - Any existing files in the output directory will be overwritten.
+    - Any existing _files in the output directory will be overwritten.
     - If a Python script cannot be converted to a Jupyter notebook, an exception is raised.
 
     Examples

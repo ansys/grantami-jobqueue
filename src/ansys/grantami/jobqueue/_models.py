@@ -12,24 +12,32 @@ from ansys.grantami.serverapi_openapi import api, models
 from ansys.openapi.common import UndefinedObjectWarning, Unset
 
 
-class JobStatus(Enum):
+class _DocumentedEnum(Enum):
+    def __new__(cls, value: int, doc: str) -> "_DocumentedEnum":
+        obj: _DocumentedEnum = object.__new__(cls)
+        obj._value_ = value
+        obj.__doc__ = " ".join(doc.split())
+        return obj
+
+
+class JobStatus(_DocumentedEnum):
     """Provides possible states of a job in the job queue."""
 
-    Pending = models.GrantaServerApiAsyncJobsJobStatus.PENDING.value, """Job is in the queue"""
+    Pending = models.GrantaServerApiAsyncJobsJobStatus.PENDING.value, """Job is in the queue."""
     Running = (
         models.GrantaServerApiAsyncJobsJobStatus.RUNNING.value,
-        """Job is currently executing""",
+        """Job is currently executing.""",
     )
     Succeeded = (
         models.GrantaServerApiAsyncJobsJobStatus.SUCCEEDED.value,
-        """Job has completed (does not guarantee that no errors occurred)""",
+        """Job has completed (does not guarantee that no errors occurred).""",
     )
-    Failed = models.GrantaServerApiAsyncJobsJobStatus.FAILED.value, """Job could not complete"""
+    Failed = models.GrantaServerApiAsyncJobsJobStatus.FAILED.value, """Job could not complete."""
     Cancelled = (
         models.GrantaServerApiAsyncJobsJobStatus.CANCELLED.value,
-        """Job was cancelled by the user""",
+        """Job was cancelled by the user.""",
     )
-    Deleted = "Deleted", """Job was deleted on the server"""
+    Deleted = "Deleted", """Job was deleted on the server."""
 
 
 class JobType(Enum):
@@ -43,15 +51,35 @@ class JobType(Enum):
 class _FileType(Enum):
     """Provides possible file types."""
 
+    Template = "Template"
     Attachment = "Attachment"
     Combined = "Combined"
     Data = "Data"
-    Template = "Template"
+
+
+@dataclass(frozen=True)
+class JobQueueProcessingConfiguration:
+    """Read only configuration of the Job Queue on the server."""
+
+    purge_job_age_in_milliseconds: int
+    purge_interval_in_milliseconds: int
+    polling_interval_in_milliseconds: int
+    concurrency: int
 
 
 @dataclass(frozen=True)
 class ExportRecord:
-    """Defines a record to be included in an Export job."""
+    """Defines a record to be included in an Export job.
+
+    Parameters
+    ----------
+    record_history_identity : int
+        The history identities of a record to be exported. Can be found in MI Viewer or using the
+        Scripting Toolkit.
+    record_version : int, optional
+        The specific version of the record to be exported. If not specified for version-controlled
+        records, the latest available version for the current user will be exported.
+    """
 
     record_history_identity: int
     record_version: Optional[int] = None
@@ -114,19 +142,22 @@ class _JobFile:
 
 class JobRequest(ABC):
     """
-    Abstract base class representing an job request.
+    Abstract base class representing a job request.
 
     Each subclass represents a specific job type and may override some steps of the submission
     process. They also add additional file types and properties as required.
 
     Parameters
     ----------
-    name
+    name : str
         The name of the job as displayed in the job queue.
-    description
+    description : str
         The description of the job as displayed in the job queue.
-    scheduled_execution_date
-        The earliest date and time the job should be executed.
+    template_file: str or pathlib.Path, optional
+        The template to use the job.
+    scheduled_execution_date : datetime.datetime, optional
+        The earliest date and time the job should be executed. If not provided, the job will begin
+        as soon as possible.
     """
 
     @abstractmethod
@@ -134,17 +165,19 @@ class JobRequest(ABC):
         self,
         name: str,
         description: str,
+        template_file: Optional[Union[str, pathlib.Path]],
         scheduled_execution_date: Optional[datetime.datetime] = None,
     ) -> None:
         self.name = name
         self.description = description
         self.scheduled_execution_date = scheduled_execution_date
-        self.files: List[_JobFile] = []
+        self._files: List[_JobFile] = []
+        if template_file:
+            self._process_files({_FileType.Template: [template_file]})
 
-    @abstractmethod
     def __repr__(self) -> str:
         """Printable representation of the object."""
-        pass
+        return f'<{type(self).__name__}: name: "{self.name}">'
 
     def _process_files(
         self, file_struct: Dict[_FileType, Optional[List[Union[str, pathlib.Path]]]]
@@ -165,10 +198,10 @@ class JobRequest(ABC):
                 "file_obj must be a pathlib.Path, BinaryIO, or str object. "
                 f"Object provided was of type {type(file_obj)}."
             )
-        self.files.append(new_file)
+        self._files.append(new_file)
 
     def _post_files(self, api_client: api.JobQueueApi) -> None:
-        for file in self.files:
+        for file in self._files:
             file_id = api_client.upload_file(file=file.path)
             file.file_id = file_id
 
@@ -180,11 +213,11 @@ class JobRequest(ABC):
         """
         pass
 
-    def get_job_for_submission(self) -> models.GrantaServerApiAsyncJobsCreateJobRequest:
+    def _get_job_for_submission(self) -> models.GrantaServerApiAsyncJobsCreateJobRequest:
         """
         Create an AsyncJobs ``JobRequest`` object ready for submission to the job queue.
 
-        Should be called after uploading files to the service.
+        Should be called after uploading _files to the service.
 
         Returns
         -------
@@ -197,7 +230,7 @@ class JobRequest(ABC):
             name=self.name,
             description=self.description,
             scheduled_execution_date=self.scheduled_execution_date,
-            input_file_ids=[file.file_id for file in self.files],
+            input_file_ids=[file.file_id for file in self._files],
             parameters=job_parameters,
         )
         return job_request
@@ -209,16 +242,11 @@ class JobRequest(ABC):
 
     @property
     def _file_types(self) -> List[_FileType]:
-        return [file.file_type for file in self.files]
+        return [file.file_type for file in self._files]
 
 
 class ImportJobRequest(JobRequest, ABC):
-    """
-    Abstract base class representing an import job request.
-
-    Each subclass represents a specific import job type and may override some steps of the submission
-    process. They also add additional file types and properties as required.
-    """
+    """Abstract base class representing an import job request."""
 
     def _process_files(
         self, file_struct: Dict[_FileType, Optional[List[Union[str, pathlib.Path]]]]
@@ -239,14 +267,14 @@ class ImportJobRequest(JobRequest, ABC):
         Raises
         ------
         ValueError
-            If not enough files have been provided for the job to successfully complete.
+            If not enough _files have been provided for the job to successfully complete.
 
         """
         pass
 
     def _generate_file_list_for_import(self) -> List[Dict[str, str]]:
         file_params = []
-        for file in self.files:
+        for file in self._files:
             file_params.append(
                 {"fileType": file.file_type.value, "filePath": file.serializable_path}
             )
@@ -270,37 +298,59 @@ class ExcelExportJobRequest(JobRequest):
 
     Parameters
     ----------
-    name
+    name : str
         The name of the job as displayed in the job queue.
-    description
+    description : str
         The description of the job as displayed in the job queue.
-    database_key
-        The database key for the records to be exported.
-    records
-        The list of :class:`~.ExportRecord` objects representing the records to be exported.
-    template_file
+    template_file : str or pathlib.Path
         Excel template file.
-    scheduled_execution_date (optional)
-        The earliest date and time the job should be executed.
+    database_key : str
+        The database key for the records to be exported.
+    records : list of ExportRecord
+        The list of :class:`~.ExportRecord` objects representing the records to be exported.
+    scheduled_execution_date : datetime.datetime, optional
+        The earliest date and time the job should be executed. If not provided, the job will begin
+        as soon as possible.
+
+    Examples
+    --------
+    >>> template_file: pathlib.Path  # pathlib Path object for the template
+    >>> record_history_identities = [12345, 23456]
+    >>> job_request = ExcelExportJobRequest(
+    ...     name="Excel export job",
+    ...     description="Example job request to import data from Excel",
+    ...     template_file=template_file,
+    ...     database_key="MI_Training",
+    ...     records=[ExportRecord(rhid) for rhid in record_history_identities],
+    ... )
+    >>> job_request
+    <ExcelExportJobRequest: name: "Excel export job">
+
+    >>> tomorrow = datetime.datetime.now(datetime.UTC) + datetime.timedelta(days=1)
+    >>> job_request = ExcelExportJobRequest(
+    ...     name="Excel export job (future execution)",
+    ...     description="Example job request to execute in the future",
+    ...     template_file=template_file,
+    ...     database_key="MI_Training",
+    ...     records=[ExportRecord(rhid) for rhid in record_history_identities],
+    ...     scheduled_execution_date=tomorrow,
+    ... )
+    >>> job_request
+    <ExcelExportJobRequest: name: "Excel export job (future execution)">
     """
 
     def __init__(
         self,
         name: str,
         description: str,
+        template_file: Union[str, pathlib.Path],
         database_key: str,
         records: List[ExportRecord],
-        template_file: Union[str, pathlib.Path],
         scheduled_execution_date: Optional[datetime.datetime] = None,
     ):
-        super().__init__(name, description, scheduled_execution_date)
+        super().__init__(name, description, template_file, scheduled_execution_date)
         self._database_key = database_key
         self._records = records
-        self._process_files({_FileType.Template: [template_file]})
-
-    def __repr__(self) -> str:
-        """Printable representation of the object."""
-        return f"<ExcelExportJobRequest '{self.name}'>"
 
     def _render_job_parameters(self) -> str:
         """
@@ -310,7 +360,7 @@ class ExcelExportJobRequest(JobRequest):
         """
         record_references = [r.to_dict() for r in self._records]
         assert self._file_types == [_FileType.Template]
-        template_file = self.files[0].serializable_path
+        template_file = self._files[0].serializable_path
         parameters = {
             "DatabaseKey": self._database_key,
             "InputRecords": record_references,
@@ -327,72 +377,90 @@ class ExcelImportJobRequest(ImportJobRequest):
     """
     Represents an Excel import job request.
 
-    Supports either combined imports (with template and data in the same file), or separate data
+    Supports either combined imports (with template and data in the same file) or separate data
     and template imports.
 
     Parameters
     ----------
-    name
+    name : str
         The name of the job as displayed in the job queue.
-    description
+    description : str
         The description of the job as displayed in the job queue.
-    scheduled_execution_date
-        The earliest date and time the job should be executed.
-    data_files
-        Excel files containing data to be imported.
-    template_file
+    template_file : str or pathlib.Path, optional
         Excel template file.
-    combined_files
-        Excel files containing data and template information.
-    attachment_files
-        Any other files referenced in the data or combined files.
+    data_files : list of str or pathlib.Path, optional
+        Excel _files containing data to be imported.
+    combined_files : list of str or pathlib.Path, optional
+        Excel _files containing data and template information.
+    attachment_files : list of str or pathlib.Path, optional
+        Any other _files referenced in the data or combined _files.
+    scheduled_execution_date : datetime.datetime, optional
+        The earliest date and time the job should be executed.
+
+    Examples
+    --------
+    >>> template_file: pathlib.Path  # pathlib Path object for the template
+    >>> job_request = ExcelImportJobRequest(
+    ...     name="Excel import job",
+    ...     description="Example job request to import data from Excel",
+    ...     data_files=["Data_File_1.xlsx", "Data_File_2.xlsx"],
+    ...     template_file=template_file,
+    ... )
+    >>> job_request
+    <ExcelImportJobRequest: name: "Excel import job">
+
+    >>> tomorrow = datetime.datetime.now(datetime.UTC) + datetime.timedelta(days=1)
+    >>> job_request = ExcelImportJobRequest(
+    ...     name="Excel import job (future execution)",
+    ...     description="Example job request to execute in the future",
+    ...     data_files=["Data_File_1.xlsx", "Data_File_2.xlsx"],
+    ...     template_file=template_file,
+    ...     scheduled_execution_date=tomorrow,
+    ... )
+    >>> job_request
+    <ExcelImportJobRequest: name: "Excel import job (future execution)">
     """
 
     def __init__(
         self,
         name: str,
         description: str,
-        scheduled_execution_date: Optional[datetime.datetime] = None,
-        data_files: Optional[List[Union[str, pathlib.Path]]] = None,
         template_file: Optional[Union[str, pathlib.Path]] = None,
+        data_files: Optional[List[Union[str, pathlib.Path]]] = None,
         combined_files: Optional[List[Union[str, pathlib.Path]]] = None,
         attachment_files: Optional[List[Union[str, pathlib.Path]]] = None,
+        scheduled_execution_date: Optional[datetime.datetime] = None,
     ):
-        super().__init__(name, description, scheduled_execution_date)
+        super().__init__(name, description, template_file, scheduled_execution_date)
         self._process_files(
             {
                 _FileType.Data: data_files,
-                _FileType.Template: [template_file] if template_file else None,
                 _FileType.Combined: combined_files,
                 _FileType.Attachment: attachment_files,
             }
         )
 
-    def __repr__(self) -> str:
-        """Printable representation of the object."""
-        return f"<ExcelImportJobRequest '{self.name}'>"
-
     def _check_files_valid_for_import(self) -> None:
         """
-        Verify that the import job can run based on the provided files.
+        Verify that the import job can run based on the provided _files.
 
-        If "Combined" files are provided, "Data" and "Template" files are not permitted. Otherwise,
-        both "Data" and "Template" files must be provided.
+        If "Combined" _files are provided, "Data" and "Template" _files are not permitted. Otherwise,
+        both "Data" and "Template" _files must be provided.
 
         Raises
         ------
         ValueError
-            If not enough files have been provided for the job to successfully complete.
+            If not enough _files have been provided for the job to successfully complete.
 
         """
         if _FileType.Combined in self._file_types:
             if _FileType.Data in self._file_types or _FileType.Template in self._file_types:
                 raise ValueError(
-                    "Cannot create Excel import job with both combined and template/data files specified"
+                    "Cannot create Excel import job with both combined and template/data _files specified"
                 )
         elif not (_FileType.Data in self._file_types and _FileType.Template in self._file_types):
             raise ValueError(
-                "Excel import jobs must contain either a 'Combined' file or both a 'Template' file and 'Data' files."
+                "Excel import jobs must contain either a 'Combined' file or both a 'Template' file and 'Data' _files."
             )
 
     @property
@@ -402,61 +470,79 @@ class ExcelImportJobRequest(ImportJobRequest):
 
 class TextImportJobRequest(ImportJobRequest):
     """
-    Represents a Text import job request. Requires a template file and one or more data files.
+    Represents a Text import job request. Requires a template file and one or more data _files.
 
     Parameters
     ----------
-    name
+    name : str
         The name of the job as displayed in the job queue.
-    description
+    description : str
         The description of the job as displayed in the job queue.
-    scheduled_execution_date
+    template_file : str or pathlib.Path, optional
+        Text import template file.
+    data_files : list of str or pathlib.Path, optional
+        Text _files containing data to be imported.
+    attachment_files : list of str or pathlib.Path, optional
+        Any other _files referenced in the data _files.
+    scheduled_execution_date : datetime.datetime, optional
         The earliest date and time the job should be executed.
-    data_files
-        Text files containing data to be imported.
-    template_file
-        Text importer template file.
-    attachment_files
-        Any other files referenced in the data files.
+
+    Examples
+    --------
+    >>> template_file: pathlib.Path  # pathlib Path object for the template
+    >>> job_request = TextImportJobRequest(
+    ...     name = "Text import job",
+    ...     description = "Example job request to import data from Excel",
+    ...     template_file=template_file,
+    ...     data_files=["Data_File_1.txt", "Data_File_2.txt"],  # Relative paths
+    ... )
+    >>> job_request
+    <TextImportJobRequest: name: "Text import job">
+
+    >>> tomorrow = datetime.datetime.now(datetime.UTC) + datetime.timedelta(days=1)
+    >>> job_request = TextImportJobRequest(
+    ...     name="Text import job (future execution)",
+    ...     description="Example job request to execute in the future",
+    ...     template_file=template_file,
+    ...     data_files=["Data_File_1.txt", "Data_File_2.txt"],
+    ...     scheduled_execution_date=tomorrow,
+    ... )
+    >>> job_request
+    <TextImportJobRequest: name: "Text import job (future execution)">
     """
 
     def __init__(
         self,
         name: str,
         description: str,
-        scheduled_execution_date: Optional[datetime.datetime] = None,
-        data_files: Optional[List[Union[str, pathlib.Path]]] = None,
         template_file: Optional[Union[str, pathlib.Path]] = None,
+        data_files: Optional[List[Union[str, pathlib.Path]]] = None,
         attachment_files: Optional[List[Union[str, pathlib.Path]]] = None,
+        scheduled_execution_date: Optional[datetime.datetime] = None,
     ):
-        super().__init__(name, description, scheduled_execution_date)
+        super().__init__(name, description, template_file, scheduled_execution_date)
         self._process_files(
             {
                 _FileType.Data: data_files,
-                _FileType.Template: [template_file] if template_file else None,
                 _FileType.Attachment: attachment_files,
             }
         )
 
-    def __repr__(self) -> str:
-        """Printable representation of the object."""
-        return f"<TextImportJobRequest '{self.name}'>"
-
     def _check_files_valid_for_import(self) -> None:
         """
-        Verify that the import job can run based on the provided files.
+        Verify that the import job can run based on the provided _files.
 
-        Both "Data" and "Template" files must be provided.
+        Both "Data" and "Template" _files must be provided.
 
         Raises
         ------
         ValueError
-            If not enough files have been provided for the job to successfully complete.
+            If not enough _files have been provided for the job to successfully complete.
 
         """
         if not (_FileType.Data in self._file_types and _FileType.Template in self._file_types):
             raise ValueError(
-                "Text import jobs must contain one or more 'Data' files and a 'Template' file"
+                "Text import jobs must contain one or more 'Data' _files and a 'Template' file"
             )
 
     @property
@@ -466,10 +552,10 @@ class TextImportJobRequest(ImportJobRequest):
 
 class AsyncJob:
     """
-    Represents a Job on the server.
+    Represents a job on the server.
 
-    Provides information on the current status of the Job, as well as any job specific outputs.
-    Allows modification of Job metadata, such as Name, Description and Scheduled Date.
+    Provides information on the current status of the job, as well as any job specific outputs.
+    Allows modification of job metadata, such as the name, description and scheduled execution date.
 
     .. note::
         Do not instantiate this class directly. Objects of this type will be returned from
@@ -529,37 +615,27 @@ class AsyncJob:
 
     def __repr__(self) -> str:
         """Printable representation of the object."""
-        return f"<AsyncJob '{self.name}' status '{self.status}'>"
+        return f'<AsyncJob: name: "{self.name}", status: "{self.status}">'
 
     @property
     def id(self) -> str:
-        """
-        Unique job identifier in GUID form. Recommended way to refer to individual jobs.
-
-        Returns
-        -------
-        str
-        """
+        """Unique job identifier. Recommended way to refer to individual jobs."""
         return self._id
 
     @property
     def name(self) -> str:
-        """
-        Display name of the job (not unique).
-
-        Returns
-        -------
-        str
-        """
+        """Display name of the job (not unique)."""
         return self._name
 
     def update_name(self, value: str) -> None:
         """
         Update the display name of the job on the server.
 
+        Performs an HTTP request against the Granta MI Server API.
+
         Parameters
         ----------
-        value
+        value : str
             The new name for this job.
 
         Raises
@@ -578,22 +654,18 @@ class AsyncJob:
 
     @property
     def description(self) -> Optional[str]:
-        """
-        Description of the job as displayed in Granta MI.
-
-        Returns
-        -------
-        str
-        """
+        """Description of the job as displayed in Granta MI."""
         return self._description
 
     def update_description(self, value: str) -> None:
         """
         Update the job description on the server.
 
+        Performs an HTTP request against the Granta MI Server API.
+
         Parameters
         ----------
-        value
+        value : str
             The new description for this job.
 
         Raises
@@ -612,26 +684,14 @@ class AsyncJob:
 
     @property
     def status(self) -> JobStatus:
-        """
-        Job status of this job on the server.
-
-        Returns
-        -------
-        JobStatus
-        """
+        """Job status of this job on the server."""
         if self._is_deleted:
             return JobStatus["Deleted"]
         return JobStatus[self._status.value]
 
     @property
     def type(self) -> JobType:
-        """
-        The type of this job on the server.
-
-        Returns
-        -------
-        JobType
-        """
+        """The type of this job on the server."""
         return JobType[self._type]
 
     @property
@@ -641,7 +701,7 @@ class AsyncJob:
 
         Returns
         -------
-        int | None
+        int or None
             Returns ``None`` if the job is not currently pending.
         """
         return self._position
@@ -660,7 +720,7 @@ class AsyncJob:
 
         Returns
         -------
-        Dict
+        dict
             The ``username`` of the submitter, ``date_time`` of submission, and the ``roles``
             to which the submitter belongs indexed by name.
         """
@@ -672,47 +732,28 @@ class AsyncJob:
 
     @property
     def completion_date_time(self) -> Optional[datetime.datetime]:
-        """
-        Date and time of job completion.
-
-        Returns
-        -------
-        datetime.datetime | None
-            Returns ``None`` if job is pending.
-        """
+        """Date and time of job completion. ``None`` if the job is pending."""
         return self._completion_datetime
 
     @property
     def execution_date_time(self) -> Optional[datetime.datetime]:
-        """
-        Date and time of job execution.
-
-        Returns
-        -------
-        datetime.datetime | None
-            Returns ``None`` if job is pending.
-        """
+        """Date and time of job execution. ``None`` if the job is pending."""
         return self._execution_datetime
 
     @property
     def scheduled_execution_date_time(self) -> Optional[datetime.datetime]:
-        """
-        Date and time of scheduled job execution.
-
-        Returns
-        -------
-        datetime.datetime | None
-            Returns ``None`` if job is not scheduled.
-        """
+        """Date and time of scheduled job execution. ``None`` if the job is not scheduled."""
         return self._scheduled_exec_datetime
 
     def update_scheduled_execution_date_time(self, value: datetime.datetime) -> None:
         """
         Update the scheduled execution time on the server.
 
+        Performs an HTTP request against the Granta MI Server API.
+
         Parameters
         ----------
-        value
+        value : datetime.datetime
             The new scheduled execution time.
 
         Raises
@@ -738,11 +779,6 @@ class AsyncJob:
 
         Additional information includes record placement or verbose logging. The addition is
         dependent on the details of the job.
-
-        Returns
-        -------
-        Dict
-            Any job-specific outputs.
         """
         parsed = {}
         for k, v in self._job_specific_outputs.items():  # type: ignore[union-attr]
@@ -752,25 +788,20 @@ class AsyncJob:
 
     @property
     def output_file_names(self) -> Union[List[str], None]:
-        """
-        List of file names produced by the job, for example log files.
-
-        Returns
-        -------
-        List[str]
-            List of file names.
-        """
+        """List of names of _files produced by the job."""
         return self._output_files
 
     def download_file(self, remote_file_name: str, file_path: Union[str, pathlib.Path]) -> None:
         """
         Download an output file from the server by name and save it to a specified location.
 
+        Performs an HTTP request against the Granta MI Server API.
+
         Parameters
         ----------
-        remote_file_name
+        remote_file_name : str
             File name provided by :meth:`output_file_names`
-        file_path
+        file_path : str or pathlib.Path
             Path where the file should be saved.
 
         Raises
@@ -783,7 +814,7 @@ class AsyncJob:
         if self._is_deleted:
             raise ValueError("Job has been deleted from the Job Queue")
         if self.output_file_names is None:
-            raise ValueError("Job has no output files")
+            raise ValueError("Job has no output _files")
         if remote_file_name not in self.output_file_names:
             raise KeyError(f"File with name {remote_file_name} does not exist for this job")
         downloaded_file_path = self._job_queue_api.get_job_output_file(
@@ -802,9 +833,11 @@ class AsyncJob:
         """
         Download an output file from the server by name and return the file contents.
 
+        Performs an HTTP request against the Granta MI Server API.
+
         Parameters
         ----------
-        remote_file_name
+        remote_file_name : str
             File name provided by :meth:`output_file_names`.
 
         Returns
@@ -822,7 +855,7 @@ class AsyncJob:
         if self._is_deleted:
             raise ValueError("Job has been deleted from the Job Queue")
         if self.output_file_names is None:
-            raise ValueError("Job has no output files")
+            raise ValueError("Job has no output _files")
         if remote_file_name not in self.output_file_names:
             raise KeyError(f"File with name {remote_file_name} does not exist for this job")
         local_file_name = self._job_queue_api.get_job_output_file(
@@ -834,7 +867,7 @@ class AsyncJob:
 
     def update(self) -> None:
         """
-        Update the job from the server.
+        Refresh the job from the server.
 
         Raises
         ------
@@ -848,13 +881,3 @@ class AsyncJob:
             job_obj = self._job_queue_api.get_job(id=self.id)
         assert job_obj
         self._update_job(job_obj)
-
-
-@dataclass(frozen=True)
-class JobQueueProcessingConfiguration:
-    """Read only configuration of the Job Queue on the server."""
-
-    purge_job_age_in_milliseconds: int
-    purge_interval_in_milliseconds: int
-    polling_interval_in_milliseconds: int
-    concurrency: int

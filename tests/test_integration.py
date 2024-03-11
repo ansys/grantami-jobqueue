@@ -114,7 +114,7 @@ class TestExcelImportJob:
 
     def test_create_excel_import_separate_files(self, empty_job_queue_api_client):
         job_req = ExcelImportJobRequest(
-            name="ExcelImportTest separate files",
+            name="ExcelImportTest separate _files",
             description="Import test 1",
             template_file=EXCEL_IMPORT_TEMPLATE_FILE,
             data_files=[EXCEL_IMPORT_DATA_FILE],
@@ -130,7 +130,7 @@ class TestExcelImportJob:
 
     def test_create_excel_import_separate_files_with_attachment(self, empty_job_queue_api_client):
         job_req = ExcelImportJobRequest(
-            name="ExcelImportTest separate files with attachment",
+            name="ExcelImportTest separate _files with attachment",
             description="Import test 1",
             template_file=EXCEL_IMPORT_TEMPLATE_FILE,
             data_files=[EXCEL_IMPORT_DATA_FILE_WITH_ATTACHMENT],

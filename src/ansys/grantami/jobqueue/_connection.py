@@ -91,9 +91,12 @@ class JobQueueApiClient(ApiClient):
         """
         Get the current job queue configuration information from the server.
 
+        Performs an HTTP request against the Granta MI Server API.
+
         Returns
         -------
         JobQueueProcessingConfiguration
+            The current job queue processing configuration on the server.
         """
         if self._processing_configuration is None:
             processing_config = self.job_queue_api.get_processing_config()
@@ -118,6 +121,8 @@ class JobQueueApiClient(ApiClient):
 
         Admin users can promote jobs to the top of the queue and interact with other users' jobs.
 
+        Performs an HTTP request against the Granta MI Server API.
+
         Returns
         -------
         bool
@@ -132,6 +137,8 @@ class JobQueueApiClient(ApiClient):
     def can_write_job(self) -> bool:
         """
         Check whether the current user can create new jobs.
+
+        Performs an HTTP request against the Granta MI Server API.
 
         Returns
         -------
@@ -148,10 +155,7 @@ class JobQueueApiClient(ApiClient):
         """
         Return the number of jobs in the Job Queue, including completed and failed jobs.
 
-        Returns
-        -------
-        int
-            Number of jobs in the queue.
+        Performs an HTTP request against the Granta MI Server API.
         """
         with warnings.catch_warnings():
             warnings.simplefilter("ignore", UndefinedObjectWarning)
@@ -170,10 +174,7 @@ class JobQueueApiClient(ApiClient):
         Running or pending jobs are sorted according to their position in the queue.
         Completed or failed jobs are returned last.
 
-        Returns
-        -------
-        List[AsyncJob]
-            A list of AsyncJob objects.
+        Performs an HTTP request against the Granta MI Server API.
         """
         self._refetch_jobs()
         return sorted(self._jobs.values(), key=lambda x: (x.position is None, x.position))
@@ -192,22 +193,24 @@ class JobQueueApiClient(ApiClient):
         Running or queued jobs are sorted according to their position in the queue, completed or
         failed jobs are returned last.
 
+        Performs an HTTP request against the Granta MI Server API.
+
         Parameters
         ----------
-        name
+        name : str, optional
             Text which must appear in the job name.
-        job_type
+        job_type : JobType, optional
             The type of job to search for.
-        description
+        description : str, optional
             Text which must appear in the job description.
-        submitter_name
+        submitter_name : str, optional
             Text which must equal the name of the user who submitted the job.
-        status
+        status : JobStatus, optional
             The status of the job.
 
         Returns
         -------
-        List[AsyncJob]
+        list of AsyncJob
             A list of AsyncJob objects.
         """
         kwargs = {
@@ -221,7 +224,7 @@ class JobQueueApiClient(ApiClient):
         with warnings.catch_warnings():
             warnings.simplefilter("ignore", UndefinedObjectWarning)
             filtered_job_resp = self.job_queue_api.get_jobs(
-                **{k: v for k, v in kwargs.items() if v is not None}  # type: ignore[arg-type]
+                **{k: v for k, v in kwargs.items() if v is not None}
             )
 
         job_list = filtered_job_resp.results
@@ -238,7 +241,7 @@ class JobQueueApiClient(ApiClient):
 
         Parameters
         ----------
-        job_id
+        job_id : str
             The job id for the job to be retrieved.
 
         Returns
@@ -254,7 +257,7 @@ class JobQueueApiClient(ApiClient):
 
         Parameters
         ----------
-        jobs
+        jobs : list of AsyncJob
             A list of AsyncJob objects to be deleted from the server.
         """
         for job in jobs:
@@ -289,14 +292,14 @@ class JobQueueApiClient(ApiClient):
     def create_job_and_wait(self, job_request: "JobRequest") -> "AsyncJob":  # noqa: D205, D400
         """
         Create a job from an :class:`~.ExcelImportJobRequest`, :class:`~.ExcelExportJobRequest`, or
-        :class:`~.TextImportJobRequest` object and block until complete.
+        :class:`~.TextImportJobRequest` object and wait until the job is complete.
 
-        Upload files and submits a job request to the Job Queue. Block execution until the job
-        has either completed or failed, then return the finished :obj:`AsyncJob` object.
+        This method also uploads the _files included in the job request as a part of the job
+        submission process.
 
         Parameters
         ----------
-        job_request
+        job_request : JobRequest
             The JobRequest to be submitted to the job queue.
 
         Returns
@@ -331,11 +334,12 @@ class JobQueueApiClient(ApiClient):
         Create a job from an :class:`~.ExcelImportJobRequest`, :class:`~.ExcelExportJobRequest`, or
         :class:`~.TextImportJobRequest` object.
 
-        Upload files and submit a job request to the Job Queue.
+        This method also uploads the _files included in the job request as a part of the job
+        submission process.
 
         Parameters
         ----------
-        job_request
+        job_request : JobRequest
             The JobRequest to be submitted to the server.
 
         Returns
@@ -345,7 +349,7 @@ class JobQueueApiClient(ApiClient):
         """
         job_request._post_files(api_client=self.job_queue_api)
 
-        job_response = self.job_queue_api.create_job(body=job_request.get_job_for_submission())
+        job_response = self.job_queue_api.create_job(body=job_request._get_job_for_submission())
         self._update_job_list_from_resp([job_response])
         return self._jobs[cast(str, job_response.id)]
 

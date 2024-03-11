@@ -8,21 +8,23 @@ from ._models import (
     ExcelImportJobRequest,
     ExportRecord,
     JobQueueProcessingConfiguration,
+    JobRequest,
     JobStatus,
     JobType,
     TextImportJobRequest,
 )
 
 __all__ = [
+    "AsyncJob",
     "Connection",
-    "JobQueueApiClient",
+    "ExcelExportJobRequest",
     "ExcelImportJobRequest",
-    "TextImportJobRequest",
+    "ExportRecord",
+    "JobQueueApiClient",
+    "JobQueueProcessingConfiguration",
+    "JobRequest",
     "JobStatus",
     "JobType",
-    "AsyncJob",
-    "JobQueueProcessingConfiguration",
-    "ExportRecord",
-    "ExcelExportJobRequest",
+    "TextImportJobRequest",
 ]
 __version__ = importlib_metadata.version(__name__.replace(".", "-"))

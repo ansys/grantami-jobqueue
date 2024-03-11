@@ -30,8 +30,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
 
-    # Label based on modified files
-    - name: Label based on changed files
+    # Label based on modified _files
+    - name: Label based on changed _files
       uses: actions/labeler@v5
       with:
         repo-token: ${{ secrets.GITHUB_TOKEN }}
