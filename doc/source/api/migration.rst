@@ -39,8 +39,8 @@ with the equivalent::
    server_url = "http://my_grantami_server/mi_servicelayer"
    client = Connection(server_url).with_autologon().connect()
 
-See the :ref:`examples/0_Getting_started` example for more detail on how to connect to Granta MI
-using other authentication methods.
+See the :ref:`ref_grantami_jobqueue_connection` documentation for more detail on how to connect to
+Granta MI using other authentication methods.
 
 
 Creating a ``JobRequest``

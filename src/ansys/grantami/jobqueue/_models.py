@@ -815,11 +815,11 @@ class AsyncJob:
         Examples
         --------
         >>> job: AsyncJob
-        >>> folder = pathlib.Path(r"C:\path\to\folder")  # or pathlib.Path("/path/to/folder")
+        >>> folder = pathlib.Path(r"C:\path\to\folder")  # or Linux equivalent
         >>> for file_name in job.output_file_names:
         ...     job.download_file(file_name, folder / file_name)
         >>> print(list(folder.iterdir()))
-        [Path(C:/path/to/folder/output_1.json), Path(C:/path/to/folder/output_2.log), ...
+        [Path(C:/path/to/folder/output_1.json), Path(C:/path/to/folder/output_...
         """
         if self._is_deleted:
             raise ValueError("Job has been deleted from the Job Queue")
@@ -869,7 +869,7 @@ class AsyncJob:
         >>> for file_name in job.output_file_names:
         ...     file_content[file_name] = job.get_file_content(file_name)
         >>> print(file_content)
-        {'output_1.log': b'2024-03-11 17:24:16,342 [396] INFO  Task started: Template...
+        {'output_1.log': b'2024-03-11 17:24:16,342 [396] INFO  Task started:...
         """
         if self._is_deleted:
             raise ValueError("Job has been deleted from the Job Queue")

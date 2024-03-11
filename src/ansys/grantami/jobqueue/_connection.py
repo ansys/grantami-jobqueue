@@ -391,6 +391,7 @@ class Connection(ApiClientFactory):
     >>> client = Connection("http://my_mi_server/mi_servicelayer").with_autologon().connect()
     >>> client
     <JobQueueApiClient: url=http://my_mi_server/mi_servicelayer>
+
     >>> client = (
     ...     Connection("http://my_mi_server/mi_servicelayer")
     ...     .with_credentials(username="my_username", password="my_password")
