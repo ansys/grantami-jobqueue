@@ -48,10 +48,14 @@ Creating a ``JobRequest``
 
 Minor modifications have been made to the :class:`JobRequest` object and its concrete subclasses:
 
+.. vale off
+
 * Only :class:`pathlib.Path` and string values for file inputs are now permitted. File objects
   are no longer allowed.
 * The ``templates`` keyword argument has changed to ``template`` and now only accepts a single
   value.
+
+.. vale on
 
 
 Submitting a ``JobRequest`` to the queue
