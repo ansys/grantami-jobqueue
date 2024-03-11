@@ -48,7 +48,7 @@ import pathlib
 try:
     # Python 3.11+
     from datetime import UTC as utc
-except AttributeError:
+except ImportError:
     # Python 3.9 and 3.10
     from datetime.timezone import utc as utc
 
