@@ -50,7 +50,9 @@ try:
     from datetime import UTC as utc
 except ImportError:
     # Python 3.9 and 3.10
-    from datetime.timezone import utc as utc
+    from datetime import timezone
+
+    utc = timezone.utc
 
 from ansys.grantami.jobqueue import ExcelImportJobRequest
 
