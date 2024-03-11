@@ -217,7 +217,7 @@ class JobRequest(ABC):
         """
         Create an AsyncJobs ``JobRequest`` object ready for submission to the job queue.
 
-        Should be called after uploading _files to the service.
+        Should be called after uploading files to the service.
 
         Returns
         -------
@@ -267,7 +267,7 @@ class ImportJobRequest(JobRequest, ABC):
         Raises
         ------
         ValueError
-            If not enough _files have been provided for the job to successfully complete.
+            If not enough files have been provided for the job to successfully complete.
 
         """
         pass
@@ -389,11 +389,11 @@ class ExcelImportJobRequest(ImportJobRequest):
     template_file : str or pathlib.Path, optional
         Excel template file.
     data_files : list of str or pathlib.Path, optional
-        Excel _files containing data to be imported.
+        Excel files containing data to be imported.
     combined_files : list of str or pathlib.Path, optional
-        Excel _files containing data and template information.
+        Excel files containing data and template information.
     attachment_files : list of str or pathlib.Path, optional
-        Any other _files referenced in the data or combined _files.
+        Any other files referenced in the data or combined files.
     scheduled_execution_date : datetime.datetime, optional
         The earliest date and time the job should be executed.
 
@@ -442,25 +442,25 @@ class ExcelImportJobRequest(ImportJobRequest):
 
     def _check_files_valid_for_import(self) -> None:
         """
-        Verify that the import job can run based on the provided _files.
+        Verify that the import job can run based on the provided files.
 
-        If "Combined" _files are provided, "Data" and "Template" _files are not permitted. Otherwise,
-        both "Data" and "Template" _files must be provided.
+        If "Combined" files are provided, "Data" and "Template" files are not permitted. Otherwise,
+        both "Data" and "Template" files must be provided.
 
         Raises
         ------
         ValueError
-            If not enough _files have been provided for the job to successfully complete.
+            If not enough files have been provided for the job to successfully complete.
 
         """
         if _FileType.Combined in self._file_types:
             if _FileType.Data in self._file_types or _FileType.Template in self._file_types:
                 raise ValueError(
-                    "Cannot create Excel import job with both combined and template/data _files specified"
+                    "Cannot create Excel import job with both combined and template/data files specified"
                 )
         elif not (_FileType.Data in self._file_types and _FileType.Template in self._file_types):
             raise ValueError(
-                "Excel import jobs must contain either a 'Combined' file or both a 'Template' file and 'Data' _files."
+                "Excel import jobs must contain either a 'Combined' file or both a 'Template' file and 'Data' files."
             )
 
     @property
@@ -470,7 +470,7 @@ class ExcelImportJobRequest(ImportJobRequest):
 
 class TextImportJobRequest(ImportJobRequest):
     """
-    Represents a Text import job request. Requires a template file and one or more data _files.
+    Represents a Text import job request. Requires a template file and one or more data files.
 
     Parameters
     ----------
@@ -481,9 +481,9 @@ class TextImportJobRequest(ImportJobRequest):
     template_file : str or pathlib.Path, optional
         Text import template file.
     data_files : list of str or pathlib.Path, optional
-        Text _files containing data to be imported.
+        Text files containing data to be imported.
     attachment_files : list of str or pathlib.Path, optional
-        Any other _files referenced in the data _files.
+        Any other files referenced in the data files.
     scheduled_execution_date : datetime.datetime, optional
         The earliest date and time the job should be executed.
 
@@ -530,19 +530,19 @@ class TextImportJobRequest(ImportJobRequest):
 
     def _check_files_valid_for_import(self) -> None:
         """
-        Verify that the import job can run based on the provided _files.
+        Verify that the import job can run based on the provided files.
 
-        Both "Data" and "Template" _files must be provided.
+        Both "Data" and "Template" files must be provided.
 
         Raises
         ------
         ValueError
-            If not enough _files have been provided for the job to successfully complete.
+            If not enough files have been provided for the job to successfully complete.
 
         """
         if not (_FileType.Data in self._file_types and _FileType.Template in self._file_types):
             raise ValueError(
-                "Text import jobs must contain one or more 'Data' _files and a 'Template' file"
+                "Text import jobs must contain one or more 'Data' files and a 'Template' file"
             )
 
     @property
@@ -788,7 +788,7 @@ class AsyncJob:
 
     @property
     def output_file_names(self) -> Union[List[str], None]:
-        """List of names of _files produced by the job."""
+        """List of names of files produced by the job."""
         return self._output_files
 
     def download_file(self, remote_file_name: str, file_path: Union[str, pathlib.Path]) -> None:
@@ -814,7 +814,7 @@ class AsyncJob:
         if self._is_deleted:
             raise ValueError("Job has been deleted from the Job Queue")
         if self.output_file_names is None:
-            raise ValueError("Job has no output _files")
+            raise ValueError("Job has no output files")
         if remote_file_name not in self.output_file_names:
             raise KeyError(f"File with name {remote_file_name} does not exist for this job")
         downloaded_file_path = self._job_queue_api.get_job_output_file(
@@ -855,7 +855,7 @@ class AsyncJob:
         if self._is_deleted:
             raise ValueError("Job has been deleted from the Job Queue")
         if self.output_file_names is None:
-            raise ValueError("Job has no output _files")
+            raise ValueError("Job has no output files")
         if remote_file_name not in self.output_file_names:
             raise KeyError(f"File with name {remote_file_name} does not exist for this job")
         local_file_name = self._job_queue_api.get_job_output_file(

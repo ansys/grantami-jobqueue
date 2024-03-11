@@ -294,7 +294,7 @@ class JobQueueApiClient(ApiClient):
         Create a job from an :class:`~.ExcelImportJobRequest`, :class:`~.ExcelExportJobRequest`, or
         :class:`~.TextImportJobRequest` object and wait until the job is complete.
 
-        This method also uploads the _files included in the job request as a part of the job
+        This method also uploads the files included in the job request as a part of the job
         submission process.
 
         Parameters
@@ -334,7 +334,7 @@ class JobQueueApiClient(ApiClient):
         Create a job from an :class:`~.ExcelImportJobRequest`, :class:`~.ExcelExportJobRequest`, or
         :class:`~.TextImportJobRequest` object.
 
-        This method also uploads the _files included in the job request as a part of the job
+        This method also uploads the files included in the job request as a part of the job
         submission process.
 
         Parameters
