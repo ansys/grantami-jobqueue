@@ -45,14 +45,16 @@ client = Connection(server_url).with_credentials("user_name", "password").connec
 import datetime
 import pathlib
 
-from ansys.grantami.jobqueue import ExcelImportJobRequest
-
 try:
     # Python 3.11+
-    tomorrow = datetime.datetime.now(datetime.UTC) + datetime.timedelta(days=1)
+    from datetime import UTC as utc
 except AttributeError:
     # Python 3.9 and 3.10
-    tomorrow = datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(days=1)
+    from datetime.timezone import utc as utc
+
+from ansys.grantami.jobqueue import ExcelImportJobRequest
+
+tomorrow = datetime.datetime.now(utc) + datetime.timedelta(days=1)
 combined_excel_import_request = ExcelImportJobRequest(
     name="Excel Import (combined template and data file)",
     description="An example excel import job",
@@ -98,12 +100,7 @@ client.jobs
 deferred_job.update_name("Combined Excel Import (modified)")
 deferred_job.update_description("A new description for a combined Excel import job")
 
-try:
-    # Python 3.11+
-    now = datetime.datetime.now(datetime.UTC)
-except AttributeError:
-    # Python 3.9 and 3.10
-    now = datetime.datetime.now(datetime.timezone.utc)
+now = datetime.datetime.now(utc)
 deferred_job.update_scheduled_execution_date_time(now)
 
 client.jobs
