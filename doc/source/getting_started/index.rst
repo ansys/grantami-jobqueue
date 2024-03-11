@@ -35,4 +35,4 @@ If you see a response from the server, you have successfully installed the JobQu
 you can start using the JobQueue client. See :ref:`ref_grantami_jobqueue_examples` for more
 examples and :ref:`ref_grantami_jobqueue_api_reference` for a full description of the API.
 
-If you are migrating code from Granta MI Scripting Toolkit AsyncJobs, consult ref:`ref_migration`.
+If you are migrating code from Granta MI Scripting Toolkit AsyncJobs, consult :ref:`ref_migration`.

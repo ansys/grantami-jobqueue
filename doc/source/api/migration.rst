@@ -8,13 +8,13 @@ Migrating from AsyncJobs
 Overview
 ========
 
-The PyGranta JobQueue functionality was previously available in the Granta MI Scripting Toolkit
-AsyncJobs submodule. As of the 2024 R2 release, this functionality is now only available in the
-PyGranta JobQueue module. The current page provides a summary of the differences between these two
-packages, and shows how to modify existing code to work against the new package.
+The import and export tools available in PyGranta JobQueue was previously available in the Granta MI
+Scripting Toolkit AsyncJobs submodule. As of the 2024 R2 release, this capability is now only
+available in the PyGranta JobQueue module. The current page provides a summary of the differences
+between these two packages, and shows how to modify existing code to work against the new package.
 
 In addition, this package is `PEP 561 <PEP561_>`_ compliant, and so mypy or most modern Python IDEs
-can be used to statically validate ``AsyncJobs`` scripts against this package. This will highlight
+can be used to statically validate ``AsyncJobs`` scripts against this package. This highlights
 issues without needing to run the code.
 
 .. _PEP561: https://peps.python.org/pep-0561/

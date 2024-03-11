@@ -6,3 +6,5 @@ Makefile
 jupytext
 (?i)ansys
 AsyncJob
+AsyncJobs
+mypy

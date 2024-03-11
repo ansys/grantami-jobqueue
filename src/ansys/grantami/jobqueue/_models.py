@@ -257,7 +257,6 @@ class ImportJobRequest(JobRequest, ABC):
         vary based on job type.
         """
         super()._process_files(file_struct=file_struct)
-        self._check_files_valid_for_import()
 
     @abstractmethod
     def _check_files_valid_for_import(self) -> None:
@@ -439,6 +438,7 @@ class ExcelImportJobRequest(ImportJobRequest):
                 _FileType.Attachment: attachment_files,
             }
         )
+        self._check_files_valid_for_import()
 
     def _check_files_valid_for_import(self) -> None:
         """
@@ -527,6 +527,7 @@ class TextImportJobRequest(ImportJobRequest):
                 _FileType.Attachment: attachment_files,
             }
         )
+        self._check_files_valid_for_import()
 
     def _check_files_valid_for_import(self) -> None:
         """
@@ -792,7 +793,7 @@ class AsyncJob:
         return self._output_files
 
     def download_file(self, remote_file_name: str, file_path: Union[str, pathlib.Path]) -> None:
-        """
+        r"""
         Download an output file from the server by name and save it to a specified location.
 
         Performs an HTTP request against the Granta MI Server API.
@@ -810,6 +811,15 @@ class AsyncJob:
             If the file name does not exist for this job.
         ValueError
             If the job has been deleted from the server.
+
+        Examples
+        --------
+        >>> job: AsyncJob
+        >>> folder = pathlib.Path(r"C:\path\to\folder")  # or pathlib.Path("/path/to/folder")
+        >>> for file_name in job.output_file_names:
+        ...     job.download_file(file_name, folder / file_name)
+        >>> print(list(folder.iterdir()))
+        [Path(C:/path/to/folder/output_1.json), Path(C:/path/to/folder/output_2.log), ...
         """
         if self._is_deleted:
             raise ValueError("Job has been deleted from the Job Queue")
@@ -851,6 +861,15 @@ class AsyncJob:
             If the file name does not exist for this job.
         ValueError
             If the job has been deleted from the server.
+
+        Examples
+        --------
+        >>> job: AsyncJob
+        >>> file_content = {}
+        >>> for file_name in job.output_file_names:
+        ...     file_content[file_name] = job.get_file_content(file_name)
+        >>> print(file_content)
+        {'output_1.log': b'2024-03-11 17:24:16,342 [396] INFO  Task started: Template...
         """
         if self._is_deleted:
             raise ValueError("Job has been deleted from the Job Queue")
