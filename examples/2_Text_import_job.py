@@ -20,8 +20,8 @@
 # A Text import job is used to import data from a plan text file with an accompanying import
 # template.
 #
-# This example shows how to create an Text import job request, submit it to the job queue, and to
-# interact with the resulting Text import job object returned by the server.
+# This example shows the steps required to create a text import job request, submit it to the job
+# queue, and interact with the resulting text import job object returned by the server.
 #
 # The details of how to create a text import template are outside the scope of this example. Consult
 # the Granta MI documentation or your ACE representative for information on how to import plain text
@@ -65,7 +65,7 @@ text_import_request = TextImportJobRequest(
 text_import_request
 # -
 
-# ## Submit jobs
+# ## Submit the job to the server
 # Next, submit the jobs to the server. There are two ways to submit the job:
 #
 # * ``create_job()``: Submit the job request to the server and immediately return an
@@ -73,7 +73,9 @@ text_import_request
 # * ``create_job_and_wait()``: Submit the job request to the server and block until the job
 #    either completes or fails. Return an ``AsyncJob`` object in the 'succeeded' or 'failed' state.
 #
-# This example submits the job and waits for a response.
+# This example uses the ``create_job_and_wait()`` method. See
+# [Scheduling and modifying jobs](4_Scheduling_and_modifying_jobs.ipynb) for an example that shows
+# how to create and submit a job that runs asynchronously.
 
 # +
 text_import_job = client.create_job_and_wait(text_import_request)
@@ -90,6 +92,12 @@ text_import_job
 
 text_import_job.output_file_names
 
+# In general, a text import job will return two files:
+#
+# 1. \<job name>.log: the log file of the import operation on the server
+# 2. summary.json: a data file which summarizes the number of records impacted by the import
+#    job
+
 # The following cell shows accessing the content of the log file as ``bytes`` using the
 # ``AsyncJob.get_file_content`` method.
 
@@ -102,7 +110,7 @@ print(f"{log_file_string[:500]}...")
 # -
 
 # The following cell shows downloading the import summary file to disk with the
-# `AsyncJob.download_file`` method.
+# ``AsyncJob.download_file`` method.
 
 # +
 summary_file_name = next(
