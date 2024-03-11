@@ -46,9 +46,10 @@ client = Connection(server_url).with_credentials("user_name", "password").connec
 # date, if the import should be deferred until that date and time.
 #
 # Different job types require different input files. For example, an Excel import can use a
-# 'template' and one or more 'data' files, or a single 'combined' file. Any additional files
-# to be imported as file attributes should be specified as 'attachment' files. These can be provided
-# as relative or absolute paths or as `pathlib.Path` objects.
+# 'template' and one or more separate 'data' files, or 'combined' files which include both the data
+# and the template. Any additional files to be imported as file or picture attributes should be
+# specified as 'attachment' files. These can be provided as relative or absolute paths or as
+# `pathlib.Path` objects.
 
 # +
 from ansys.grantami.jobqueue import ExcelImportJobRequest
@@ -57,7 +58,7 @@ separate_excel_import_request = ExcelImportJobRequest(
     name="Excel Import (separate template and data files)",
     description="An example excel import job",
     data_files=["data_file_1.xlsx", "data_file_2.xlsx"],
-    template_files=["import_template.xlsx"],
+    template_file="import_template.xlsx",
 )
 separate_excel_import_request
 # -

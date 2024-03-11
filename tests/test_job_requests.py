@@ -13,9 +13,7 @@ from common import (
 EXCEL_TOO_MANY_FILES_ERROR_MESSAGE = (
     "Cannot create Excel import job with both combined and template/data files specified"
 )
-EXCEL_MISSING_FILES_ERROR_MESSAGE = (
-    "Excel import jobs must contain either a 'Combined' file or 'Data' files and a 'Template' file."
-)
+EXCEL_MISSING_FILES_ERROR_MESSAGE = "Excel import jobs must contain either a 'Combined' file or both a 'Template' file and 'Data' files."
 
 
 @pytest.mark.parametrize(
@@ -24,13 +22,13 @@ EXCEL_MISSING_FILES_ERROR_MESSAGE = (
         (
             [EXCEL_IMPORT_COMBINED_FILE],
             [EXCEL_IMPORT_DATA_FILE],
-            [EXCEL_IMPORT_TEMPLATE_FILE],
+            EXCEL_IMPORT_TEMPLATE_FILE,
             EXCEL_TOO_MANY_FILES_ERROR_MESSAGE,
         ),
         (
             [EXCEL_IMPORT_COMBINED_FILE],
             None,
-            [EXCEL_IMPORT_TEMPLATE_FILE],
+            EXCEL_IMPORT_TEMPLATE_FILE,
             EXCEL_TOO_MANY_FILES_ERROR_MESSAGE,
         ),
         (
@@ -54,7 +52,7 @@ EXCEL_MISSING_FILES_ERROR_MESSAGE = (
         (
             None,
             None,
-            [EXCEL_IMPORT_TEMPLATE_FILE],
+            EXCEL_IMPORT_TEMPLATE_FILE,
             EXCEL_MISSING_FILES_ERROR_MESSAGE,
         ),
     ],
@@ -66,7 +64,7 @@ def test_excel_invalid_files_raise_exception(combined, data, template, attachmen
             name="ExcelImportTest",
             description="Import test 1",
             data_files=data,
-            template_files=template,
+            template_file=template,
             combined_files=combined,
             attachment_files=attachment,
         )
@@ -77,7 +75,7 @@ def test_excel_invalid_files_raise_exception(combined, data, template, attachmen
     [
         (None, None),
         ([TEXT_IMPORT_DATA_FILE], None),
-        (None, [TEXT_IMPORT_TEMPLATE_FILE]),
+        (None, TEXT_IMPORT_TEMPLATE_FILE),
     ],
 )
 @pytest.mark.parametrize("attachment", [[ATTACHMENT], None])
@@ -90,6 +88,6 @@ def test_text_invalid_files_raise_exception(data, template, attachment):
             name="ExcelImportTest",
             description="Import test 1",
             data_files=data,
-            template_files=template,
+            template_file=template,
             attachment_files=attachment,
         )

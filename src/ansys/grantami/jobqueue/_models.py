@@ -340,8 +340,8 @@ class ExcelImportJobRequest(ImportJobRequest):
         The earliest date and time the job should be executed.
     data_files
         Excel files containing data to be imported.
-    template_files
-        Excel template files.
+    template_file
+        Excel template file.
     combined_files
         Excel files containing data and template information.
     attachment_files
@@ -354,7 +354,7 @@ class ExcelImportJobRequest(ImportJobRequest):
         description: str,
         scheduled_execution_date: Optional[datetime.datetime] = None,
         data_files: Optional[List[Union[str, pathlib.Path]]] = None,
-        template_files: Optional[List[Union[str, pathlib.Path]]] = None,
+        template_file: Optional[Union[str, pathlib.Path]] = None,
         combined_files: Optional[List[Union[str, pathlib.Path]]] = None,
         attachment_files: Optional[List[Union[str, pathlib.Path]]] = None,
     ):
@@ -362,7 +362,7 @@ class ExcelImportJobRequest(ImportJobRequest):
         self._process_files(
             {
                 _FileType.Data: data_files,
-                _FileType.Template: template_files,
+                _FileType.Template: [template_file] if template_file else None,
                 _FileType.Combined: combined_files,
                 _FileType.Attachment: attachment_files,
             }
@@ -392,7 +392,7 @@ class ExcelImportJobRequest(ImportJobRequest):
                 )
         elif not (_FileType.Data in self._file_types and _FileType.Template in self._file_types):
             raise ValueError(
-                "Excel import jobs must contain either a 'Combined' file or 'Data' files and a 'Template' file."
+                "Excel import jobs must contain either a 'Combined' file or both a 'Template' file and 'Data' files."
             )
 
     @property
@@ -414,7 +414,7 @@ class TextImportJobRequest(ImportJobRequest):
         The earliest date and time the job should be executed.
     data_files
         Text files containing data to be imported.
-    template_files
+    template_file
         Text importer template file.
     attachment_files
         Any other files referenced in the data files.
@@ -426,14 +426,14 @@ class TextImportJobRequest(ImportJobRequest):
         description: str,
         scheduled_execution_date: Optional[datetime.datetime] = None,
         data_files: Optional[List[Union[str, pathlib.Path]]] = None,
-        template_files: Optional[List[Union[str, pathlib.Path]]] = None,
+        template_file: Optional[Union[str, pathlib.Path]] = None,
         attachment_files: Optional[List[Union[str, pathlib.Path]]] = None,
     ):
         super().__init__(name, description, scheduled_execution_date)
         self._process_files(
             {
                 _FileType.Data: data_files,
-                _FileType.Template: template_files,
+                _FileType.Template: [template_file] if template_file else None,
                 _FileType.Attachment: attachment_files,
             }
         )
