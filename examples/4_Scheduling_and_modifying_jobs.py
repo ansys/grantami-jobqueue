@@ -60,8 +60,8 @@ tomorrow = datetime.datetime.now(utc) + datetime.timedelta(days=1)
 combined_excel_import_request = ExcelImportJobRequest(
     name="Excel Import (combined template and data file)",
     description="An example excel import job",
-    scheduled_execution_date=tomorrow,
     combined_files=[pathlib.Path("combined_import_file.xlsx")],
+    scheduled_execution_date=tomorrow,
 )
 
 combined_excel_import_request

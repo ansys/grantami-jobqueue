@@ -65,9 +65,9 @@ export_records = [
 excel_export_request = ExcelExportJobRequest(
     name="Excel Export",
     description="An example excel export job",
+    template_file="export_template.xlsx",
     database_key="MI_Training",
     records=export_records,
-    template_file="export_template.xlsx",
 )
 excel_export_request
 # -
