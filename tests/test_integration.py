@@ -51,7 +51,7 @@ def completed_text_import_job(empty_job_queue_api_client: JobQueueApiClient) -> 
         name="TextImportTest",
         description="Import test with text",
         data_files=[TEXT_IMPORT_DATA_FILE],
-        template_files=[TEXT_IMPORT_TEMPLATE_FILE],
+        template_file=TEXT_IMPORT_TEMPLATE_FILE,
     )
     job = empty_job_queue_api_client.create_job_and_wait(job_req)
     check_success(job)
@@ -116,7 +116,7 @@ class TestExcelImportJob:
         job_req = ExcelImportJobRequest(
             name="ExcelImportTest separate files",
             description="Import test 1",
-            template_files=[EXCEL_IMPORT_TEMPLATE_FILE],
+            template_file=EXCEL_IMPORT_TEMPLATE_FILE,
             data_files=[EXCEL_IMPORT_DATA_FILE],
         )
 
@@ -132,7 +132,7 @@ class TestExcelImportJob:
         job_req = ExcelImportJobRequest(
             name="ExcelImportTest separate files with attachment",
             description="Import test 1",
-            template_files=[EXCEL_IMPORT_TEMPLATE_FILE],
+            template_file=EXCEL_IMPORT_TEMPLATE_FILE,
             data_files=[EXCEL_IMPORT_DATA_FILE_WITH_ATTACHMENT],
             attachment_files=[ATTACHMENT],
         )
