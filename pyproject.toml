@@ -37,7 +37,7 @@ ansys-grantami-serverapi-openapi = "3.0.0a2"
 optional = true
 
 [tool.poetry.group.doc.dependencies]
-Sphinx = "7.0.1"
+sphinx = "7.0.1"
 numpydoc = "1.4.0"
 ansys-sphinx-theme = "0.14.0"
 sphinx-copybutton = "0.5.0"

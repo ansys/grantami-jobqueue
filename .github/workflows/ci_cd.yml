@@ -62,6 +62,11 @@ jobs:
       - name: "Generate the documentation with tox"
         run: tox -e doc
 
+      - name: "Generate PDF documentation"
+        run: |
+          cd doc
+          make pdf
+
       - name: "Upload HTML documentation"
         uses: actions/upload-artifact@v4
         with:
