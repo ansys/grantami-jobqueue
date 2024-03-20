@@ -58,6 +58,7 @@ jobs:
         run: |
           python -m pip install --upgrade pip tox
           python -m pip install poetry~=1.4.0
+          python -m pip install sphinx
           poetry install --with doc
 
       - name: "Generate the documentation with tox"
@@ -65,7 +66,7 @@ jobs:
 
       - name: "Generate PDF documentation"
         run: |
-          make -C doc pdf
+          tox -e pdf
 
       - name: "Upload HTML documentation"
         uses: actions/upload-artifact@v4
