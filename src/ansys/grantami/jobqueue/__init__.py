@@ -24,8 +24,8 @@
 
 import importlib.metadata as importlib_metadata
 
-from ._connection import Connection, JobQueueApiClient
-from ._models import (
+from .connection import Connection, JobQueueApiClient
+from .models import (
     AsyncJob,
     ExcelExportJobRequest,
     ExcelImportJobRequest,

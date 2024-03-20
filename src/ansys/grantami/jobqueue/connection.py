@@ -36,7 +36,7 @@ from ansys.openapi.common import (
 import requests  # type: ignore[import-untyped]
 
 from ._logger import logger
-from ._models import AsyncJob, JobQueueProcessingConfiguration, JobRequest, JobStatus, JobType
+from .models import AsyncJob, JobQueueProcessingConfiguration, JobRequest, JobStatus, JobType
 
 PROXY_PATH = "/proxy/v1.svc/mi"
 AUTH_PATH = "/Health/v2.svc"
