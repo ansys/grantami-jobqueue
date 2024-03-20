@@ -402,7 +402,7 @@ class ExcelImportJobRequest(ImportJobRequest):
     >>> job_request = ExcelImportJobRequest(
     ...     name="Excel import job",
     ...     description="Example job request to import data from Excel",
-    ...     data_files=["Data_File_1.xlsx", "Data_File_2.xlsx"],
+    ...     data_files=["assets/data_file_1.xlsx", "assets/data_file_2.xlsx"],
     ...     template_file=template_file,
     ... )
     >>> job_request
@@ -412,7 +412,7 @@ class ExcelImportJobRequest(ImportJobRequest):
     >>> job_request = ExcelImportJobRequest(
     ...     name="Excel import job (future execution)",
     ...     description="Example job request to execute in the future",
-    ...     data_files=["Data_File_1.xlsx", "Data_File_2.xlsx"],
+    ...     data_files=["assets/data_file_1.xlsx", "assets/data_file_2.xlsx"],
     ...     template_file=template_file,
     ...     scheduled_execution_date=tomorrow,
     ... )
