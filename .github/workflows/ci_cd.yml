@@ -58,6 +58,7 @@ jobs:
         run: |
           python -m pip install --upgrade pip tox
           python -m pip install poetry~=1.4.0
+          poetry install --with doc
 
       - name: "Generate the documentation with tox"
         run: tox -e doc
