@@ -145,7 +145,7 @@ jobs:
   build-library:
     name: "Build library"
     runs-on: ubuntu-latest
-    needs: [ doc-build, tests ]
+    needs: [ doc-build-poetry, tests ]
     steps:
       - uses: ansys/actions/build-library@v5
         with:
