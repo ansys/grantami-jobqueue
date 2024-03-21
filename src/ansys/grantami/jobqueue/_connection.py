@@ -87,7 +87,7 @@ class JobQueueApiClient(ApiClient):
         service_layer_url: str,
         configuration: SessionConfiguration,
     ) -> None:
-        
+
         self._service_layer_url = service_layer_url
         api_url = service_layer_url + PROXY_PATH
 
