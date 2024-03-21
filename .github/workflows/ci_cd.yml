@@ -47,45 +47,6 @@ jobs:
       with:
         check-links: false
 
-  doc-build-poetry:
-    name: "Build documentation (mock examples)"
-    runs-on: ubuntu-latest
-    needs: doc-style
-    steps:
-      - name: "Checkout the repository"
-        uses: actions/checkout@v4
-
-      - name: "Set up Python"
-        uses: actions/setup-python@v5
-        with:
-          python-version: ${{ env.MAIN_PYTHON_VERSION }}
-
-      - name: "Install system dependencies"
-        run: |
-          sudo apt-get update && sudo apt-get install pandoc
-
-      - name: "Install Python dependencies"
-        run: |
-          python -m pip install --upgrade pip tox
-          python -m pip install poetry~=1.4.0
-          poetry install --with doc
-
-      - name: "Generate the documentation with tox"
-        run: |
-          cd doc
-          make html
-
-      - name: "Generate PDF documentation"
-        run: |
-          tox -e pdf
-
-      - name: "Upload HTML documentation"
-        uses: actions/upload-artifact@v4
-        with:
-          name: documentation-html-mock-examples
-          path: doc/_build/html
-          retention-days: 7
-
   smoke-tests:
     name: "Build wheelhouse for latest Python versions"
     runs-on: ${{ matrix.os }}
@@ -145,7 +106,7 @@ jobs:
   build-library:
     name: "Build library"
     runs-on: ubuntu-latest
-    needs: [ doc-build-poetry, tests ]
+    needs: [ docs-build, tests ]
     steps:
       - uses: ansys/actions/build-library@v5
         with:
