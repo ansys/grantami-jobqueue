@@ -37,7 +37,17 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           vale-version: "2.29.6"
 
-  doc-build:
+
+  docs-build:
+    name: Documentation Build
+    runs-on: ubuntu-latest
+    steps:
+    - name: "Run Ansys documentation building action"
+      uses: ansys/actions/doc-build@v5
+      with:
+        check-links: false
+
+  doc-build-poetry:
     name: "Build documentation (mock examples)"
     runs-on: ubuntu-latest
     needs: doc-style
@@ -58,11 +68,12 @@ jobs:
         run: |
           python -m pip install --upgrade pip tox
           python -m pip install poetry~=1.4.0
-          python -m pip install sphinx
           poetry install --with doc
 
       - name: "Generate the documentation with tox"
-        run: tox -e doc
+        run: |
+          cd doc
+          make html
 
       - name: "Generate PDF documentation"
         run: |
