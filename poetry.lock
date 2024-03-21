@@ -1570,20 +1570,6 @@ files = [
 ]
 
 [[package]]
-name = "pandoc"
-version = "2.3"
-description = "Pandoc Documents for Python"
-optional = false
-python-versions = "*"
-files = [
-    {file = "pandoc-2.3.tar.gz", hash = "sha256:e772c2c6d871146894579828dbaf1efd538eb64fc7e71d4a6b3a11a18baef90d"},
-]
-
-[package.dependencies]
-plumbum = "*"
-ply = "*"
-
-[[package]]
 name = "pandocfilters"
 version = "1.5.1"
 description = "Utilities for writing pandoc filters in python"
@@ -1652,36 +1638,6 @@ files = [
 [package.extras]
 dev = ["pre-commit", "tox"]
 testing = ["pytest", "pytest-benchmark"]
-
-[[package]]
-name = "plumbum"
-version = "1.8.2"
-description = "Plumbum: shell combinators library"
-optional = false
-python-versions = ">=3.6"
-files = [
-    {file = "plumbum-1.8.2-py3-none-any.whl", hash = "sha256:3ad9e5f56c6ec98f6f7988f7ea8b52159662ea9e915868d369dbccbfca0e367e"},
-    {file = "plumbum-1.8.2.tar.gz", hash = "sha256:9e6dc032f4af952665f32f3206567bc23b7858b1413611afe603a3f8ad9bfd75"},
-]
-
-[package.dependencies]
-pywin32 = {version = "*", markers = "platform_system == \"Windows\" and platform_python_implementation != \"PyPy\""}
-
-[package.extras]
-dev = ["paramiko", "psutil", "pytest (>=6.0)", "pytest-cov", "pytest-mock", "pytest-timeout"]
-docs = ["sphinx (>=4.0.0)", "sphinx-rtd-theme (>=1.0.0)"]
-ssh = ["paramiko"]
-
-[[package]]
-name = "ply"
-version = "3.11"
-description = "Python Lex & Yacc"
-optional = false
-python-versions = "*"
-files = [
-    {file = "ply-3.11-py2.py3-none-any.whl", hash = "sha256:096f9b8350b65ebd2fd1346b12452efe5b9607f7482813ffca50c22722a807ce"},
-    {file = "ply-3.11.tar.gz", hash = "sha256:00c7c1aaa88358b9c765b6d3000c6eec0ba42abca5351b095321aef446081da3"},
-]
 
 [[package]]
 name = "pre-commit"
@@ -1820,6 +1776,22 @@ files = [
 [package.extras]
 plugins = ["importlib-metadata"]
 windows-terminal = ["colorama (>=0.4.6)"]
+
+[[package]]
+name = "pypandoc-binary"
+version = "1.13"
+description = "Thin wrapper for pandoc."
+optional = false
+python-versions = ">=3.6"
+files = [
+    {file = "pypandoc_binary-1.13-py3-none-macosx_10_9_x86_64.whl", hash = "sha256:946666388eb79b307d7f497b3b33045ef807750f8e5ef3440e0ba3bbab698044"},
+    {file = "pypandoc_binary-1.13-py3-none-macosx_11_0_arm64.whl", hash = "sha256:21ef0345726d36fc45a50211320614daf2caede684b0d0963ce8738292809746"},
+    {file = "pypandoc_binary-1.13-py3-none-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:67c0c7af811bcf3cd4f3221be756a4975ec35b2d7df89d8de4313a8caa2cd54f"},
+    {file = "pypandoc_binary-1.13-py3-none-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:9455fdd9521cbf4b56d79a56b806afa94c8c22f3c8ef878536e58d941a70f6d6"},
+    {file = "pypandoc_binary-1.13-py3-none-musllinux_1_1_aarch64.whl", hash = "sha256:2915f52e4632bd2d0a8fcd2f7e7dfc2ea19b4e1a280fcbc2ddcd142713c4ff12"},
+    {file = "pypandoc_binary-1.13-py3-none-musllinux_1_1_x86_64.whl", hash = "sha256:11a2497320eb3dccb74de3c67b6df3e5d3f66cdc2a36a67e9a871708f7e48412"},
+    {file = "pypandoc_binary-1.13-py3-none-win_amd64.whl", hash = "sha256:3881aa7c84faec2007c0ae4466d3a1cfc93171206b8540f2defa8ea971bf6fd6"},
+]
 
 [[package]]
 name = "pyparsing"
@@ -2981,4 +2953,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.9,<4.0"
-content-hash = "ca454c9cf334bcbd905ae7f58c21fac0afc376de2d25fc5baa9a5cc6927f5607"
+content-hash = "339e99b8dc3c900b5ec464fd66c804e0543a6c5f4350a1bb66579fa94eb275f9"
