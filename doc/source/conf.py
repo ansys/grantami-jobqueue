@@ -6,7 +6,12 @@ from pathlib import Path
 import re
 import shutil
 
-from ansys_sphinx_theme import ansys_favicon, get_version_match, pyansys_logo_black
+from ansys_sphinx_theme import (
+    ansys_favicon,
+    get_autoapi_templates_dir_relative_path,
+    get_version_match,
+    pyansys_logo_black,
+)
 import jupytext
 
 from ansys.grantami.jobqueue import __version__
@@ -51,6 +56,8 @@ extensions = [
     "sphinx_jinja",
     "nbsphinx",
     "enum_tools.autoenum",
+    "autoapi.extension",
+    "sphinx_design",
 ]
 
 # sphinx
@@ -213,3 +220,19 @@ Download this example as a :download:`Jupyter notebook </{{ env.docname }}.ipynb
 
 ----
 """
+# Configuration for Sphinx autoapi
+autoapi_type = "python"
+autoapi_dirs = ["../../src/ansys"]
+autoapi_root = "api"
+autoapi_options = [
+    "members",
+    "undoc-members",
+    "show-inheritance",
+    "show-module-summary",
+    "special-members",
+]
+autoapi_template_dir = get_autoapi_templates_dir_relative_path(Path(__file__))
+suppress_warnings = ["autoapi.python_import_resolution"]
+autoapi_python_use_implicit_namespaces = True
+autoapi_keep_files = True
+autoapi_render_in_single_page = ["class", "enum", "exception"]

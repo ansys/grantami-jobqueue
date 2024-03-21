@@ -2,8 +2,13 @@
 
 .. currentmodule:: ansys.grantami.jobqueue
 
+User guide
+##########
+
 Migrating from AsyncJobs
-########################
+========================
+
+This section shows how to migrate from AsyncJobs to PyGranta JobQueue package.
 
 Overview
 ========
