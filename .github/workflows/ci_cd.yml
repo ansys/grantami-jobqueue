@@ -42,14 +42,12 @@ jobs:
     name: Documentation Build
     runs-on: ubuntu-latest
     steps:
-    - name: "Install system dependencies"
-      run: |
-        sudo apt-get update && sudo apt-get install pandoc
 
     - name: "Run Ansys documentation building action"
       uses: ansys/actions/doc-build@v5
       with:
         check-links: false
+        dependencies: "pandoc"
 
   smoke-tests:
     name: "Build wheelhouse for latest Python versions"
