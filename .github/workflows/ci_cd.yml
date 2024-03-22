@@ -48,6 +48,7 @@ jobs:
       with:
         check-links: false
         dependencies: "pandoc"
+        sphinxopts: '-j auto --keep-going'
 
   smoke-tests:
     name: "Build wheelhouse for latest Python versions"
