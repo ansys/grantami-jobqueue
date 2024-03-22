@@ -50,14 +50,46 @@ html_theme_options = {
 
 # Sphinx extensions
 extensions = [
+    "autoapi.extension",
     "sphinx.ext.intersphinx",
     "sphinx_copybutton",
     "sphinx_jinja",
     "nbsphinx",
     "enum_tools.autoenum",
-    "autoapi.extension",
     "sphinx_design",
+    "sphinx.ext.napoleon",
 ]
+
+napoleon_custom_sections = ["Parameters", "Notes", "Examples"]
+
+
+# Configuration for Sphinx autoapi
+autoapi_type = "python"
+autoapi_dirs = ["../../src/ansys"]
+autoapi_root = "api"
+autoapi_options = [
+    "members",
+    "undoc-members",
+    "show-inheritance",
+    "show-module-summary",
+    "special-members",
+]
+autoapi_template_dir = get_autoapi_templates_dir_relative_path(Path(__file__))
+suppress_warnings = ["autoapi.python_import_resolution"]
+autoapi_python_use_implicit_namespaces = True
+autoapi_keep_files = True
+autoapi_render_in_single_page = ["class", "enum", "exception"]
+
+
+def skip_submodules(app, what, name, obj, skip, options):
+    if what == "module":
+        skip = True
+    return skip
+
+
+def setup(sphinx):
+    sphinx.connect("autoapi-skip-member", skip_submodules)
+
 
 # sphinx
 add_module_names = False
@@ -219,19 +251,3 @@ Download this example as a :download:`Jupyter notebook </{{ env.docname }}.ipynb
 
 ----
 """
-# Configuration for Sphinx autoapi
-autoapi_type = "python"
-autoapi_dirs = ["../../src/ansys"]
-autoapi_root = "api"
-autoapi_options = [
-    "members",
-    "undoc-members",
-    "show-inheritance",
-    "show-module-summary",
-    "special-members",
-]
-autoapi_template_dir = get_autoapi_templates_dir_relative_path(Path(__file__))
-suppress_warnings = ["autoapi.python_import_resolution"]
-autoapi_python_use_implicit_namespaces = True
-autoapi_keep_files = True
-autoapi_render_in_single_page = ["class", "enum", "exception"]
