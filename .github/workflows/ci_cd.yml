@@ -38,17 +38,17 @@ jobs:
           vale-version: "2.29.6"
 
 
-  docs-build:
-    name: Documentation Build
-    runs-on: ubuntu-latest
-    steps:
+#  docs-build:
+#    name: Documentation Build
+#    runs-on: ubuntu-latest
+#    steps:
+#    - name: "Run Ansys documentation building action"
+#      uses: ansys/actions/doc-build@v5
+#      with:
+#        check-links: false
+#        dependencies: "pandoc"
+#        sphinxopts: '-j auto --keep-going'
 
-    - name: "Run Ansys documentation building action"
-      uses: ansys/actions/doc-build@v5
-      with:
-        check-links: false
-        dependencies: "pandoc"
-        sphinxopts: '-j auto --keep-going'
 
   smoke-tests:
     name: "Build wheelhouse for latest Python versions"
