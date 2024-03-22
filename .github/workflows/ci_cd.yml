@@ -109,7 +109,7 @@ jobs:
   build-library:
     name: "Build library"
     runs-on: ubuntu-latest
-    needs: [ docs-build, tests ]
+    needs: [tests]
     steps:
       - uses: ansys/actions/build-library@v5
         with:
