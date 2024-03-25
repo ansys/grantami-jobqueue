@@ -37,19 +37,6 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           vale-version: "2.29.6"
 
-
-#  docs-build:
-#    name: Documentation Build
-#    runs-on: ubuntu-latest
-#    steps:
-#    - name: "Run Ansys documentation building action"
-#      uses: ansys/actions/doc-build@v5
-#      with:
-#        check-links: false
-#        dependencies: "pandoc"
-#        sphinxopts: '-j auto --keep-going'
-
-
   smoke-tests:
     name: "Build wheelhouse for latest Python versions"
     runs-on: ${{ matrix.os }}
@@ -90,21 +77,21 @@ jobs:
       - name: "Test with tox"
         run: tox -e tests -- -m "not integration"
 
-#      - name: "Upload coverage artifacts"
-#        uses: actions/upload-artifact@v4
-#        if: ${{ matrix.python-version == env.MAIN_PYTHON_VERSION && matrix.os == 'ubuntu-latest' && !startsWith( github.event.pull_request.head.ref, 'dependabot/') }}
-#        with:
-#          name: coverage-html-unittests
-#          path: .cov/html
-#          retention-days: 7
-#
-#      - name: "Upload coverage to Codecov"
-#        uses: codecov/codecov-action@v3
-#        if: ${{ matrix.python-version == env.MAIN_PYTHON_VERSION && matrix.os == 'ubuntu-latest' && !startsWith( github.event.pull_request.head.ref, 'dependabot/') }}
-#        with:
-#          files: .cov/xml
-#          flags: unittests
-#          fail_ci_if_error: true
+      - name: "Upload coverage artifacts"
+        uses: actions/upload-artifact@v4
+        if: ${{ matrix.python-version == env.MAIN_PYTHON_VERSION && matrix.os == 'ubuntu-latest' && !startsWith( github.event.pull_request.head.ref, 'dependabot/') }}
+        with:
+          name: coverage-html-unittests
+          path: .cov/html
+          retention-days: 7
+
+      - name: "Upload coverage to Codecov"
+        uses: codecov/codecov-action@v4
+        if: ${{ matrix.python-version == env.MAIN_PYTHON_VERSION && matrix.os == 'ubuntu-latest' && !startsWith( github.event.pull_request.head.ref, 'dependabot/') }}
+        with:
+          files: .cov/xml
+          flags: unittests
+          fail_ci_if_error: true
 
   build-library:
     name: "Build library"
@@ -118,7 +105,7 @@ jobs:
 
   server-checks:
     name: "Server checks"
-    # needs: [ smoke-tests ]
+    needs: [ smoke-tests ]
     if: ${{ !startsWith( github.event.pull_request.head.ref, 'dependabot/') }}
     uses: ./.github/workflows/server_checks.yml
     with:
