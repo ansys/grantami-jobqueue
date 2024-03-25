@@ -153,7 +153,6 @@ jobs:
         with:
           check-links: false
           dependencies: "pandoc"
-          sphinxopts: '-j auto --keep-going'
 
   stop-vm:
     name: "Stop Azure VM"
