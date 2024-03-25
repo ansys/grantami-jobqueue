@@ -105,7 +105,6 @@ checks = [
     "SA01",
     "ES01",
 ]
-    #exclude: "^(tests/)|^(.github/)|^(examples/)|^(.ipython/)|^(doc)"
 
 exclude = [  # don't report on objects that match any of these regex
     '\.__repr__$',
