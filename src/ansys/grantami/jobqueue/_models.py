@@ -35,6 +35,8 @@ from ansys.openapi.common import UndefinedObjectWarning, Unset
 
 
 class _DocumentedEnum(Enum):
+    """Base class for documented enums."""
+
     def __new__(cls, value: int, doc: str) -> "_DocumentedEnum":
         obj: _DocumentedEnum = object.__new__(cls)
         obj._value_ = value
@@ -91,7 +93,8 @@ class JobQueueProcessingConfiguration:
 
 @dataclass(frozen=True)
 class ExportRecord:
-    """Defines a record to be included in an Export job.
+    """
+    Defines a record to be included in an Export job.
 
     Parameters
     ----------
@@ -107,7 +110,14 @@ class ExportRecord:
     record_version: Optional[int] = None
 
     def to_dict(self) -> Dict[str, Union[int, None]]:
-        """Serialize this object to a dictionary."""
+        """
+        Serialize this object to a dictionary.
+
+        Returns
+        -------
+        Dict[str, Union[int, None]]
+            A dictionary representation of this object.
+        """
         return {
             "RecordHistoryIdentity": self.record_history_identity,
             "RecordVersion": self.record_version,
@@ -115,6 +125,15 @@ class ExportRecord:
 
 
 class _JobFile:
+    """
+    Represents a file associated with a job request.
+
+    Parameters
+    ----------
+    file_type : _FileType
+        The type of file being represented.
+    """
+
     def __init__(self, file_type: _FileType):
         self.file_type = file_type
         self._path: Union[pathlib.Path, None] = None
@@ -122,43 +141,126 @@ class _JobFile:
 
     @classmethod
     def from_pathlib_path(cls, path: pathlib.Path, file_type: _FileType) -> "_JobFile":
+        """
+        Create a new JobFile object from a pathlib.Path object.
+
+        Parameters
+        ----------
+        path : pathlib.Path
+            The path to the file.
+        file_type : _FileType
+            The type of file being created.
+
+        Returns
+        -------
+        _JobFile
+            The new JobFile object.
+        """
         new_obj = cls(file_type)
         new_obj.path = path
         return new_obj
 
     @classmethod
     def from_string(cls, file_path: str, file_type: _FileType) -> "_JobFile":
+        """
+        Create a new JobFile object from a string path.
+
+        Parameters
+        ----------
+        file_path : str
+            The path to the file.
+        file_type : _FileType
+            The type of file being created.
+
+        Returns
+        -------
+        _JobFile
+            The new JobFile object.
+        """
         path = pathlib.Path(file_path)
         new_obj = cls.from_pathlib_path(path, file_type)
         return new_obj
 
     @property
     def name(self) -> str:
+        """
+        Get the name of the file.
+
+        Returns
+        -------
+        str
+            The name of the file.
+        """
         assert self._path
         return self._path.name
 
     @property
     def path(self) -> pathlib.Path:
+        """
+        Get the path of the file.
+
+        Returns
+        -------
+        pathlib.Path
+            The path of the file.
+        """
         assert self._path
         return self._path
 
     @path.setter
     def path(self, value: pathlib.Path) -> None:
+        """
+        Set the path of the file.
+
+        Parameters
+        ----------
+        value : pathlib.Path
+            The path of the file.
+        """
         self._path = value
 
     @property
     def serializable_path(self) -> str:
+        """
+        Get the path of the file as a string.
+
+        Returns
+        -------
+        str
+            The path of the file as a string.
+        """
         assert self._path
         return str(self._path)
 
     @property
     def file_id(self) -> str:
+        """
+        Get the file ID for this file.
+
+        Returns
+        -------
+        str
+            The file ID for this file.
+
+        Raises
+        ------
+        ValueError
+            If the file has not been uploaded to the server.
+        """
         if not self._id:
             raise ValueError("File has not been uploaded to the server.")
         return self._id
 
     @file_id.setter
     def file_id(self, value: str) -> None:
+        """
+        Set the file ID for this file.
+
+        Parameters
+        ----------
+        value : str
+            The file ID to set for this file.
+        """
         self._id = value
 
 
@@ -198,12 +300,20 @@ class JobRequest(ABC):
             self._process_files({_FileType.Template: [template_file]})
 
     def __repr__(self) -> str:
-        """Printable representation of the object."""
+        """Represent the object in string format."""
         return f'<{type(self).__name__}: name: "{self.name}">'
 
     def _process_files(
         self, file_struct: Dict[_FileType, Optional[List[Union[str, pathlib.Path]]]]
     ) -> None:
+        """
+        Parse the file structure for the job request.
+
+        Parameters
+        ----------
+        file_struct : Dict[_FileType, Optional[List[Union[str, pathlib.Path]]]]
+            A dictionary containing lists of file paths for each file type.
+        """
         for file_type, file_list in file_struct.items():
             if file_list is None:
                 continue
@@ -211,6 +321,21 @@ class JobRequest(ABC):
                 self._add_file(file, file_type)
 
     def _add_file(self, file_obj: Union[str, pathlib.Path], type_: _FileType) -> None:
+        """
+        Add a file to the job request.
+
+        Parameters
+        ----------
+        file_obj : Union[str, pathlib.Path]
+            The file to be added to the job request.
+        type_ : _FileType
+            The type of file being added.
+
+        Raises
+        ------
+        TypeError
+            If the file object is not a string or pathlib.Path object.
+        """
         if isinstance(file_obj, pathlib.Path):
             new_file = _JobFile.from_pathlib_path(file_type=type_, path=file_obj)
         elif isinstance(file_obj, str):
@@ -223,13 +348,22 @@ class JobRequest(ABC):
         self._files.append(new_file)
 
     def _post_files(self, api_client: api.JobQueueApi) -> None:
+        """
+        Upload files to the server.
+
+        Parameters
+        ----------
+        api_client : api.JobQueueApi
+            The Job Queue API object used to interact with the server.
+        """
         for file in self._files:
             file_id = api_client.upload_file(file=file.path)
             file.file_id = file_id
 
     @abstractmethod
     def _render_job_parameters(self) -> str:
-        """Serialize the parameters required to create the job.
+        """
+        Serialize the parameters required to create the job.
 
         These are undocumented and vary depending on the specific job type.
         """
@@ -260,10 +394,26 @@ class JobRequest(ABC):
     @property
     @abstractmethod
     def _job_type(self) -> JobType:
+        """
+        Return the job type for this job request.
+
+        Returns
+        -------
+        JobType
+            The type of job this request represents.
+        """
         pass
 
     @property
     def _file_types(self) -> List[_FileType]:
+        """
+        Return the file types of the files associated with this job request.
+
+        Returns
+        -------
+        List[_FileType]
+            The file types of the files associated with this job request.
+        """
         return [file.file_type for file in self._files]
 
 
@@ -273,10 +423,16 @@ class ImportJobRequest(JobRequest, ABC):
     def _process_files(
         self, file_struct: Dict[_FileType, Optional[List[Union[str, pathlib.Path]]]]
     ) -> None:
-        """Check the validity of the file structure for importing.
+        """
+        Check the validity of the file structure for importing.
 
         Required since only certain combinations of file types are permitted, and these combinations
         vary based on job type.
+
+        Parameters
+        ----------
+        file_struct : Dict[_FileType, Optional[List[Union[str, pathlib.Path]]]]
+            A dictionary containing lists of file paths for each file type.
         """
         super()._process_files(file_struct=file_struct)
 
@@ -289,11 +445,18 @@ class ImportJobRequest(JobRequest, ABC):
         ------
         ValueError
             If not enough files have been provided for the job to successfully complete.
-
         """
         pass
 
     def _generate_file_list_for_import(self) -> List[Dict[str, str]]:
+        """
+        Generate a list of dictionaries representing the files to be imported.
+
+        Returns
+        -------
+        List[Dict[str, str]]
+            A list of dictionaries containing the file type and path for each file.
+        """
         file_params = []
         for file in self._files:
             file_params.append(
@@ -302,12 +465,28 @@ class ImportJobRequest(JobRequest, ABC):
         return file_params
 
     def _render_job_parameters(self) -> str:
+        """
+        Serialize the parameters required to create the job.
+
+        Returns
+        -------
+        str
+            The serialized parameters for the job request.
+        """
         file_params = self._generate_file_list_for_import()
         return json.dumps(file_params)
 
     @property
     @abstractmethod
     def _job_type(self) -> JobType:
+        """
+        Return the job type for this job request.
+
+        Returns
+        -------
+        JobType
+            The type of job this request represents.
+        """
         pass
 
 
@@ -369,6 +548,7 @@ class ExcelExportJobRequest(JobRequest):
         records: List[ExportRecord],
         scheduled_execution_date: Optional[datetime.datetime] = None,
     ):
+        """Initialize the ExcelExportJobRequest object."""
         super().__init__(name, description, template_file, scheduled_execution_date)
         self._database_key = database_key
         self._records = records
@@ -378,6 +558,11 @@ class ExcelExportJobRequest(JobRequest):
         Generate a serialized representation of the parameters required to create the export job.
 
         Includes references to the records to be exported and the name of the template file.
+
+        Returns
+        -------
+        str
+            The serialized parameters for the job request.
         """
         record_references = [r.to_dict() for r in self._records]
         assert self._file_types == [_FileType.Template]
@@ -391,6 +576,14 @@ class ExcelExportJobRequest(JobRequest):
 
     @property
     def _job_type(self) -> JobType:
+        """
+        Return the job type for this job request.
+
+        Returns
+        -------
+        JobType
+            The type of job this request represents.
+        """
         return JobType.ExcelExportJob
 
 
@@ -452,6 +645,7 @@ class ExcelImportJobRequest(ImportJobRequest):
         attachment_files: Optional[List[Union[str, pathlib.Path]]] = None,
         scheduled_execution_date: Optional[datetime.datetime] = None,
     ):
+        """Initialize the ExcelImportJobRequest object."""
         super().__init__(name, description, template_file, scheduled_execution_date)
         self._process_files(
             {
@@ -473,7 +667,6 @@ class ExcelImportJobRequest(ImportJobRequest):
         ------
         ValueError
             If not enough files have been provided for the job to successfully complete.
-
         """
         if _FileType.Combined in self._file_types:
             if _FileType.Data in self._file_types or _FileType.Template in self._file_types:
@@ -487,6 +680,14 @@ class ExcelImportJobRequest(ImportJobRequest):
 
     @property
     def _job_type(self) -> JobType:
+        """
+        Return the job type for this job request.
+
+        Returns
+        -------
+        JobType
+            The type of job this request represents.
+        """
         return JobType.ExcelImportJob
 
 
@@ -542,6 +743,7 @@ class TextImportJobRequest(ImportJobRequest):
         attachment_files: Optional[List[Union[str, pathlib.Path]]] = None,
         scheduled_execution_date: Optional[datetime.datetime] = None,
     ):
+        """Initialize the TextImportJobRequest object."""
         super().__init__(name, description, template_file, scheduled_execution_date)
         self._process_files(
             {
@@ -561,7 +763,6 @@ class TextImportJobRequest(ImportJobRequest):
         ------
         ValueError
             If not enough files have been provided for the job to successfully complete.
-
         """
         if not (_FileType.Data in self._file_types and _FileType.Template in self._file_types):
             raise ValueError(
@@ -570,6 +771,14 @@ class TextImportJobRequest(ImportJobRequest):
 
     @property
     def _job_type(self) -> JobType:
+        """
+        Return the job type for this job request.
+
+        Returns
+        -------
+        JobType
+            The type of job this request represents.
+        """
         return JobType.TextImportJob
 
 
@@ -580,6 +789,15 @@ class AsyncJob:
     Provides information on the current status of the job, as well as any job specific outputs.
     Allows modification of job metadata, such as the name, description and scheduled execution date.
 
+    Parameters
+    ----------
+    job_obj : models.GrantaServerApiAsyncJobsJob
+        The job object returned from the server.
+    job_queue_api : api.JobQueueApi
+        The Job Queue API object used to interact with the server.
+
+    Notes
+    -----
     .. note::
         Do not instantiate this class directly. Objects of this type will be returned from
         :meth:`~JobQueueApiClient.create_job` and
@@ -589,6 +807,7 @@ class AsyncJob:
     def __init__(
         self, job_obj: models.GrantaServerApiAsyncJobsJob, job_queue_api: api.JobQueueApi
     ) -> None:
+        """Initialize the AsyncJob object."""
         self._job_queue_api = job_queue_api
         self._is_deleted = False
 
@@ -610,6 +829,14 @@ class AsyncJob:
         self._update_job(job_obj)
 
     def _update_job(self, job_obj: models.GrantaServerApiAsyncJobsJob) -> None:
+        """
+        Job object with the latest information from the server.
+
+        Parameters
+        ----------
+        job_obj : models.GrantaServerApiAsyncJobsJob
+            The job object returned from the server.
+        """
         self._id = self._get_property(job_obj, name="id", required=True)
         self._name = self._get_property(job_obj, name="name", required=True)
         self._description = self._get_property(job_obj, name="description", required=True)
@@ -629,6 +856,29 @@ class AsyncJob:
     def _get_property(
         job_obj: models.GrantaServerApiAsyncJobsJob, name: str, required: bool = False
     ) -> Any:
+        """
+        Get the value of a property from the job object.
+
+        Parameters
+        ----------
+        job_obj : models.GrantaServerApiAsyncJobsJob
+            The job object returned from the server.
+        name : str
+            The name of the property to retrieve.
+        required : bool, optional
+            If True, raise an error if the property is not present. If False, return None if the
+            property is not present. By default, False.
+
+        Returns
+        -------
+        Any
+            The value of the property.
+
+        Raises
+        ------
+        ValueError
+            If the property is required and not present in the job object.
+        """
         value = job_obj.__getattribute__(name)
         if not required:
             return value if value not in [None, Unset] else None
@@ -637,17 +887,38 @@ class AsyncJob:
         return value
 
     def __repr__(self) -> str:
-        """Printable representation of the object."""
+        """
+        Printable representation of the object.
+
+        Returns
+        -------
+        str
+            The string representation of the object.
+        """
         return f'<AsyncJob: name: "{self.name}", status: "{self.status}">'
 
     @property
     def id(self) -> str:
-        """Unique job identifier. Recommended way to refer to individual jobs."""
+        """
+        Unique job identifier. Recommended way to refer to individual jobs.
+
+        Returns
+        -------
+        str
+            The unique identifier of the job.
+        """
         return self._id
 
     @property
     def name(self) -> str:
-        """Display name of the job (not unique)."""
+        """
+        Display name of the job (not unique).
+
+        Returns
+        -------
+        str
+            The name of the job.
+        """
         return self._name
 
     def update_name(self, value: str) -> None:
@@ -677,7 +948,14 @@ class AsyncJob:
 
     @property
     def description(self) -> Optional[str]:
-        """Description of the job as displayed in Granta MI."""
+        """
+        Description of the job as displayed in Granta MI.
+
+        Returns
+        -------
+        str or None
+            The description of the job.
+        """
         return self._description
 
     def update_description(self, value: str) -> None:
@@ -707,14 +985,28 @@ class AsyncJob:
 
     @property
     def status(self) -> JobStatus:
-        """Job status of this job on the server."""
+        """
+        Job status of this job on the server.
+
+        Returns
+        -------
+        JobStatus
+            The status of this job.
+        """
         if self._is_deleted:
             return JobStatus["Deleted"]
         return JobStatus[self._status.value]
 
     @property
     def type(self) -> JobType:
-        """The type of this job on the server."""
+        """
+        The type of this job on the server.
+
+        Returns
+        -------
+        JobType
+            The type of job this is.
+        """
         return JobType[self._type]
 
     @property
@@ -730,7 +1022,7 @@ class AsyncJob:
         return self._position
 
     def move_to_top(self) -> None:
-        """Promotes the job to the top of the Job Queue. User must have MI_ADMIN permission."""
+        """Promote the job to the top of the Job Queue. User must have MI_ADMIN permission."""
         self._job_queue_api.move_to_top(id=self.id)
         self.update()
 
@@ -755,17 +1047,38 @@ class AsyncJob:
 
     @property
     def completion_date_time(self) -> Optional[datetime.datetime]:
-        """Date and time of job completion. ``None`` if the job is pending."""
+        """
+        Date and time of job completion. ``None`` if the job is pending.
+
+        Returns
+        -------
+        datetime.datetime or None
+            The date and time the job was completed.
+        """
         return self._completion_datetime
 
     @property
     def execution_date_time(self) -> Optional[datetime.datetime]:
-        """Date and time of job execution. ``None`` if the job is pending."""
+        """
+        Date and time of job execution. ``None`` if the job is pending.
+
+        Returns
+        -------
+        datetime.datetime or None
+            The date and time the job was executed.
+        """
         return self._execution_datetime
 
     @property
     def scheduled_execution_date_time(self) -> Optional[datetime.datetime]:
-        """Date and time of scheduled job execution. ``None`` if the job is not scheduled."""
+        """
+        Date and time of scheduled job execution. ``None`` if the job is not scheduled.
+
+        Returns
+        -------
+        datetime.datetime or None
+            The date and time the job is scheduled to run.
+        """
         return self._scheduled_exec_datetime
 
     def update_scheduled_execution_date_time(self, value: datetime.datetime) -> None:
@@ -802,6 +1115,11 @@ class AsyncJob:
 
         Additional information includes record placement or verbose logging. The addition is
         dependent on the details of the job.
+
+        Returns
+        -------
+        dict
+            Additional information provided by the job.
         """
         parsed = {}
         for k, v in self._job_specific_outputs.items():  # type: ignore[union-attr]
@@ -811,7 +1129,14 @@ class AsyncJob:
 
     @property
     def output_file_names(self) -> Union[List[str], None]:
-        """List of names of files produced by the job."""
+        """
+        List of names of files produced by the job.
+
+        Returns
+        -------
+        list of str or None
+            Returns ``None`` if the job has no output files.
+        """
         return self._output_files
 
     def download_file(self, remote_file_name: str, file_path: Union[str, pathlib.Path]) -> None:
@@ -823,7 +1148,7 @@ class AsyncJob:
         Parameters
         ----------
         remote_file_name : str
-            File name provided by :meth:`output_file_names`
+            File name provided by :meth:`output_file_names`.
         file_path : str or pathlib.Path
             Path where the file should be saved.
 

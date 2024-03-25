@@ -97,3 +97,20 @@ files = "src"
 explicit_package_bases = true
 mypy_path = "$MYPY_CONFIG_FILE_DIR/src"
 namespace_packages = true
+
+[tool.numpydoc_validation]
+checks = [
+    "all",   # report on all checks, except the below
+    "EX01",
+    "SA01",
+    "ES01",
+]
+    #exclude: "^(tests/)|^(.github/)|^(examples/)|^(.ipython/)|^(doc)"
+
+exclude = [  # don't report on objects that match any of these regex
+    '\.__repr__$',
+    '\.__new__$',
+    '\.__init__$',
+    '\.JobRequest$',
+    '\.ExportRecord$',
+]

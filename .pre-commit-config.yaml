@@ -59,8 +59,8 @@ repos:
       args:
       - --start_year=2024
 
-#- repo: https://github.com/numpy/numpydoc
-#  rev: v1.6.0
-#  hooks:
-#  - id: numpydoc-validation
-#    exclude: "^(tests/)|^(.github/)|^(examples/)|^(.ipython/)|^(doc)"
+- repo: https://github.com/numpy/numpydoc
+  rev: v1.6.0
+  hooks:
+  - id: numpydoc-validation
+    exclude: "^(tests/)|^(.github/)|^(examples/)|^(.ipython/)|^(doc)"

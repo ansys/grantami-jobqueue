@@ -49,7 +49,8 @@ _ArgNotProvided = "_ArgNotProvided"
 
 
 def _get_mi_server_version(client: ApiClient) -> Tuple[int, ...]:
-    """Get the Granta MI version as a tuple.
+    """
+    Get the Granta MI version as a tuple.
 
     Makes direct use of the underlying serverapi-openapi package. The API methods
     in this package may change over time, and so it is expected that this method
@@ -79,6 +80,15 @@ class JobQueueApiClient(ApiClient):
 
     This class is instantiated by the :class:`Connection` class
     and should not be instantiated directly.
+
+    Parameters
+    ----------
+    session : requests.Session
+        Session object to use for HTTP requests.
+    service_layer_url : str
+        Base URL of the Granta MI Service Layer application.
+    configuration : SessionConfiguration
+        Configuration settings for the requests session.
     """
 
     def __init__(
@@ -87,7 +97,6 @@ class JobQueueApiClient(ApiClient):
         service_layer_url: str,
         configuration: SessionConfiguration,
     ) -> None:
-
         self._service_layer_url = service_layer_url
         api_url = service_layer_url + PROXY_PATH
 
@@ -140,7 +149,7 @@ class JobQueueApiClient(ApiClient):
     @property
     def is_admin_user(self) -> bool:
         """
-        Checks whether the current user is a Job Queue admin.
+        Check whether the current user is a Job Queue admin.
 
         Admin users can promote jobs to the top of the queue and interact with other users' jobs.
 
@@ -179,6 +188,11 @@ class JobQueueApiClient(ApiClient):
         Return the number of jobs in the Job Queue, including completed and failed jobs.
 
         Performs an HTTP request against the Granta MI Server API.
+
+        Returns
+        -------
+        int
+            The number of jobs in the Job Queue.
         """
         with warnings.catch_warnings():
             warnings.simplefilter("ignore", UndefinedObjectWarning)
@@ -186,18 +200,24 @@ class JobQueueApiClient(ApiClient):
         return len(cast(List[models.GrantaServerApiAsyncJobsJob], jobs.results))
 
     def _refetch_user(self) -> None:
+        """Refetch the current user information from the server."""
         self._user = self.job_queue_api.get_current_user()
         assert self._user
 
     @property
     def jobs(self) -> "List[AsyncJob]":
         """
-        Returns a list of all jobs on the server visible to the current user.
+        Return a list of all jobs on the server visible to the current user.
 
         Running or pending jobs are sorted according to their position in the queue.
         Completed or failed jobs are returned last.
 
         Performs an HTTP request against the Granta MI Server API.
+
+        Returns
+        -------
+        list[AsyncJob]
+            A list of AsyncJob objects.
         """
         self._refetch_jobs()
         return sorted(self._jobs.values(), key=lambda x: (x.position is None, x.position))
@@ -290,6 +310,7 @@ class JobQueueApiClient(ApiClient):
         self._refetch_jobs()
 
     def _refetch_jobs(self) -> None:
+        """Refetch the list of jobs from the server."""
         with warnings.catch_warnings():
             warnings.simplefilter("ignore", UndefinedObjectWarning)
             job_resp = self.job_queue_api.get_jobs()
@@ -300,6 +321,17 @@ class JobQueueApiClient(ApiClient):
     def _update_job_list_from_resp(
         self, job_resp: List[models.GrantaServerApiAsyncJobsJob], flush_jobs: bool = False
     ) -> None:
+        """
+        Update the internal job list with a list of job objects from the server.
+
+        Parameters
+        ----------
+        job_resp : List[models.GrantaServerApiAsyncJobsJob]
+            A list of job objects from the server.
+        flush_jobs : bool, optional
+            If ``True``, remove jobs from the internal list that are not in the job_resp list.
+            By default, ``False``.
+        """
         remote_ids = [remote_job.id for remote_job in job_resp]
         if flush_jobs:
             for job_id in self._jobs:
@@ -314,6 +346,8 @@ class JobQueueApiClient(ApiClient):
 
     def create_job_and_wait(self, job_request: "JobRequest") -> "AsyncJob":  # noqa: D205, D400
         """
+        Create a job from Excel import, export or text import request and wait until completed.
+
         Create a job from an :class:`~.ExcelImportJobRequest`, :class:`~.ExcelExportJobRequest`, or
         :class:`~.TextImportJobRequest` object and wait until the job is complete.
 
@@ -354,6 +388,8 @@ class JobQueueApiClient(ApiClient):
 
     def create_job(self, job_request: "JobRequest") -> "AsyncJob":  # noqa: D205, D400
         """
+        Create a job from Excel import, export or text import job request.
+
         Create a job from an :class:`~.ExcelImportJobRequest`, :class:`~.ExcelExportJobRequest`, or
         :class:`~.TextImportJobRequest` object.
 
@@ -400,7 +436,6 @@ class Connection(ApiClientFactory):
     :external+openapi-common:doc:`ansys-openapi-common API reference <api/index>`. Specifically, see
     the documentation for the :class:`~ansys.openapi.common.ApiClientFactory` base class and the
     :class:`~ansys.openapi.common.SessionConfiguration` class
-
 
     1. Create the connection builder object and specify the server to connect to.
     2. Specify the authentication method to use for the connection and provide credentials if
@@ -463,7 +498,8 @@ class Connection(ApiClientFactory):
 
     @staticmethod
     def _test_connection(client: JobQueueApiClient) -> None:
-        """Check if the created client can be used to perform a request.
+        """
+        Check if the created client can be used to perform a request.
 
         This method tests both that the API definition can be accessed and that the Granta MI
         version is compatible with this package.
