@@ -22,7 +22,6 @@ Python interface to the Granta JobQueue API.
 
       Understand key concepts for implementing PyGranta JobQueue.
 
-
    .. grid-item-card:: API reference :material-regular:`bookmark`
       :padding: 2 2 2 2
       :link: api/index
