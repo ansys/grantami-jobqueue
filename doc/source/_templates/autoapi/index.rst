@@ -1,6 +1,6 @@
 .. _ref_grantami_jobqueue_connection:
 
-API Reference
+API reference
 =============
 
 This page contains auto-generated API reference documentation [#f1]_.
