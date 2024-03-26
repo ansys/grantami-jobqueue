@@ -10,7 +10,7 @@ on:
 
 env:
   MAIN_PYTHON_VERSION: '3.9'
-  DOCUMENTATION_CNAME: 'psychic-bassoon-o4119q9.pages.github.io'
+  DOCUMENTATION_CNAME: 'jobqueue.grantami.docs.pyansys.com'
   LIBRARY_NAME: 'ansys-grantami-jobqueue'
   LIBRARY_NAMESPACE: 'ansys.grantami.jobqueue'
 
@@ -105,7 +105,7 @@ jobs:
 
   server-checks:
     name: "Server checks"
-    # needs: [ smoke-tests ]
+    needs: [ smoke-tests ]
     if: ${{ !startsWith( github.event.pull_request.head.ref, 'dependabot/') }}
     uses: ./.github/workflows/server_checks.yml
     with:
