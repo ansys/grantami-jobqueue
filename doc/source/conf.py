@@ -29,7 +29,7 @@ html_theme = "ansys_sphinx_theme"
 html_short_title = html_title = "PyGranta JobQueue"
 html_favicon = ansys_favicon
 
-cname = os.getenv("DOCUMENTATION_CNAME", "psychic-bassoon-o4119q9.pages.github.io")
+cname = os.getenv("DOCUMENTATION_CNAME", "jobqueue.grantami.docs.pyansys.com")
 """The canonical name of the webpage hosting the documentation."""
 
 # specify the location of your github repo
