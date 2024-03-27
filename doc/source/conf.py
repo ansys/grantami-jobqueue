@@ -77,7 +77,7 @@ autoapi_template_dir = get_autoapi_templates_dir_relative_path(Path(__file__))
 suppress_warnings = ["autosectionlabel.*", "autoapi.python_import_resolution", "autoapi."]
 autoapi_python_use_implicit_namespaces = True
 autoapi_keep_files = True
-autoapi_render_in_single_page = ["class", "enum", "exception"]
+autoapi_own_page_level = "class"
 
 
 def skip_submodules(app, what, name, obj, skip, options):
