@@ -32,7 +32,7 @@ Check that you can start the JobQueue client from Python by running this code:
     <JobQueueApiClient url: http://my.server.name/mi_servicelayer>
 
 If you see a response from the server, you have successfully installed the JobQueue package and
-you can start using the JobQueue client. See the :ref:` examples section <ref_grantami_jobqueue_examples>` for more
-examples and you can go to the API reference section for a full description of the API.
+you can start using the JobQueue client. See :ref:`ref_grantami_jobqueue_examples` for more
+examples and :ref:`ref_grantami_jobqueue_api_reference` for a full description of the API.
 
 If you are migrating code from Granta MI Scripting Toolkit AsyncJobs, consult :ref:`ref_migration`.

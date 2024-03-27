@@ -133,7 +133,7 @@ advised to resolve any warnings/errors locally before pushing changes.
 Example notebooks
 -----------------
 Examples are included in the documentation to give you more context around
-the core capabilities described in the API reference.
+the core capabilities described in :ref:`ref_grantami_jobqueue_api_reference`.
 Additional examples are welcomed, especially if they cover a key use case of the
 package that has not yet been covered.
 

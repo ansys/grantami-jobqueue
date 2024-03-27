@@ -6,12 +6,7 @@ from pathlib import Path
 import re
 import shutil
 
-from ansys_sphinx_theme import (
-    ansys_favicon,
-    get_autoapi_templates_dir_relative_path,
-    get_version_match,
-    pyansys_logo_black,
-)
+from ansys_sphinx_theme import ansys_favicon, get_version_match, pyansys_logo_black
 import jupytext
 
 from ansys.grantami.jobqueue import __version__
@@ -50,45 +45,38 @@ html_theme_options = {
 
 # Sphinx extensions
 extensions = [
-    "autoapi.extension",
+    "numpydoc",
     "sphinx.ext.intersphinx",
     "sphinx_copybutton",
     "sphinx_jinja",
     "nbsphinx",
-    "enum_tools.autoenum",
     "sphinx_design",
-    "sphinx.ext.napoleon",
+    "enum_tools.autoenum",
 ]
 
-napoleon_custom_sections = ["Parameters", "Notes", "Examples"]
 
+# numpydoc configuration
+numpydoc_show_class_members = False
+numpydoc_xref_param_type = True
+numpydoc_xref_ignore = {"of", "optional", "or"}
 
-# Configuration for Sphinx autoapi
-autoapi_type = "python"
-autoapi_dirs = ["../../src/ansys"]
-autoapi_root = "api"
-autoapi_options = [
-    "members",
-    "undoc-members",
-    "show-inheritance",
-    "show-module-summary",
-]
-autoapi_template_dir = get_autoapi_templates_dir_relative_path(Path(__file__))
-suppress_warnings = ["autosectionlabel.*", "autoapi.python_import_resolution", "autoapi."]
-autoapi_python_use_implicit_namespaces = True
-autoapi_keep_files = True
-autoapi_own_page_level = "class"
-
-
-def skip_submodules(app, what, name, obj, skip, options):
-    if what == "module":
-        skip = True
-    return skip
-
-
-def setup(sphinx):
-    sphinx.connect("autoapi-skip-member", skip_submodules)
-
+# Consider enabling numpydoc validation. See:
+# https://numpydoc.readthedocs.io/en/latest/validation.html#
+numpydoc_validate = True
+numpydoc_validation_checks = {
+    "GL06",  # Found unknown section
+    "GL07",  # Sections are in the wrong order.
+    "GL08",  # The object does not have a docstring
+    "GL09",  # Deprecation warning should precede extended summary
+    "GL10",  # reST directives {directives} must be followed by two colons
+    "SS01",  # No summary found
+    "SS02",  # Summary does not start with a capital letter
+    # "SS03", # Summary does not end with a period
+    "SS04",  # Summary contains heading whitespaces
+    # "SS05", # Summary must start with infinitive verb, not third person
+    "RT02",  # The first line of the Returns section should contain only the
+    # type, unless multiple values are being returned"
+}
 
 # sphinx
 add_module_names = False

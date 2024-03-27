@@ -1,11 +1,17 @@
-API reference
-=============
+.. _ref_grantami_jobqueue_api_reference:
 
-This section describes endpoints, their capabilities, and how
-to interact with them programmatically.
+API reference
+#############
+
+The API for PyGranta JobQueue comprises the following key areas:
+
+- :ref:`ref_grantami_jobqueue_connection` describes how to connect to Granta MI Server API and provides details about the operations
+  available on the client.
+- :ref:`ref_grantami_jobqueue_models` describes resources handled by the client.
 
 .. toctree::
-   :titlesonly:
-   :maxdepth: 3
+   :maxdepth: 2
+   :hidden:
 
-   🖿 ansys.grantami.jobqueue</api/ansys/grantami/jobqueue/index>
+   connection
+   models
