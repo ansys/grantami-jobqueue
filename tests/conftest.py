@@ -1,5 +1,6 @@
 import datetime
 import os
+import time
 
 import pytest
 
@@ -45,17 +46,7 @@ def job_queue_api_client(sl_url, admin_username, admin_password):
     else:
         raise ValueError("Specify both or neither of TEST_ADMIN_USER and TEST_ADMIN_PASS.")
     client: JobQueueApiClient = connection.connect()
-    clear_job_queue(client)
-    delete_record(
-        client=client,
-        name=FOLDER_NAME,
-    )
     yield client
-    clear_job_queue(client)
-    delete_record(
-        client=client,
-        name=FOLDER_NAME,
-    )
 
 
 @pytest.fixture(scope="function")
@@ -69,6 +60,7 @@ def empty_job_queue_api_client(job_queue_api_client):
         client=job_queue_api_client,
         name=FOLDER_NAME,
     )
+    time.sleep(5)
     yield job_queue_api_client
     clear_job_queue(job_queue_api_client)
     delete_record(

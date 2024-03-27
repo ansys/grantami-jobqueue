@@ -2,7 +2,6 @@ import datetime
 import pathlib
 import time
 from typing import List, Tuple
-import warnings
 
 from ansys.grantami.serverapi_openapi import api, models
 from ansys.openapi.common import ApiClient
@@ -83,9 +82,8 @@ def search_for_records_by_name(client: ApiClient, name: str) -> List[Tuple[str, 
     while not database_api.get_status(database_key=DB_KEY).search_index_up_to_date:
         counter += 1
         if counter == MAX_DATABASE_CACHE_ATTEMPTS:
-            warnings.warn(
-                f"Database {DB_KEY} failed to cache after {MAX_DATABASE_CACHE_ATTEMPTS} attempts. "
-                "Continuing with doubts."
+            raise RuntimeError(
+                f"Database {DB_KEY} failed to cache after {MAX_DATABASE_CACHE_ATTEMPTS} attempts."
             )
         time.sleep(DATABASE_CACHE_SLEEP)
 
@@ -124,14 +122,13 @@ def clear_job_queue(client: JobQueueApiClient):
     while JobStatus.Running in {j.status for j in client.jobs}:
         counter += 1
         if counter == MAX_JOB_QUEUE_CLEAR_ATTEMPTS:
-            warnings.warn(
+            raise RuntimeError(
                 f"Jobs {[j.id for j in client.jobs if j.status == JobStatus.Running]} failed to "
-                f"finish after {MAX_JOB_QUEUE_CLEAR_ATTEMPTS} attempts. Continuing with doubts."
+                f"finish after {MAX_JOB_QUEUE_CLEAR_ATTEMPTS} attempts."
             )
-            break
         time.sleep(JOB_QUEUE_CLEAR_SLEEP)
 
     try:
         client.delete_jobs(client.jobs)
     except Exception as e:
-        warnings.warn(f"Cleanup failed because of {e}\n. Continuing with doubts.")
+        raise RuntimeError(f"Cleanup failed because of {e}\n.")
