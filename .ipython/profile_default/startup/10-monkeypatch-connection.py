@@ -1,7 +1,11 @@
 import os
+import time
 
 from ansys.grantami.jobqueue import Connection
-from ansys.grantami.jobqueue._connection import JobQueueApiClient
+from ansys.grantami.jobqueue._connection import JobQueueApiClient, JobStatus
+
+JOB_QUEUE_CLEAR_SLEEP = 5
+MAX_JOB_QUEUE_CLEAR_ATTEMPTS = 10
 
 # Monkey patch the Connection() class to use the environment variable-specified server URL.
 original_ctor = Connection.__init__
@@ -36,10 +40,20 @@ Connection.with_autologon = with_autologon
 server_url = "http://my_grantami_server/mi_servicelayer"
 
 
+def clear_job_queue(client: JobQueueApiClient):
+    counter = 0
+    while JobStatus.Running in {j.status for j in client.jobs}:
+        counter += 1
+        if counter == MAX_JOB_QUEUE_CLEAR_ATTEMPTS:
+            break
+        time.sleep(JOB_QUEUE_CLEAR_SLEEP)
+    client.delete_jobs(client.jobs)
+
+
 def __init__(self: JobQueueApiClient, *args, **kwargs) -> None:
     super().__init__(*args, **kwargs)
     # Clear job queue as soon as client is created
-    self.delete_jobs(self.jobs)
+    clear_job_queue(self)
 
 
 def __repr__(self: JobQueueApiClient) -> str:
@@ -48,7 +62,7 @@ def __repr__(self: JobQueueApiClient) -> str:
 
 def __del__(self: JobQueueApiClient) -> None:
     # Clear job queue after script completes
-    self.delete_jobs(self.jobs)
+    clear_job_queue(self)
 
 
 JobQueueApiClient.__repr__ = __repr__

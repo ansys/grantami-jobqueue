@@ -1,11 +1,10 @@
 import datetime
 import os
-import warnings
 
 import pytest
 
 from ansys.grantami.jobqueue import Connection, JobQueueApiClient
-from common import FOLDER_NAME, delete_record, generate_now
+from common import FOLDER_NAME, clear_job_queue, delete_record, generate_now
 
 
 @pytest.fixture(scope="session")
@@ -86,10 +85,3 @@ def now() -> datetime.datetime:
 @pytest.fixture(scope="function")
 def tomorrow(now) -> datetime.datetime:
     return now + datetime.timedelta(days=1)
-
-
-def clear_job_queue(client: JobQueueApiClient):
-    try:
-        client.delete_jobs(client.jobs)
-    except Exception as e:
-        warnings.warn(f"Cleanup failed because of {e}\n continuing tests for now")

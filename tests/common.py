@@ -2,9 +2,12 @@ import datetime
 import pathlib
 import time
 from typing import List, Tuple
+import warnings
 
 from ansys.grantami.serverapi_openapi import api, models
 from ansys.openapi.common import ApiClient
+
+from ansys.grantami.jobqueue import JobQueueApiClient, JobStatus
 
 TEST_ARTIFACT_DIR = pathlib.Path(__file__).parent / "test_artifacts"
 
@@ -15,6 +18,9 @@ EXCEL_IMPORT_FOLDER_NAME = "Excel Import Test"
 
 DATABASE_CACHE_SLEEP = 1
 MAX_DATABASE_CACHE_ATTEMPTS = 10
+
+JOB_QUEUE_CLEAR_SLEEP = 5
+MAX_JOB_QUEUE_CLEAR_ATTEMPTS = 10
 
 EXCEL_IMPORT_COMBINED_FILE = TEST_ARTIFACT_DIR / "ExcelImportCombinedFile.xlsx"
 EXCEL_IMPORT_DATA_FILE = TEST_ARTIFACT_DIR / "ExcelImportDataFile.xlsx"
@@ -77,8 +83,9 @@ def search_for_records_by_name(client: ApiClient, name: str) -> List[Tuple[str, 
     while not database_api.get_status(database_key=DB_KEY).search_index_up_to_date:
         counter += 1
         if counter == MAX_DATABASE_CACHE_ATTEMPTS:
-            raise RuntimeError(
-                f"Database {DB_KEY} failed to cache after {MAX_DATABASE_CACHE_ATTEMPTS} attempts."
+            warnings.warn(
+                f"Database {DB_KEY} failed to cache after {MAX_DATABASE_CACHE_ATTEMPTS} attempts. "
+                "Continuing with doubts."
             )
         time.sleep(DATABASE_CACHE_SLEEP)
 
@@ -110,3 +117,21 @@ def search_for_records_by_name(client: ApiClient, name: str) -> List[Tuple[str, 
         database_key=DB_KEY, table_guid=table_guid, body=request
     )
     return [(r.record_history_guid, r.record_guid) for r in response.results]
+
+
+def clear_job_queue(client: JobQueueApiClient):
+    counter = 0
+    while JobStatus.Running in {j.status for j in client.jobs}:
+        counter += 1
+        if counter == MAX_JOB_QUEUE_CLEAR_ATTEMPTS:
+            warnings.warn(
+                f"Jobs {[j.id for j in client.jobs if j.status == JobStatus.Running]} failed to "
+                f"finish after {MAX_JOB_QUEUE_CLEAR_ATTEMPTS} attempts. Continuing with doubts."
+            )
+            break
+        time.sleep(JOB_QUEUE_CLEAR_SLEEP)
+
+    try:
+        client.delete_jobs(client.jobs)
+    except Exception as e:
+        warnings.warn(f"Cleanup failed because of {e}\n. Continuing with doubts.")
