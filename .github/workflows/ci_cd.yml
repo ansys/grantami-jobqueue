@@ -36,6 +36,7 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           vale-version: "2.29.6"
+
   doc-build:
     name: Documentation Build (mock examples)
     runs-on: ubuntu-latest
@@ -45,7 +46,7 @@ jobs:
       with:
         check-links: false
         dependencies: "pandoc"
-        sphinxopts: "-n -W --keep-going"
+        sphinxopts: "-j 1 -n -W --keep-going"
 
     - name: "Delete unneeded doc artifact"
       if: ${{ !startsWith( github.event.pull_request.head.ref, 'dependabot/') }}
@@ -54,6 +55,7 @@ jobs:
         name: |
           documentation-html
           documentation-pdf
+
   smoke-tests:
     name: "Build wheelhouse for latest Python versions"
     runs-on: ${{ matrix.os }}
