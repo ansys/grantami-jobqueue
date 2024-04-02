@@ -3,15 +3,37 @@ updates:
   - package-ecosystem: "pip"
     directory: "/"
     schedule:
-      interval: "daily"
+      interval: "weekly"
     labels:
       - "maintenance"
       - "dependencies"
     versioning-strategy: increase-if-necessary
+    groups:
+      doc-deps:
+        patterns:
+        - "*sphinx*"
+        - "numpydoc"
+        - "jupytext"
+        - "ipykernel"
+        - "enum-tools"
+      dev-deps:
+        patterns:
+        - "pytest*"
+        - "mypy"
+        - "requests-mock"
+        - "pre-commit"
+      src-deps:
+        patterns:
+        - "ansys-openapi-common"
+        - "ansys-grantami-serverapi-openapi"
 
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
-      interval: "daily"
+      interval: "weekly"
     labels:
       - "maintenance"
+    groups:
+       actions:
+          patterns:
+            - "*"

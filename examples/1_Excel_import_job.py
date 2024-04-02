@@ -57,8 +57,8 @@ from ansys.grantami.jobqueue import ExcelImportJobRequest
 separate_excel_import_request = ExcelImportJobRequest(
     name="Excel Import (separate template and data files)",
     description="An example excel import job",
-    template_file="import_template.xlsx",
-    data_files=["data_file_1.xlsx", "data_file_2.xlsx"],
+    template_file="assets/import_template.xlsx",
+    data_files=["assets/data_file_1.xlsx", "assets/data_file_2.xlsx"],
 )
 separate_excel_import_request
 # -

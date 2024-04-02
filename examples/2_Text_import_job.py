@@ -58,8 +58,8 @@ from ansys.grantami.jobqueue import TextImportJobRequest
 text_import_request = TextImportJobRequest(
     name="Text Import",
     description="An example text import job",
-    template_file=pathlib.Path("./text_import_template.xml"),
-    data_files=["./text_import_data.txt", "./text_import_data.RLT"],
+    template_file=pathlib.Path("./assets/text_import_template.xml"),
+    data_files=["./assets/text_import_data.txt", "./assets/text_import_data.RLT"],
 )
 
 text_import_request

@@ -2,8 +2,13 @@
 
 .. currentmodule:: ansys.grantami.jobqueue
 
+User guide
+##########
+
 Migrating from AsyncJobs
-########################
+========================
+
+This section shows how to migrate from AsyncJobs to PyGranta JobQueue package.
 
 Overview
 ========
@@ -39,7 +44,7 @@ with the equivalent::
    server_url = "http://my_grantami_server/mi_servicelayer"
    client = Connection(server_url).with_autologon().connect()
 
-See the :ref:`ref_grantami_jobqueue_connection` documentation for more detail on how to connect to
+See the API reference documentation for more detail on how to connect to
 Granta MI using other authentication methods.
 
 

@@ -1,28 +1,28 @@
 repos:
 
 - repo: https://github.com/psf/black
-  rev: 23.3.0
+  rev: 24.3.0
   hooks:
   - id: black
 
 - repo: https://github.com/pycqa/isort
-  rev: 5.12.0
+  rev: 5.13.2
   hooks:
   - id: isort
 
 - repo: https://github.com/PyCQA/flake8
-  rev: 6.0.0
+  rev: 7.0.0
   hooks:
   - id: flake8
 
 - repo: https://github.com/codespell-project/codespell
-  rev: v2.2.4
+  rev: v2.2.6
   hooks:
   - id: codespell
     args: ["--ignore-words", "doc/styles/Vocab/ANSYS/accept.txt", "--skip", "poetry.lock"]
 
 - repo: https://github.com/pre-commit/pre-commit-hooks
-  rev: v4.4.0
+  rev: v4.5.0
   hooks:
   - id: check-yaml
   - id: debug-statements
@@ -51,3 +51,17 @@ repos:
     language: "pygrep"
     types: [text]
     files: "^examples/.*"
+
+- repo: https://github.com/ansys/pre-commit-hooks
+  rev: v0.2.8
+  hooks:
+    - id: add-license-headers
+      args:
+      - --start_year=2024
+      files: '(src|tests)/.*\.(py)'
+
+- repo: https://github.com/numpy/numpydoc
+  rev: v1.6.0
+  hooks:
+  - id: numpydoc-validation
+    exclude: "^(tests/)|^(.github/)|^(examples/)|^(.ipython/)|^(doc)"
