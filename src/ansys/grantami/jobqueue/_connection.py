@@ -87,7 +87,7 @@ class JobQueueApiClient(ApiClient):
         Session object to use for HTTP requests.
     service_layer_url : str
         Base URL of the Granta MI Service Layer application.
-    configuration : SessionConfiguration
+    configuration : ansys.openapi.common.SessionConfiguration
         Configuration settings for the requests session.
     """
 
