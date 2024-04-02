@@ -112,4 +112,6 @@ exclude = [  # don't report on objects that match any of these regex
     '\.__init__$',
     '\.JobRequest$',
     '\.ExportRecord$',
+    '\.JobQueueApiClient',  # User does not need to instantiate this object
+    '\.AsyncJob',  # User does not need to instantiate this object
 ]

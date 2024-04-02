@@ -80,15 +80,6 @@ class JobQueueApiClient(ApiClient):
 
     This class is instantiated by the :class:`Connection` class
     and should not be instantiated directly.
-
-    Parameters
-    ----------
-    session : requests.Session
-        Session object to use for HTTP requests.
-    service_layer_url : str
-        Base URL of the Granta MI Service Layer application.
-    configuration : ansys.openapi.common.SessionConfiguration
-        Configuration settings for the requests session.
     """
 
     def __init__(
