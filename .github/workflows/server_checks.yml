@@ -114,7 +114,7 @@ jobs:
           pip install poetry 'tox<4' --disable-pip-version-check
 
       - name: "Test with tox (integration tests only)"
-        run: tox -e tests -- -m "integration"
+        run: tox -e tests
         env:
           TEST_SL_URL: ${{secrets.TEST_SERVER_URL_NEXT}}
           TEST_ADMIN_USER: ${{secrets.TEST_SERVER_ADMIN_USER}}
@@ -122,75 +122,40 @@ jobs:
           TEST_READ_USER: ${{secrets.TEST_SERVER_READ_USER}}
           TEST_READ_PASS: ${{secrets.TEST_SERVER_READ_PASS}}
 
-#      - name: "Upload coverage artifacts"
-#        uses: actions/upload-artifact@v4
-#        if: ${{ matrix.os  == 'ubuntu-latest' }}
-#        with:
-#          name: coverage-html-integrationtests
-#          path: .cov/html
-#          retention-days: 7
-#
-#      - name: "Upload coverage to Codecov"
-#        uses: codecov/codecov-action@v3
-#        if: ${{ matrix.os  == 'ubuntu-latest' }}
-#        with:
-#          files: .cov/xml
-#          flags: integration
-#          fail_ci_if_error: true
+      - name: "Upload coverage artifacts"
+        uses: actions/upload-artifact@v4
+        if: ${{ matrix.os == 'ubuntu-latest' && !startsWith( github.event.pull_request.head.ref, 'dependabot/') }}
+        with:
+          name: coverage-html-unittests
+          path: .cov/html
+          retention-days: 7
+
+  #      - name: "Upload coverage to Codecov"
+  #        uses: codecov/codecov-action@v4
+  #        if: ${{ matrix.python-version == env.MAIN_PYTHON_VERSION && matrix.os == 'ubuntu-latest' && !startsWith( github.event.pull_request.head.ref, 'dependabot/') }}
+  #        env:
+  #         CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+  #          with:
+  #          files: .cov/xml
+  #          flags: unittests
+  #          fail_ci_if_error: true
+
 
   doc-build:
     name: "Build documentation"
     runs-on: ubuntu-latest
     needs: integration-tests
     steps:
-      - name: "Checkout the repository"
-        uses: actions/checkout@v4
-
-      - name: "Set up Python ${{ inputs.python-version }}"
-        uses: actions/setup-python@v5
-        with:
-          python-version: ${{ inputs.python-version }}
-
-      - name: "Install system dependencies"
-        run: |
-          sudo apt update
-          sudo apt-get install pandoc
-          sudo apt-get install texlive-latex-extra latexmk texlive-xetex fonts-freefont-otf xindy
-
-      - name: "Install documentation dependencies"
-        run: |
-          pip install poetry~=1.3.0 --disable-pip-version-check
-          poetry install --with doc
-
-      - name: "Build HTML documentation"
-        run: poetry run -- make -C doc html SPHINXOPTS="-n -W --keep-going"
+      - name: "Run Ansys documentation building action"
+        uses: ansys/actions/doc-build@v5
         env:
           TEST_SL_URL: ${{secrets.TEST_SERVER_URL_NEXT}}
           TEST_USER: ${{secrets.TEST_SERVER_ADMIN_USER}}
           TEST_PASS: ${{secrets.TEST_SERVER_ADMIN_PASS}}
           BUILD_EXAMPLES: "true"
-
-      - name: "Build PDF documentation"
-        run: poetry run -- make -C doc latexpdf
-        env:
-          TEST_SL_URL: ${{secrets.TEST_SERVER_URL_NEXT}}
-          TEST_USER: ${{secrets.TEST_SERVER_ADMIN_USER}}
-          TEST_PASS: ${{secrets.TEST_SERVER_ADMIN_PASS}}
-          BUILD_EXAMPLES: "true"
-
-      - name: "Upload HTML documentation"
-        uses: actions/upload-artifact@v4
         with:
-          name: documentation-html
-          path: doc/_build/html
-          retention-days: 7
-
-      - name: "Upload PDF documentation"
-        uses: actions/upload-artifact@v4
-        with:
-          name: documentation-pdf
-          path: doc/_build/latex/*.pdf
-          retention-days: 7
+          check-links: false
+          dependencies: "pandoc"
 
   stop-vm:
     name: "Stop Azure VM"

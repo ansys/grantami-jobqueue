@@ -1,4 +1,5 @@
 """Sphinx documentation configuration file."""
+
 import datetime
 import os
 from pathlib import Path
@@ -23,7 +24,7 @@ html_theme = "ansys_sphinx_theme"
 html_short_title = html_title = "PyGranta JobQueue"
 html_favicon = ansys_favicon
 
-cname = os.getenv("DOCUMENTATION_CNAME", "psychic-bassoon-o4119q9.pages.github.io")
+cname = os.getenv("DOCUMENTATION_CNAME", "jobqueue.grantami.docs.pyansys.com")
 """The canonical name of the webpage hosting the documentation."""
 
 # specify the location of your github repo
@@ -49,30 +50,10 @@ extensions = [
     "sphinx_copybutton",
     "sphinx_jinja",
     "nbsphinx",
+    "sphinx_design",
     "enum_tools.autoenum",
 ]
 
-# sphinx
-add_module_names = False
-
-# sphinx.ext.autodoc
-autodoc_typehints = "description"  # Remove typehints from signatures in docs
-autodoc_typehints_description_target = "documented"
-autodoc_member_order = "bysource"
-
-# Intersphinx mapping
-intersphinx_mapping = {
-    "python": ("https://docs.python.org/3", None),
-    "openapi-common": ("https://openapi.docs.pyansys.com", None),
-    "requests": ("https://requests.readthedocs.io/en/latest/", None),
-    # kept here as an example
-    # "scipy": ("https://docs.scipy.org/doc/scipy/reference", None),
-    # "numpy": ("https://numpy.org/devdocs", None),
-    # "matplotlib": ("https://matplotlib.org/stable", None),
-    # "pandas": ("https://pandas.pydata.org/pandas-docs/stable", None),
-    # "pyvista": ("https://docs.pyvista.org/", None),
-    # "grpc": ("https://grpc.github.io/grpc/python/", None),
-}
 
 # numpydoc configuration
 numpydoc_show_class_members = False
@@ -97,6 +78,27 @@ numpydoc_validation_checks = {
     # type, unless multiple values are being returned"
 }
 
+# sphinx
+add_module_names = False
+
+# sphinx.ext.autodoc
+autodoc_typehints = "description"  # Remove typehints from signatures in docs
+autodoc_typehints_description_target = "documented"
+autodoc_member_order = "bysource"
+
+# Intersphinx mapping
+intersphinx_mapping = {
+    "python": ("https://docs.python.org/3", None),
+    "openapi-common": ("https://openapi.docs.pyansys.com", None),
+    "requests": ("https://requests.readthedocs.io/en/latest/", None),
+    # kept here as an example
+    # "scipy": ("https://docs.scipy.org/doc/scipy/reference", None),
+    # "numpy": ("https://numpy.org/devdocs", None),
+    # "matplotlib": ("https://matplotlib.org/stable", None),
+    # "pandas": ("https://pandas.pydata.org/pandas-docs/stable", None),
+    # "pyvista": ("https://docs.pyvista.org/", None),
+    # "grpc": ("https://grpc.github.io/grpc/python/", None),
+}
 
 # static path
 html_static_path = ["_static"]
