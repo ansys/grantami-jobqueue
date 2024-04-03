@@ -789,13 +789,6 @@ class AsyncJob:
     Provides information on the current status of the job, as well as any job specific outputs.
     Allows modification of job metadata, such as the name, description and scheduled execution date.
 
-    Parameters
-    ----------
-    job_obj : models.GrantaServerApiAsyncJobsJob
-        The job object returned from the server.
-    job_queue_api : api.JobQueueApi
-        The Job Queue API object used to interact with the server.
-
     Notes
     -----
     .. note::
