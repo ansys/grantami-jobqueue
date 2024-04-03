@@ -1,41 +1,43 @@
 .. _ref_contributing:
 
-Contributing
-############
+Contribute
+##########
 
 General guidelines
 ==================
 Overall guidance on contributing to a PyAnsys library appears in the
 `Contributing <https://dev.docs.pyansys.com/how-to/contributing.html>`_ topic
-in the *PyAnsys Developer's Guide*. Ensure that you are thoroughly familiar
-with this guide before attempting to contribute to the ``grantami-jobqueue``
-repository.
+in the *PyAnsys developer's guide*. Ensure that you are thoroughly familiar
+with this guide before attempting to contribute to PyGranta JobQueue.
 
-The following contribution information is specific to the ``grantami-jobqueue``
-repository, which is for the PyGranta JobQueue library. This PyAnsys library name
-is often used in place of the repository name to provide clarity and improve
-readability.
+The following contribution information is specific to PyGranta JobQueue.
 
 Post issues
 ------------
-Use the `Issues <https://github.com/pyansys/grantami-jobqueue/issues>`_ page for
-this repository to submit questions, report bugs, and request new features.
+Use the `PyGranta JobQueue Issues <https://github.com/pyansys/grantami-jobqueue/issues>`_ page
+to report bugs and request new features. When possible, use the issue templates provided. If
+your issue does not fit into one of these templates, click the link for opening a blank issue.
 
-To reach the PyAnsys core team, email `pyansys.core@ansys.com <pyansys.core@ansys.com>`_.
+If you have general questions about the PyAnsys ecosystem, email `pyansys.core@ansys.com <pyansys.core@ansys.com>`_.
+If your question is specific to PyGranta JobQueue, ask your question in an issue as described in
+the previous paragraph.
 
 Developer environment setup
 ===========================
 
-The project uses ``poetry`` for packaging and dependency management. See the `poetry`_ documentation
-for installation instructions.
+PyGranta JobQueue uses ``poetry`` for packaging and dependency management. For installation
+information, see the `poetry`_ documentation.
 
 Clone the source repository
 ---------------------------
 
-Run the following code to clone and install the latest version of the ``grantami-jobqueue``
-repository. It installs the package in editable mode, which ensures changes to the code
-are immediately visible in the environment. It also installs the required development
-dependencies to run the tests, build the docs and build the package.
+Installing PyGranta JobQueue in developer mode allows you to modify and enhance
+the source.
+
+Run the following commands to clone and install the latest version of PyGranta JobQueue
+in editable mode, which ensures changes to the code are immediately visible in the environment.
+RUnning these commands also installs the required development dependencies to run the tests,
+build the documentation, and build the package.
 
 .. code:: bash
 
@@ -50,7 +52,7 @@ Pre-commit
 ~~~~~~~~~~
 
 The style checks take advantage of `pre-commit`_. Developers are not forced but
-encouraged to install this tool via:
+encouraged to install this tool with this command:
 
 .. code:: bash
 
@@ -60,19 +62,19 @@ encouraged to install this tool via:
 
 Tox
 ~~~
-Tests can be run using `tox`_. The project defines the tox environments in ``tox.ini``.
-The following tox environments are provided:
+Tests can be run using `tox`_. The project defines the tox environments in the ``tox.ini``
+file. The following tox environments are provided:
 
 .. vale off
 
-- ``tox -e style``: checks for coding style quality.
-- ``tox -e tests``: runs all tests and checks code coverage (see :ref:`ref_serveraccess` for requirements).
-- ``tox -e doc``: checks the documentation building process.
+- ``tox -e style``: Checks for coding style quality.
+- ``tox -e tests``: Runs all tests and checks code coverage. (For requirements, see :ref:`ref_serveraccess`.)
+- ``tox -e doc``: Checks the documentation-building process.
 
 .. vale on
 
 Optionally add the ``-- -m "not integration"`` suffix to the commands above to skip integration
-tests. For example, ``tox -e tests -- -m "not integration"`` will only run tests that
+tests. For example, ``tox -e tests -- -m "not integration"`` only runs tests that
 do not require a Granta MI instance.
 
 .. _ref_serveraccess:
@@ -81,7 +83,7 @@ Server access
 --------------
 
 Running integration tests and building the examples requires access to a valid Granta MI instance
-(see :ref:`ref_software_requirements`).
+as indicated in :ref:`ref_software_requirements`.
 
 External contributors may not have an instance of Granta MI at their disposal. Prior to creating a
 pull request with the desired changes, they should make sure that unit tests pass (:ref:`ref_tox`),
@@ -100,7 +102,7 @@ Code formatting and styling
 ===========================
 
 This project adheres with PyAnsys recommendation of styling and formatting. The easiest way to
-validate changes are compliant is to run the following command:
+validate changes are compliant is to run this command:
 
 .. code:: bash
 
@@ -121,9 +123,9 @@ For building documentation, use the `Sphinx`_ Makefile:
     make -C doc/ html && your_browser_name doc/build/html/index.html
 
 If any changes have been made to the documentation, it is strongly recommended
-to run sphinx directly with the following extra arguments. They ensure all references
+that you run Sphinx directly with the following extra arguments. They ensure all references
 are valid, and turn warnings into errors. CI uses the same configuration, so it is
-advised to resolve any warnings/errors locally before pushing changes.
+advised to resolve any warnings and errors locally before pushing changes.
 
 .. code:: bash
 
@@ -141,13 +143,13 @@ The example scripts are placed in the ``examples`` directory and are included
 in the documentation build if the environment variable ``BUILD_EXAMPLES`` is set
 to ``True``. Otherwise, a different set of examples is run to validate the process.
 
-Examples are checked in as scripts using the ``light`` format, see `jupytext`_
-for more information. As part of the doc build process, the Python
+Examples are checked in as scripts using the ``light`` format. For more information,
+see `jupytext`_. As part of the documentation-building process, the Python
 files are converted back into Jupyter notebooks and the output cells are populated
 by running the notebooks against a Granta MI instance.
 
 This conversion between Jupyter notebooks and Python files is performed by
-`nb-convert`_. For installation instructions, see the nb-convert documentation.
+`nb-convert`_. For installation information, see the ``nb-convert`` documentation.
 
 
 .. _poetry: https://python-poetry.org/

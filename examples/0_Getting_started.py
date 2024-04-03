@@ -13,10 +13,10 @@
 #     name: python3
 # ---
 
-# # Getting started
+# # Connect and access the job queue
 
 # This example shows how to connect to Granta MI and access the job queue. For more information
-# about creating and interacting with jobs, see the subsequent examples.
+# on creating and interacting with jobs, see the subsequent examples.
 
 # ## Connect to Granta MI
 
@@ -24,8 +24,8 @@
 # server. The ``Connection`` class uses a fluent interface to build the connection, which is always
 # invoked in the following sequence:
 #
-# 1. Specify your Granta MI Service Layer URL as a parameter to the ``Connection`` class.
-# 2. Specify the authentication method using a ``Connection.with_...()`` method.
+# 1. Specify the URL for your Granta MI service layer as a parameter to the ``Connection`` class.
+# 2. Specify the authentication method using a ``Connection.with_*()`` method.
 # 3. Use the ``Connection.connect()`` method to finalize the connection.
 #
 # This returns an ``ansys.grantami.jobqueue.JobQueueApiClient`` object, which is called ``client``
@@ -53,11 +53,10 @@ client
 # -
 
 # OIDC and anonymous authentication methods are also available, but they are beyond the scope of
-# this example. For more information, see the
-# [ansys-openapi-common](https://github.com/pyansys/openapi-common) package documentation.
+# this example. For more information, see the PyAnsys [OpenAPI-Common documentation](https://github.com/pyansys/openapi-common).
 
-# ## Access the Job Queue
-# The ``client`` object can be used to determine the activities we can perform with the job queue.
+# ## Access the job queue
+# You use the ``client`` object to determine the activities that you can perform with the job queue.
 
 # + tags=[]
 f"The current user is an administrator: {client.is_admin_user}"
@@ -67,15 +66,15 @@ f"The current user is an administrator: {client.is_admin_user}"
 f"The current user can write jobs: {client.can_write_job}"
 # -
 
-# We can also access information about how the job queue will process jobs.
+# You can also access information on how the job queue processes jobs.
 
 f"Concurrency enabled: {'Yes' if client.processing_configuration.concurrency else 'No'}"
 
-# Finally, we can access the job queue itself (the job queue may be empty if the current user
-# has not submitted a job recently):
+# Finally, you can access the job queue itself. The job queue might be empty if no
+# jobs have been submitted recently.)
 
 client.jobs
 
-# Note: these are only the jobs accessible to the current user, which depends on the user's role.
-# Standard users can only access their own jobs, whereas admin users can access jobs created by
-# all users.
+# Note: The jobs accessible in the queue depend on the user's role.
+# Standard users can only access their own jobs, whereas administrative users
+# can access jobs created by all users.

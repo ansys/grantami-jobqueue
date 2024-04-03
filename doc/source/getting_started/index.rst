@@ -5,8 +5,8 @@ Getting started
 
 .. _ref_software_requirements:
 
-Ansys software requirements
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Software requirements
+~~~~~~~~~~~~~~~~~~~~~~
 .. include:: ../../../README.rst
       :start-after: readme_software_requirements
       :end-before: readme_software_requirements_end
@@ -21,7 +21,7 @@ Installation
 
 Verify your installation
 ~~~~~~~~~~~~~~~~~~~~~~~~
-Check that you can start the JobQueue client from Python by running this code:
+Check that you can start the PyGranta JobQueue client from Python by running this code:
 
 .. code:: python
 
@@ -31,8 +31,8 @@ Check that you can start the JobQueue client from Python by running this code:
 
     <JobQueueApiClient url: http://my.server.name/mi_servicelayer>
 
-If you see a response from the server, you have successfully installed the JobQueue package and
-you can start using the JobQueue client. See :ref:`ref_grantami_jobqueue_examples` for more
-examples and :ref:`ref_grantami_jobqueue_api_reference` for a full description of the API.
+If you see a response from the server, you have successfully installed PyGranta JobQueue and
+you can start using the JobQueue client. For more examples, see :ref:`ref_grantami_jobqueue_examples`.
+For comprehensive information on the API, see :ref:`ref_grantami_jobqueue_api_reference`.
 
-If you are migrating code from Granta MI Scripting Toolkit AsyncJobs, consult :ref:`ref_migration`.
+If you are migrating from the Granta MI Scripting Toolkit AsyncJobs submodule, see :ref:`ref_migration`.
