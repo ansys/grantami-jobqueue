@@ -49,7 +49,7 @@ jobs:
         sphinxopts: "-j 1 -n -W --keep-going"
 
     - name: "Delete unneeded doc artifact"
-      if: ${{ !startsWith( github.event.pull_request.head.ref, 'dependabot/') }}
+      # if: ${{ !startsWith( github.event.pull_request.head.ref, 'dependabot/') }}
       uses: geekyeggo/delete-artifact@v5
       with:
         name: |
