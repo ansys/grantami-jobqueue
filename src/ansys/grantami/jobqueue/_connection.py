@@ -112,7 +112,7 @@ class JobQueueApiClient(ApiClient):
     @property
     def processing_configuration(self) -> JobQueueProcessingConfiguration:
         """
-        Get the current job queue configuration information from the server.
+        Current job queue configuration information from the server.
 
         Performs an HTTP request against the Granta MI Server API.
 
@@ -140,7 +140,7 @@ class JobQueueApiClient(ApiClient):
     @property
     def is_admin_user(self) -> bool:
         """
-        Flag indicating if the current user is a Job Queue administrator.
+        Flag indicating if the current user is a job queue administrator.
 
         Administrators can promote jobs to the top of the queue and interact with other users' jobs.
 
@@ -271,17 +271,17 @@ class JobQueueApiClient(ApiClient):
 
     def get_job_by_id(self, job_id: str) -> "AsyncJob":
         """
-        Get the job with a specified job ID.
+        Get the job with a given job ID.
 
         Parameters
         ----------
         job_id : str
-            Job ID for the job to get.
+            Job ID.
 
         Returns
         -------
         AsyncJob
-            Job with the specified job ID.
+            Job with the given ID.
         """
         return next(job for id_, job in self._jobs.items() if id_ == job_id)
 
@@ -410,7 +410,7 @@ class Connection(ApiClientFactory):
 
     This is a subclass of the :class:`ansys.openapi.common.ApiClientFactory` class. All methods in
     this class are documented as returning :class:`~ansys.openapi.common.ApiClientFactory` class
-    instances of the :class:`ansys.grantami.jobqueue.Connection` class instead.
+    instances of the :class:`ansys.grantami.jobqueue.Connection` class.
 
     Parameters
     ----------

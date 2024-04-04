@@ -31,7 +31,7 @@ Connect to Granta MI
 AsyncJobs relied on an existing Granta MI Scripting Toolkit connection to connect to the job queue.
 PyGranta JobQueue uses the PyGranta approach to creating a client.
 
-Your AsyncJobs code looks like this::
+Your existing AsyncJobs code looks like this::
 
    from GRANTA_MIScriptingToolkit import granta as mpy
 
@@ -45,7 +45,7 @@ Replace the preceding code with this code::
    server_url = "http://my_grantami_server/mi_servicelayer"
    client = Connection(server_url).with_autologon().connect()
 
-For more information on how to connect to Granta MI using other authentication
+For information on how to connect to Granta MI using other authentication
 methods, see :ref:`ref_grantami_jobqueue_connection` in the API reference documentation.
 
 
@@ -82,5 +82,5 @@ Two ``AsyncJob`` attributes for querying the job queue have changed type:
 * The :attr:`AsyncJob.type` attribute returns a member of the :class:`JobType` class instead of a string.
 
 The :meth:`~JobQueueApiClient.jobs_where` method, which accepted :class:`str` values for the
-``job_type`` and ``status`` keyword arguments, are enumerations. You should provide members
-of the :class:`JobType` and :class:`JobStatus` classes instead.
+``job_type`` and ``status`` keyword arguments, are changed to enumerations. Thus, you must
+provide members of the :class:`JobType` and :class:`JobStatus` classes.

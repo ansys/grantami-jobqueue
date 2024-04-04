@@ -44,7 +44,7 @@ Dependencies
 ------------
 .. readme_software_requirements
 
-To use PyGranta JobQueue you must have access to a Granta MI 2024 R2 deployment.
+To use PyGranta JobQueue, you must have access to a Granta MI 2024 R2 deployment.
 
 The ``ansys.grantami.jobqueue`` package currently supports Python version 3.9 through 3.12.
 
@@ -53,24 +53,24 @@ The ``ansys.grantami.jobqueue`` package currently supports Python version 3.9 th
 
 
 Installation
---------------
+------------
 .. readme_installation
 
-To install the latest release from `PyPI <https://pypi.org/project/ansys-grantami-jobqueue/>`_, run
-this command:
+To install the latest PyGranta JobQueue release from `PyPI <https://pypi.org/project/ansys-grantami-jobqueue/>`_,
+run this command:
 
 .. code::
 
     pip install ansys-grantami-jobqueue
 
-To install a release compatible with a specific version of Granta MI, use the
-`PyGranta <https://grantami.docs.pyansys.com/>`_ meta-package with a requirement specifier:
+To install a release compatible with a specific version of Granta MI, install the
+`PyGranta <https://grantami.docs.pyansys.com/>`_ metapackage with a requirement specifier:
 
 .. code::
 
     pip install pygranta==2024.2.0
 
-Alternatively, to install the latest from the `GitHub repository <https://github.com/ansys/grantami-jobqueue>`_,
+Alternatively, to install the latest release from the `PyGranta JobQueue repository <https://github.com/ansys/grantami-jobqueue>`_,
 run this command:
 
 .. code::

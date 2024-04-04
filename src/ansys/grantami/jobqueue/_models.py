@@ -278,7 +278,7 @@ class JobRequest(ABC):
         Name of the job as shown in the job queue.
     description : str
         Description of the job as shown in the job queue.
-    template_file: str or pathlib.Path, default: None
+    template_file : str or pathlib.Path, default: None
         Template to use the job.
     scheduled_execution_date : datetime.datetime, default: None
         Earliest date and time to run the job. If no date and time are
@@ -486,7 +486,7 @@ class ImportJobRequest(JobRequest, ABC):
         Returns
         -------
         JobType
-            Type of job this request represents.
+             Type of job that the request represents.
         """
         pass
 
@@ -495,7 +495,7 @@ class ExcelExportJobRequest(JobRequest):
     """
     Represents an Excel export job request.
 
-    Both an Excel template and references to the records to export
+    An Excel template and references to the records to export
     are required.
 
     Parameters
@@ -503,13 +503,13 @@ class ExcelExportJobRequest(JobRequest):
     name : str
         Name of the job as shown in the job queue.
     description : str
-        The description of the job as shown in the job queue.
+        Description of the job as shown in the job queue.
     template_file : str or pathlib.Path
         Excel template file.
     database_key : str
         Database key for the records to export.
     records : list of ExportRecord
-        List of :class:`~.ExportRecord` objects representing the records to export.
+        List of objects representing the records to export.
     scheduled_execution_date : datetime.datetime, default: None
         Earliest date and time to run the job. If no date and time are provided,
         the job begins as soon as possible.
@@ -594,7 +594,7 @@ class ExcelImportJobRequest(ImportJobRequest):
     """
     Represents an Excel import job request.
 
-    This class supports either combined imports (with template and data in the same file)
+    This class supports either combined imports (with a template and data in the same file)
     or separate data and template imports.
 
     Parameters
@@ -707,7 +707,7 @@ class TextImportJobRequest(ImportJobRequest):
         Name of the job as shown in the job queue.
     description : str
         Description of the job as shown in the job queue.
-    template_file : str or pathlib.Path, optional
+    template_file : str or pathlib.Path, default: None
         Text import template file.
     data_files : list of str or pathlib.Path, default: None
         Text files containing the data to import.
@@ -784,7 +784,7 @@ class TextImportJobRequest(ImportJobRequest):
         Returns
         -------
         JobType
-            Type of job that this request represents.
+            Type of job that the request represents.
         """
         return JobType.TextImportJob
 
@@ -793,15 +793,15 @@ class AsyncJob:
     """
     Represents a job on the server.
 
-    This class provides information on the current status of the job, as well as any
-    job-specific outputs. It allows modification of job metadata, such as the name,
-    description, and scheduled execution date.
+    This class provides information on the current status of the job and any
+    job-specific outputs. It allows modification of job metadata, such as the job
+    name, description, and scheduled execution date.
 
     Notes
     -----
     .. note::
         Do not instantiate this class directly. Objects of this type are returned from
-        :meth:`~JobQueueApiClient.create_job` and
+        the :meth:`~JobQueueApiClient.create_job` and
         :meth:`~JobQueueApiClient.create_job_and_wait` methods.
     """
 
@@ -1006,7 +1006,7 @@ class AsyncJob:
         Returns
         -------
         JobType
-            Type of job.
+            Type of the job.
         """
         return JobType[self._type]
 
@@ -1018,7 +1018,8 @@ class AsyncJob:
         Returns
         -------
         int or None
-            Returns ``None`` if the job is not currently pending.
+            Position of the job in the job queue or ``None`` if the job is not
+            currently pending.
         """
         return self._position
 
@@ -1040,9 +1041,9 @@ class AsyncJob:
         Returns
         -------
         dict
-            Dictionary of job submission information with the user name of the submitter,
+            Dictionary of job submission information with the username of the submitter,
             date and time of submission, and the roles that the submitter belongs to
-            indexed by name.
+            (indexed by name).
         """
         return {
             "username": self._submitter_name,
@@ -1058,7 +1059,7 @@ class AsyncJob:
         Returns
         -------
         datetime.datetime or None
-            Date and time the job was completed or ``None`` if the job is pending.
+            Date and time of job completion or ``None`` if the job is pending.
         """
         return self._completion_datetime
 
@@ -1077,18 +1078,18 @@ class AsyncJob:
     @property
     def scheduled_execution_date_time(self) -> Optional[datetime.datetime]:
         """
-        Date and time that the job is scheduled to run  of scheduled job execution.
+        Date and time that the job is scheduled to run.
 
         Returns
         -------
         datetime.datetime or None
-            Date and time that the job is scheduled to run or ``None`` if the job is not scheduled..
+            Date and time that the job is scheduled to run or ``None`` if the job is not scheduled.
         """
         return self._scheduled_exec_datetime
 
     def update_scheduled_execution_date_time(self, value: datetime.datetime) -> None:
         """
-        Update the date tand time that the job is scheduled to run on the server.
+        Update the date and time that the job is scheduled to run on the server.
 
         Performs an HTTP request against the Granta MI Server API.
 
@@ -1116,15 +1117,15 @@ class AsyncJob:
     @property
     def output_information(self) -> Dict[str, Any]:
         """
-        Additional information if supported by the job type.
+        Additional output information provided by the job (if supported by the job type).
 
-        Additional information includes record placement or verbose logging. The additional
-        information is dependent on the job.
+        Additional output information includes record placement or verbose logging.
+        The additional information supported is dependent on the job.
 
         Returns
         -------
         dict
-            Additional information provided by the job.
+            Additional output information provided by the job.
         """
         parsed = {}
         for k, v in self._job_specific_outputs.items():  # type: ignore[union-attr]

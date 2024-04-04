@@ -21,7 +21,7 @@ Installation
 
 Verify your installation
 ~~~~~~~~~~~~~~~~~~~~~~~~
-Check that you can start the PyGranta JobQueue client from Python by running this code:
+To verify that you can start the PyGranta JobQueue client from Python, run this code:
 
 .. code:: python
 
@@ -32,7 +32,7 @@ Check that you can start the PyGranta JobQueue client from Python by running thi
     <JobQueueApiClient url: http://my.server.name/mi_servicelayer>
 
 If you see a response from the server, you have successfully installed PyGranta JobQueue and
-you can start using the JobQueue client. For more examples, see :ref:`ref_grantami_jobqueue_examples`.
+can start using the JobQueue client. For more examples, see :ref:`ref_grantami_jobqueue_examples`.
 For comprehensive information on the API, see :ref:`ref_grantami_jobqueue_api_reference`.
 
 If you are migrating from the Granta MI Scripting Toolkit AsyncJobs submodule, see :ref:`ref_migration`.
