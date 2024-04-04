@@ -33,9 +33,11 @@ from common import (
 )
 
 EXCEL_TOO_MANY_FILES_ERROR_MESSAGE = (
-    "Cannot create Excel import job with both combined and template/data files specified"
+    "Cannot create Excel import job with both combined and template/data files specified."
 )
-EXCEL_MISSING_FILES_ERROR_MESSAGE = "Excel import jobs must contain either a 'Combined' file or both a 'Template' file and 'Data' files."
+EXCEL_MISSING_FILES_ERROR_MESSAGE = (
+    "Excel import jobs must contain either a combined file or both a template file and data files."
+)
 
 
 @pytest.mark.parametrize(
@@ -104,7 +106,7 @@ def test_excel_invalid_files_raise_exception(combined, data, template, attachmen
 def test_text_invalid_files_raise_exception(data, template, attachment):
     with pytest.raises(
         ValueError,
-        match="Text import jobs must contain one or more 'Data' files and a 'Template' file",
+        match="Text import jobs must contain one or more data files and a template file.",
     ):
         TextImportJobRequest(
             name="ExcelImportTest",
