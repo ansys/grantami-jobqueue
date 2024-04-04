@@ -83,7 +83,7 @@ class _FileType(Enum):
 
 @dataclass(frozen=True)
 class JobQueueProcessingConfiguration:
-    """Read-only configuration of the job queue on the server."""
+    """Provides a read-only configuration of the job queue on the server."""
 
     purge_job_age_in_milliseconds: int
     purge_interval_in_milliseconds: int
