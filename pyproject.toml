@@ -106,12 +106,18 @@ checks = [
     "ES01",
 ]
 
-exclude = [  # don't report on objects that match any of these regex
+override_PR02 = [  # numpydoc_validation doesn't support dataclasses
+    'Provides a read\-only configuration of the job queue on the server',  # JobQueueProcessingConfiguration
+    'Defines a record to include in an export job',  # ExportRecord
+]
+
+override_PR01 = [  # User does not need to instantiate these objects and parameter types are not local to this package
+    'Represents a job on the server',  # AsyncJob
+    'Communicates with Granta MI'  # JobQueueApiClient
+]
+
+exclude = [  # don't report on objects that match any of these regexes
     '\.__repr__$',
     '\.__new__$',
     '\.__init__$',
-    '\.JobRequest$',
-    '\.ExportRecord$',
-    '\.JobQueueApiClient',  # User does not need to instantiate this object
-    '\.AsyncJob',  # User does not need to instantiate this object
 ]
