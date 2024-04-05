@@ -96,7 +96,7 @@ def delete_record(client: ApiClient, name: str) -> None:
 def search_for_records_by_name(client: ApiClient, name: str) -> List[Tuple[str, str]]:
     database_api = api.DatabaseApi(client)
     counter = 0
-    while not database_api.get_status(database_key=DB_KEY).search_index_up_to_date:
+    while not database_api.get_search_index_status(database_key=DB_KEY).search_index_up_to_date:
         counter += 1
         if counter == MAX_DATABASE_CACHE_ATTEMPTS:
             raise RuntimeError(
@@ -110,14 +110,14 @@ def search_for_records_by_name(client: ApiClient, name: str) -> List[Tuple[str, 
                 _property=models.GrantaServerApiSearchSearchableRecordProperty.RECORDNAME,
                 inner_criterion=models.GrantaServerApiSearchShortTextDatumCriterion(
                     value=name,
-                    text_match_behaviour=models.GrantaServerApiSearchTextMatchBehaviour.EXACTMATCHCASEINSENSITIVE,
+                    text_match_behavior=models.GrantaServerApiSearchTextMatchBehavior.EXACTMATCHCASEINSENSITIVE,
                 ),
             ),
             models.GrantaServerApiSearchRecordPropertyCriterion(
                 _property=models.GrantaServerApiSearchSearchableRecordProperty.TREENAME,
                 inner_criterion=models.GrantaServerApiSearchShortTextDatumCriterion(
                     value=name,
-                    text_match_behaviour=models.GrantaServerApiSearchTextMatchBehaviour.EXACTMATCHCASEINSENSITIVE,
+                    text_match_behavior=models.GrantaServerApiSearchTextMatchBehavior.EXACTMATCHCASEINSENSITIVE,
                 ),
             ),
         ]
