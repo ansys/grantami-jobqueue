@@ -5,7 +5,7 @@ Examples
 
 The following examples demonstrate key aspects of Granta MI JobQueue.
 
-To run these examples, install dependencies with this code:
+To run these examples, install dependencies with this command:
 
 .. code::
 

@@ -20,7 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""Pythonic client for GRANTA MI ServerAPI JobQueue."""
+"""Python client for Granta MI Server API Job Queue."""
 
 import importlib.metadata as importlib_metadata
 
