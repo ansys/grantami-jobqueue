@@ -1,7 +1,7 @@
 PyGranta JobQueue |version|
 ===========================
 
-PyGranta JobQueue is a component of the PyGranta software suite that provides a
+PyGranta JobQueue, a component of the PyGranta software suite, provides a
 Python interface to the Granta JobQueue API.
 
 .. grid:: 1 2 2 2
@@ -20,7 +20,7 @@ Python interface to the Granta JobQueue API.
       :link: user_guide/index
       :link-type: doc
 
-      Understand key concepts for implementing PyGranta JobQueue.
+      Understand key concepts for using PyGranta JobQueue.
 
    .. grid-item-card:: API reference :material-regular:`bookmark`
       :padding: 2 2 2 2

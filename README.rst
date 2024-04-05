@@ -29,14 +29,14 @@
    :alt: Black
 
 
-PyGranta Job Queue
-==================
+PyGranta JobQueue
+=================
 
 ..
    _after-badges
 
 
-This package allows users to import and export correctly formatted Excel and text files to and from
+PyGranta JobQueue allows you to import and export correctly formatted Excel and text files to and from
 Granta MI.
 
 
@@ -44,41 +44,41 @@ Dependencies
 ------------
 .. readme_software_requirements
 
-To use the ``ansys.grantami.jobqueue`` package you must have access to a Granta MI 2024 R2 deployment.
+To use PyGranta JobQueue, you must have access to a Granta MI 2024 R2 deployment.
 
-The ``ansys.grantami.jobqueue`` package currently supports Python from version 3.9 to version 3.12.
+The ``ansys.grantami.jobqueue`` package currently supports Python version 3.9 through 3.12.
 
 .. readme_software_requirements_end
 
 
 
 Installation
---------------
+------------
 .. readme_installation
 
-To install the latest release from `PyPI <https://pypi.org/project/ansys-grantami-jobqueue/>`_, use
-this code:
+To install the latest PyGranta JobQueue release from `PyPI <https://pypi.org/project/ansys-grantami-jobqueue/>`_,
+run this command:
 
 .. code::
 
     pip install ansys-grantami-jobqueue
 
-To install a release compatible with a specific version of Granta MI, use the
-`PyGranta <https://grantami.docs.pyansys.com/>`_ meta-package with a requirement specifier:
+To install a release compatible with a specific version of Granta MI, install the
+`PyGranta <https://grantami.docs.pyansys.com/>`_ metapackage with a requirement specifier:
 
 .. code::
 
     pip install pygranta==2024.2.0
 
-Alternatively, to install the latest from ``ansys-grantami-jobqueue`` `GitHub <https://github.com/ansys/grantami-jobqueue>`_,
-use this code:
+Alternatively, to install the latest release from the `PyGranta JobQueue repository <https://github.com/ansys/grantami-jobqueue>`_,
+run this command:
 
 .. code::
 
     pip install git:https://github.com/ansys/grantami-jobqueue.git
 
 
-To install a local *development* version with Git and Poetry, use this code:
+To install a local *development* version with Git and Poetry, run these commands:
 
 .. code::
 
@@ -87,7 +87,7 @@ To install a local *development* version with Git and Poetry, use this code:
     poetry install
 
 
-The preceding code installs the package and allows you to modify it locally,
-with your changes reflected in your Python setup after restarting the Python kernel.
+The preceding commands install the package in development mode so that you can modify
+it locally. Your changes are reflected in your Python setup after restarting the Python kernel.
 
 .. readme_installation_end
