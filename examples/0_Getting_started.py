@@ -76,5 +76,5 @@ f"Concurrency enabled: {'Yes' if client.processing_configuration.concurrency els
 client.jobs
 
 # Note: The jobs accessible in the queue depend on the user's role.
-# Standard users can only access their own jobs, whereas administrative users
+# Standard users can only access their own jobs, whereas administrator users
 # can access jobs created by all users.

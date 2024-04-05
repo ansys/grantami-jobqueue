@@ -90,8 +90,8 @@ deferred_job
 
 client.jobs
 
-# Note that only jobs that you have access to are included in this property. Non-administrative users
-# can only access and modify their own jobs. Administrative users can access and modify all jobs on the
+# Note that only jobs that you have access to are included in this property. Non-administrator users
+# can only access and modify their own jobs. Administrator users can access and modify all jobs on the
 # server.
 
 # ## Edit existing jobs
