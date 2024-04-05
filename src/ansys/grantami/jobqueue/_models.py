@@ -913,7 +913,7 @@ class AsyncJob:
     @property
     def name(self) -> str:
         """
-        Display ame of the job, which does not have to be unique.
+        Display name of the job, which does not have to be unique.
 
         Returns
         -------

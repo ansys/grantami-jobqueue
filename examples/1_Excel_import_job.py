@@ -49,7 +49,7 @@ client = Connection(server_url).with_credentials("user_name", "password").connec
 # *template*, one or more *data* files, or *combined* files, which include both the template
 # and data files. You should specicy any additional files to imported as file or picture attributes
 # as *attachment* files. You can provide these additional files as relative or absolute paths or as
-# `pathlib.Path` objects.
+# ``pathlib.Path`` objects.
 
 # +
 from ansys.grantami.jobqueue import ExcelImportJobRequest

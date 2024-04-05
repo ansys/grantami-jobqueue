@@ -9,7 +9,7 @@ Migrate from AsyncJobs
 ======================
 
 The import and export tools in PyGranta JobQueue were previously available in the Granta MI
-Scripting Toolkit AsyncJobs submodule, which this documentation refers to as AnsyncJobs. As
+Scripting Toolkit AsyncJobs submodule, which this documentation refers to as AsyncJobs. As
 of the Granta MI 2024 R2 release, however, these import and export tools are available only
 in PyGranta JobQueue.
 

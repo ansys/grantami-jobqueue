@@ -140,7 +140,8 @@ class JobQueueApiClient(ApiClient):
     @property
     def is_admin_user(self) -> bool:
         """
-        Flag indicating if the current user is a job queue administrator.
+        Flag indicating if the current user is an
+        administrator of the job queue.
 
         Administrators can promote jobs to the top of the queue and interact with other users' jobs.
 
