@@ -110,14 +110,14 @@ def search_for_records_by_name(client: ApiClient, name: str) -> List[Tuple[str, 
                 _property=models.GrantaServerApiSearchSearchableRecordProperty.RECORDNAME,
                 inner_criterion=models.GrantaServerApiSearchShortTextDatumCriterion(
                     value=name,
-                    text_match_behaviour=models.GrantaServerApiSearchTextMatchBehaviour.EXACTMATCHCASEINSENSITIVE,
+                    text_match_behavior=models.GrantaServerApiSearchTextMatchBehavior.EXACTMATCHCASEINSENSITIVE,
                 ),
             ),
             models.GrantaServerApiSearchRecordPropertyCriterion(
                 _property=models.GrantaServerApiSearchSearchableRecordProperty.TREENAME,
                 inner_criterion=models.GrantaServerApiSearchShortTextDatumCriterion(
                     value=name,
-                    text_match_behaviour=models.GrantaServerApiSearchTextMatchBehaviour.EXACTMATCHCASEINSENSITIVE,
+                    text_match_behavior=models.GrantaServerApiSearchTextMatchBehavior.EXACTMATCHCASEINSENSITIVE,
                 ),
             ),
         ]
