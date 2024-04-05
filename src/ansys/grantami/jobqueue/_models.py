@@ -89,13 +89,13 @@ class JobQueueProcessingConfiguration:
     Parameters
     ----------
     purge_job_age_in_milliseconds : int
-        The age at which jobs will be automatically removed from the queue.
+       Age at which to automatically remove jobs from the queue.
     purge_interval_in_milliseconds : int
-        The time between purge operations.
+        Time between purge operations.
     polling_interval_in_milliseconds : int
-        The idle time before executing the next job in the queue.
+       Idle time before executing the next job in the queue.
     concurrency : int
-        The maximum number of jobs to be processed concurrently.
+        Maximum number of jobs to process concurrently.
     """
 
     purge_job_age_in_milliseconds: int
