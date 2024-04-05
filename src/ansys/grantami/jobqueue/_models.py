@@ -83,7 +83,20 @@ class _FileType(Enum):
 
 @dataclass(frozen=True)
 class JobQueueProcessingConfiguration:
-    """Provides a read-only configuration of the job queue on the server."""
+    """
+    Provides a read-only configuration of the job queue on the server.
+
+    Parameters
+    ----------
+    purge_job_age_in_milliseconds : int
+       Age at which to automatically remove jobs from the queue.
+    purge_interval_in_milliseconds : int
+        Time between purge operations.
+    polling_interval_in_milliseconds : int
+       Idle time before executing the next job in the queue.
+    concurrency : int
+        Maximum number of jobs to process concurrently.
+    """
 
     purge_job_age_in_milliseconds: int
     purge_interval_in_milliseconds: int
@@ -1024,7 +1037,8 @@ class AsyncJob:
         return self._position
 
     def move_to_top(self) -> None:
-        """Promote the job to the top of the job queue.
+        """
+        Promote the job to the top of the job queue.
 
         To use this method, you must have ``MI_ADMIN`` permission.
         """
