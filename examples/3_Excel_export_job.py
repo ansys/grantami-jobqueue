@@ -15,21 +15,21 @@
 #     name: python3
 # ---
 
-# # Creating an Excel export job
+# # Create an Excel export job
 
-# An Excel export job is used to export data into a properly formatted Excel spreadsheet.
+# You use an Excel export job to export data into a properly formatted Excel spreadsheet.
 #
-# This example shows the steps required to create a Excel export job request, submit it to the job
+# This example shows how to create an Excel export job request, submit it to the job
 # queue, and interact with the resulting Excel export job object returned by the server.
 #
-# The details of how to create a properly-formatted Excel export template are outside the scope of
-# this example. Consult the Granta MI documentation or your ACE representative for information on
-# the use of Excel for exporting data from Granta MI.
+# Information on how to create a properly formatted Excel export template is outside the scope of
+# this example. For information on the use of Excel for exporting data from Granta MI, see
+# the Granta MI documentation or consult your ACE representative.
 
-# ## Connecting to Granta MI
+# ## Connect to Granta MI
 
-# Import the ``Connection`` class and create the connection. See the
-# [Getting started](0_Getting_started.ipynb) example for more detail.
+# Import the ``Connection`` class and create the connection. For more information,
+# see the [Connect and access the job queue](0_Getting_started.ipynb) example.
 
 # + tags=[]
 from ansys.grantami.jobqueue import Connection
@@ -38,21 +38,21 @@ server_url = "http://my_grantami_server/mi_servicelayer"
 client = Connection(server_url).with_credentials("user_name", "password").connect()
 # -
 
-# ## Create an Excel export job request object
+# ## Create an ``ExcelExportJobRequest`` object
 
 # The first step in exporting an Excel file with the job queue is to create an
 # ``ExcelExportJobRequest`` object. When creating this object, specify the name of the job, the
-# Excel export template file, the relevant database, and  the records to be exported. You can also
+# Excel export template file, the relevant database, and the records to export. You can also
 # specify an optional description and the scheduled execution date, if the export should be deferred
 # until that date and time.
 #
-# The records to be exported are provided as ``ExportRecord`` objects. Records are defined in terms
-# of a 'record history identity' and an optional record version, used to identify a previous record
-# version in version-controlled tables. To determine the 'record history identity', use of the
-# Granta MI Python Scripting Toolkit is recommended. Consult your ACE representative for more
-# details.
+# You provide the records to export as ``ExportRecord`` objects. Records are defined in terms
+# of a *record history identity* and an optional *record version*, which are used to identify
+# a previous record version in version-controlled tables. To determine the record history identity,
+# use of the Granta MI Python Scripting Toolkit is recommended. For more information, consult your
+# ACE representative.
 #
-# The Excel export template file can be provided as a relative or absolute path, or as a
+# You can provide the Excel export template file as a relative or absolute path, or as a
 # ``pathlib.Path`` objects.
 
 # +
@@ -73,16 +73,17 @@ excel_export_request
 # -
 
 # ## Submit the job to the server
-# Next, submit the job to the server. There are two ways to submit the job:
+# Next, submit the jobs to the server. There are two methods for submitting job
+# requests:
 #
 # * ``create_job()``: Submit the job request to the server and immediately return an
-#   ``AsyncJob`` object in the 'pending' state.
+#   ``AsyncJob`` object in the *pending* state.
 # * ``create_job_and_wait()``: Submit the job request to the server and block until the job
-#    either completes or fails. Return an ``AsyncJob`` object in the 'succeeded' or 'failed' state.
+#    either completes or fails. Return an ``AsyncJob`` object in the *succeeded* or *failed* state.
 #
-# This example uses the ``create_job_and_wait()`` method. See
-# [Scheduling and modifying jobs](4_Scheduling_and_modifying_jobs.ipynb) for an example that shows
-# how to create and submit a job that runs asynchronously.
+# This example uses the ``create_job_and_wait()`` method. For an example that shows
+# how to create and submit a job that runs asynchronously, see
+# [Schedule and modify jobs](4_Scheduling_and_modifying_jobs.ipynb).
 
 # +
 completed_job = client.create_job_and_wait(excel_export_request)
@@ -90,27 +91,28 @@ completed_job = client.create_job_and_wait(excel_export_request)
 
 # ## Access output files
 # Finally, access the results of the job. Export jobs typically create log files and either a
-# single Excel output file, or a zip containing multiple Excel files and/or attachments.
+# single Excel output file or a ZIP file containing multiple Excel files and/or attachments.
 
 # Access the list of files generated by the job with the ``output_file_names`` property. This
 # returns a list of file names.
 
 completed_job.output_file_names
 
-# In general, an Excel export job will return three files:
+# In general, an Excel export job returns three files:
 #
-# 1. \<job name>.log: the log file of the import operation on the server
-# 2. summary.json: a data file which summarizes the number of records exported by the job
-# 3. A file containing the data exported from Granta MI
+# - ``<job name>.log``: Log file of the import operation on the server
+# - ``summary.json``: Data file that summarizes the number of records exported by the job
+# - A file containing the data exported from Granta MI
 #
-# The contents of the exported data file depends on the details of the job:
-# * If one Excel file is generated and there are no attachments to be exported, the exported file
-# is the Excel file generated by the export operation.
+# The contents of the exported data file depends on the job:
+#
+# * If one Excel file is generated and no attachments are included in the export,
+#   the exported file is the Excel file generated by the export operation.
 # * If there are multiple Excel files generated, or if attachments are included in the export,
-# the exported file is a zip of all the exported files.
+#   the exported file is a ZIP file of all the exported files.
 
-# The following cell shows accessing the content of the log file as ``bytes`` using the
-# ``AsyncJob.get_file_content`` method.
+# This cell shows how to access the content of the log file as ``bytes`` using the
+# ``AsyncJob.get_file_content()`` method:
 
 # +
 log_file_name = next(name for name in completed_job.output_file_names if "log" in name)
@@ -120,8 +122,8 @@ print(f"{log_file_name} (first 200 characters):")
 print(f"{log_file_string[:500]}...")
 # -
 
-# The following cell shows downloading the Excel file and export summary file to disk with the
-# ``AsyncJob.download_file`` method.
+# This next cell shows how to download the Excel file and export summary file to disk using the
+# ``AsyncJob.download_file()`` method.
 
 # +
 output_file_name = next(name for name in completed_job.output_file_names if name.endswith("xlsx"))

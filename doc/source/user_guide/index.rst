@@ -5,86 +5,82 @@
 User guide
 ##########
 
-Migrating from AsyncJobs
-========================
+Migrate from AsyncJobs
+======================
 
-This section shows how to migrate from AsyncJobs to PyGranta JobQueue package.
+The import and export tools in PyGranta JobQueue were previously available in the Granta MI
+Scripting Toolkit AsyncJobs submodule, which this documentation refers to as AsyncJobs. As
+of the Granta MI 2024 R2 release, however, these import and export tools are available only
+in PyGranta JobQueue.
 
-Overview
-========
+In addition to providing a summary of the differences between AsyncJobs and PyGranta JobQueue,
+this section shows how to modify your existing AsyncJobs scripts to work in PyGranta JobQueue.
 
-The import and export tools available in PyGranta JobQueue was previously available in the Granta MI
-Scripting Toolkit AsyncJobs submodule. As of the 2024 R2 release, this capability is now only
-available in the PyGranta JobQueue module. The current page provides a summary of the differences
-between these two packages, and shows how to modify existing code to work against the new package.
-
-In addition, this package is `PEP 561 <PEP561_>`_ compliant, and so mypy or most modern Python IDEs
-can be used to statically validate ``AsyncJobs`` scripts against this package. This highlights
-issues without needing to run the code.
+.. note::
+  Because PyGranta JobQueue is `PEP 561 <PEP561_>`_-compliant, you can use `Mypy <https://pypi.org/project/mypy/>`_
+  or most modern Python IDEs to statically validate AsyncJobs scripts against PyGranta JobQueue. This
+  highlights issues without needing to run the code.
 
 .. _PEP561: https://peps.python.org/pep-0561/
 
-Connecting to Granta MI
-=======================
+Connect to Granta MI
+====================
 
 .. highlight:: python
 
-AsyncJobs relied on an existing Scripting Toolkit connection to connect to the job queue. Instead,
-JobQueue uses the PyGranta approach to creating a client. Replace your existing code::
+AsyncJobs relied on an existing Granta MI Scripting Toolkit connection to connect to the job queue.
+PyGranta JobQueue uses the PyGranta approach to creating a client.
+
+Your existing AsyncJobs code looks like this::
 
    from GRANTA_MIScriptingToolkit import granta as mpy
 
    mi = mpy.connect('http://my_grantami_server/mi_servicelayer', autologon=True)
    job_queue = mi.get_async_job_queue()
 
-with the equivalent::
+Replace the preceding code with this code::
 
    from ansys.grantami.jobqueue import Connection
 
    server_url = "http://my_grantami_server/mi_servicelayer"
    client = Connection(server_url).with_autologon().connect()
 
-See the API reference documentation for more detail on how to connect to
-Granta MI using other authentication methods.
+For information on how to connect to Granta MI using other authentication
+methods, see :ref:`ref_grantami_jobqueue_connection` in the API reference documentation.
 
 
-Creating a ``JobRequest``
-=========================
+Create a job request
+====================
 
-Minor modifications have been made to the :class:`JobRequest` object and its concrete subclasses:
+There are some minor modifications to the :class:`JobRequest` object and its concrete subclasses:
 
 .. vale off
 
-* Only :class:`pathlib.Path` and string values for file inputs are now permitted. File objects
-  are no longer allowed.
-* The ``templates`` keyword argument has changed to ``template`` and now only accepts a single
+* Only the :class:`pathlib.Path` object and string values for file inputs are permitted.
+  File objects are no longer allowed.
+* The ``templates`` keyword argument has changed to ``template`` and only accepts a single
   value.
 
 .. vale on
 
 
-Submitting a ``JobRequest`` to the queue
-========================================
+Submit a job request to the queue
+=================================
 
-The methods formerly available on the ``AsyncJobQueue`` that were used to create jobs have been
-renamed to reflect that jobs may now be import or export jobs:
+The ``AsyncJobQueue`` methods for creating jobs are renamed to reflect that jobs can
+be import or export jobs:
 
-* ``AsyncJobQueue.create_import_job_and_wait`` is now :meth:`JobQueueApiClient.create_job_and_wait`
-* ``AsyncJobQueue.create_import_job`` is now :meth:`JobQueueApiClient.create_job`
+* ``AsyncJobQueue.create_import_job_and_wait`` is renamed to :meth:`JobQueueApiClient.create_job_and_wait`.
+* ``AsyncJobQueue.create_import_job`` is renamed to :meth:`JobQueueApiClient.create_job`.
 
+Query the job queue
+===================
 
-``AsyncJob`` properties
-=======================
+Two ``AsyncJob`` attributes for querying the job queue have changed type:
 
-Two ``AsyncJob`` properties have changed type:
+* The :attr:`AsyncJob.status` attribute returns a member of the :class:`JobStatus` class instead of a string.
+* The :attr:`AsyncJob.type` attribute returns a member of the :class:`JobType` class instead of a string.
 
-* :attr:`AsyncJob.status` now returns a :class:`JobStatus` member instead of a string
-* :attr:`AsyncJob.type` now returns a :class:`JobType` member instead of a string
-
-
-Querying the job queue (``jobs_where()``)
-=========================================
-
-The :meth:`~JobQueueApiClient.jobs_where` method previously accepted :class:`str` values for the
-``job_type`` and ``status`` keyword arguments. These are now enumerations, and members of the
-:class:`JobType` and :class:`JobStatus` classes should be provided instead.
+The :meth:`~JobQueueApiClient.jobs_where` method, which accepted :class:`str` values for the
+``job_type`` and ``status`` keyword arguments, are changed to enumerations. Thus, you must
+provide members of the :class:`JobType` and :class:`JobStatus` classes.

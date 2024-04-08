@@ -15,22 +15,22 @@
 #     name: python3
 # ---
 
-# # Creating a Text import job
+# # Create a text import job
 
-# A Text import job is used to import data from a plan text file with an accompanying import
+# You use a text import job to import data from a plain text file with an accompanying import
 # template.
 #
-# This example shows the steps required to create a text import job request, submit it to the job
+# This example shows how to create a text import job request, submit it to the job
 # queue, and interact with the resulting text import job object returned by the server.
 #
-# The details of how to create a text import template are outside the scope of this example. Consult
-# the Granta MI documentation or your ACE representative for information on how to import plain text
-# data into Granta MI.
+# Information on how to create a text import template is outside the scope of this example.
+# For information on how to import plain text data into Granta MI, see the Granta MI documentation
+# or consult your ACE representative.
 
-# ## Connecting to Granta MI
+# ## Connect to Granta MI
 
-# Import the ``Connection`` class and create the connection. See the
-# [Getting started](0_Getting_started.ipynb) example for more detail.
+# Import the ``Connection`` class and create the connection. For more information,
+# see the [Connect and access the job queue](0_Getting_started.ipynb) example.
 
 # + tags=[]
 from ansys.grantami.jobqueue import Connection
@@ -39,11 +39,11 @@ server_url = "http://my_grantami_server/mi_servicelayer"
 client = Connection(server_url).with_credentials("user_name", "password").connect()
 # -
 
-# ## Create a Text import job request object
+# ## Create a ``TextImportJobRequest`` object
 
 # The first step in importing a text file with the job queue is to create a
 # ``TextImportJobRequest`` object. When creating this object, specify the name of the job and the
-# file(s) to be imported. You can also specify an optional description and the scheduled execution
+# files to import. You can also specify an optional description and the scheduled execution
 # date, if the import should be deferred until that date and time.
 #
 # A text import job requires data files, template files, and optionally additional files to be
@@ -66,16 +66,17 @@ text_import_request
 # -
 
 # ## Submit the job to the server
-# Next, submit the jobs to the server. There are two ways to submit the job:
+# Next, submit the jobs to the server. There are two methods for submitting job
+# requests:
 #
 # * ``create_job()``: Submit the job request to the server and immediately return an
-#   ``AsyncJob`` object in the 'pending' state.
+#   ``AsyncJob`` object in the *pending* state.
 # * ``create_job_and_wait()``: Submit the job request to the server and block until the job
-#    either completes or fails. Return an ``AsyncJob`` object in the 'succeeded' or 'failed' state.
+#    either completes or fails. Return an ``AsyncJob`` object in the *succeeded* or *failed* state.
 #
-# This example uses the ``create_job_and_wait()`` method. See
-# [Scheduling and modifying jobs](4_Scheduling_and_modifying_jobs.ipynb) for an example that shows
-# how to create and submit a job that runs asynchronously.
+# This example uses the ``create_job_and_wait()`` method. For an example that shows
+# how to create and submit a job that runs asynchronously, see
+# [Schedule and modify jobs](4_Scheduling_and_modifying_jobs.ipynb).
 
 # +
 text_import_job = client.create_job_and_wait(text_import_request)
@@ -92,14 +93,14 @@ text_import_job
 
 text_import_job.output_file_names
 
-# In general, a text import job will return two files:
+# In general, a text import job returns two files:
 #
-# 1. \<job name>.log: the log file of the import operation on the server
-# 2. summary.json: a data file which summarizes the number of records impacted by the import
+# - ``<job name>.log``: Log file of the import operation on the server
+# - ``summary.json``: Data file that summarizes the number of records impacted by the import
 #    job
 
-# The following cell shows accessing the content of the log file as ``bytes`` using the
-# ``AsyncJob.get_file_content`` method.
+# This cell shows how to access the content of the log file as ``bytes`` using the
+# ``AsyncJob.get_file_content()`` method:
 
 # +
 log_file_name = next(name for name in text_import_job.output_file_names if "log" in name)
@@ -109,8 +110,8 @@ print(f"{log_file_name} (first 200 characters):")
 print(f"{log_file_string[:500]}...")
 # -
 
-# The following cell shows downloading the import summary file to disk with the
-# ``AsyncJob.download_file`` method.
+# This next cell shows how to download the import summary file to disk using the
+# ``AsyncJob.download_file()`` method.
 
 # +
 summary_file_name = next(
