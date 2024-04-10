@@ -141,12 +141,12 @@ jobs:
           twine-username: "__token__"
           twine-token: ${{ secrets.PYANSYS_PRIVATE_PYPI_TOKEN }}
 
-      - uses: ansys/actions/release-pypi-public@v5
-        name: "Release to public PyPI"
-        with:
-          library-name: ${{ env.LIBRARY_NAME }}
-          twine-username: "__token__"
-          twine-token: ${{ secrets.PYPI_TOKEN }}
+#      - uses: ansys/actions/release-pypi-public@v5
+#        name: "Release to public PyPI"
+#        with:
+#          library-name: ${{ env.LIBRARY_NAME }}
+#          twine-username: "__token__"
+#          twine-token: ${{ secrets.PYPI_TOKEN }}
 
       - uses: ansys/actions/release-github@v5
         name: "Release to GitHub"
