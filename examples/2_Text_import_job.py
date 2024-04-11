@@ -59,7 +59,7 @@ text_import_request = TextImportJobRequest(
     name="Text Import",
     description="An example text import job",
     template_file=pathlib.Path("./assets/text_import_template.xml"),
-    data_files=["./assets/text_import_data.txt", "./assets/text_import_data.RLT"],
+    data_files=["./assets/example_data.txt"],
 )
 
 text_import_request
