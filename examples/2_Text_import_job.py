@@ -119,5 +119,5 @@ summary_file_name = next(
 )
 output_path = f"./{summary_file_name}"
 text_import_job.download_file(summary_file_name, output_path)
-f"{summary_file_name} saved to disk"
+print(f"{summary_file_name} saved to disk")
 # -
