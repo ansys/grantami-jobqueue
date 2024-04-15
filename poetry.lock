@@ -2426,13 +2426,13 @@ test = ["cython (>=3.0)", "filelock", "html5lib", "pytest (>=4.6)", "setuptools 
 
 [[package]]
 name = "sphinx-autoapi"
-version = "3.1.0a3"
+version = "3.1.0b0"
 description = "Sphinx API documentation generator"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "sphinx-autoapi-3.1.0a3.tar.gz", hash = "sha256:398eb5639ab11af17bd153cb644a2531d06e35fe91a005e4c85c57bcbab70600"},
-    {file = "sphinx_autoapi-3.1.0a3-py2.py3-none-any.whl", hash = "sha256:fff3434868536eaa6ea7317624eb61a67b538b76351ce09fe5a6da98e9b909dc"},
+    {file = "sphinx_autoapi-3.1.0b0-py2.py3-none-any.whl", hash = "sha256:2b61a59a443906cee03219bc4e026f6c39af581b45b378d07ec585ab1d1a0ab4"},
+    {file = "sphinx_autoapi-3.1b0.tar.gz", hash = "sha256:2f91530460fd09bcc9991950116df67b4029c8a95d1da813dd76459b6680ccd4"},
 ]
 
 [package.dependencies]
