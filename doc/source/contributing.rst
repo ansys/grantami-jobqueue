@@ -33,10 +33,12 @@ build the documentation, and build the package.
 
     git clone https://github.com/ansys/grantami-jobqueue
     cd grantami-jobqueue
-    poetry install --with build,doc,tests
+    poetry install --with doc
 
 Additional tools
 -----------------
+
+.. _ref_precommit:
 
 Pre-commit
 ~~~~~~~~~~
@@ -86,8 +88,6 @@ Continuous Integration (CI) on GitHub is configured to run the integration tests
 full documentation on creation and updates of pull requests. CI is not configured to run for pull
 requests from forks. External contributions require approval from a maintainer for checks to run.
 
-
-.. _ref_precommit:
 
 Code formatting and styling
 ===========================
