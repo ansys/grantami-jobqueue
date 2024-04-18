@@ -33,6 +33,7 @@ updates:
       interval: "weekly"
     labels:
       - "maintenance"
+      - "dependencies"
     groups:
        actions:
           patterns:
