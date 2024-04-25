@@ -226,10 +226,39 @@ class TestExcelImportJob:
         with pytest.raises(ValueError):
             job.update()
 
+    def test_create_excel_import_no_description(self, empty_job_queue_api_client):
+        job_req = ExcelImportJobRequest(
+            name="ExcelImportTest combined file with attachment",
+            description=None,
+            combined_files=[str(EXCEL_IMPORT_COMBINED_FILE_WITH_ATTACHMENT)],
+            attachment_files=[ATTACHMENT],
+        )
+
+        job = empty_job_queue_api_client.create_job_and_wait(job_req)
+        assert job.description is None
+
+        output_info = job.output_information["summary"]
+        assert output_info["NumberOfRecordsCreated"] == 1
+        assert output_info["NumberOfRecordsUpdated"] == 0
+
 
 class TestTextImportJob:
     def test_create_text_import(self, completed_text_import_job):
         output_info = completed_text_import_job.output_information["summary"]
+        assert output_info["NumberOfRecordsCreated"] == 4
+        assert output_info["NumberOfRecordsUpdated"] == 0
+
+    def test_create_text_import_no_description(self, empty_job_queue_api_client):
+        job_req = TextImportJobRequest(
+            name="TextImportTest",
+            description=None,
+            data_files=[TEXT_IMPORT_DATA_FILE],
+            template_file=TEXT_IMPORT_TEMPLATE_FILE,
+        )
+        job = empty_job_queue_api_client.create_job_and_wait(job_req)
+        assert job.description is None
+
+        output_info = job.output_information["summary"]
         assert output_info["NumberOfRecordsCreated"] == 4
         assert output_info["NumberOfRecordsUpdated"] == 0
 
@@ -258,6 +287,24 @@ class TestExportJob:
 
         output_info = job.output_information["summary"]
         assert output_info["ExportedRecords"] == 2
+
+    def test_excel_export_job_no_description(self, empty_job_queue_api_client):
+        record = ExportRecord(
+            record_history_identity=123222,
+        )
+        job_req = ExcelExportJobRequest(
+            name="ExcelImportTest",
+            description=None,
+            database_key="MI_Training",
+            records=[record],
+            template_file=EXCEL_EXPORT_TEMPLATE_FILE,
+        )
+        job = empty_job_queue_api_client.create_job_and_wait(job_req)
+        assert job.description is None
+        check_success(job)
+
+        output_info = job.output_information["summary"]
+        assert output_info["ExportedRecords"] == 1
 
 
 class TestFileOutputs:
