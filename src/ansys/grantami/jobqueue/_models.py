@@ -289,7 +289,7 @@ class JobRequest(ABC):
     ----------
     name : str
         Name of the job as shown in the job queue.
-    description : str
+    description : Optional[str]
         Description of the job as shown in the job queue.
     template_file : str or pathlib.Path, default: None
         Template to use the job.
@@ -302,7 +302,7 @@ class JobRequest(ABC):
     def __init__(
         self,
         name: str,
-        description: str,
+        description: Optional[str],
         template_file: Optional[Union[str, pathlib.Path]],
         scheduled_execution_date: Optional[datetime.datetime] = None,
     ) -> None:
@@ -515,7 +515,7 @@ class ExcelExportJobRequest(JobRequest):
     ----------
     name : str
         Name of the job as shown in the job queue.
-    description : str
+    description : Optional[str]
         Description of the job as shown in the job queue.
     template_file : str or pathlib.Path
         Excel template file.
@@ -533,7 +533,7 @@ class ExcelExportJobRequest(JobRequest):
     >>> record_history_identities = [12345, 23456]
     >>> job_request = ExcelExportJobRequest(
     ...     name="Excel export job",
-    ...     description="Example job request to import data from Excel",
+    ...     description=None,
     ...     template_file=template_file,
     ...     database_key="MI_Training",
     ...     records=[ExportRecord(rhid) for rhid in record_history_identities],
@@ -557,7 +557,7 @@ class ExcelExportJobRequest(JobRequest):
     def __init__(
         self,
         name: str,
-        description: str,
+        description: Optional[str],
         template_file: Union[str, pathlib.Path],
         database_key: str,
         records: List[ExportRecord],
@@ -614,7 +614,7 @@ class ExcelImportJobRequest(ImportJobRequest):
     ----------
     name : str
         Name of the job as shown in the job queue.
-    description : str
+    description : Optional[str]
         Description of the job as shown in the job queue.
     template_file : str or pathlib.Path, default: None
         Excel template file.
@@ -633,7 +633,7 @@ class ExcelImportJobRequest(ImportJobRequest):
     >>> template_file: pathlib.Path  # pathlib Path object for the template
     >>> job_request = ExcelImportJobRequest(
     ...     name="Excel import job",
-    ...     description="Example job request to import data from Excel",
+    ...     description=None,
     ...     data_files=["assets/data_file_1.xlsx", "assets/data_file_2.xlsx"],
     ...     template_file=template_file,
     ... )
@@ -655,7 +655,7 @@ class ExcelImportJobRequest(ImportJobRequest):
     def __init__(
         self,
         name: str,
-        description: str,
+        description: Optional[str],
         template_file: Optional[Union[str, pathlib.Path]] = None,
         data_files: Optional[List[Union[str, pathlib.Path]]] = None,
         combined_files: Optional[List[Union[str, pathlib.Path]]] = None,
@@ -718,7 +718,7 @@ class TextImportJobRequest(ImportJobRequest):
     ----------
     name : str
         Name of the job as shown in the job queue.
-    description : str
+    description : Optional[str]
         Description of the job as shown in the job queue.
     template_file : str or pathlib.Path, default: None
         Text import template file.
@@ -734,8 +734,8 @@ class TextImportJobRequest(ImportJobRequest):
     --------
     >>> template_file: pathlib.Path  # pathlib Path object for the template
     >>> job_request = TextImportJobRequest(
-    ...     name = "Text import job",
-    ...     description = "Example job request to import data from Excel",
+    ...     name="Text import job",
+    ...     description=None,
     ...     template_file=template_file,
     ...     data_files=["Data_File_1.txt", "Data_File_2.txt"],  # Relative paths
     ... )
@@ -757,7 +757,7 @@ class TextImportJobRequest(ImportJobRequest):
     def __init__(
         self,
         name: str,
-        description: str,
+        description: Optional[str],
         template_file: Optional[Union[str, pathlib.Path]] = None,
         data_files: Optional[List[Union[str, pathlib.Path]]] = None,
         attachment_files: Optional[List[Union[str, pathlib.Path]]] = None,
@@ -827,7 +827,7 @@ class AsyncJob:
 
         self._id: str
         self._name: str
-        self._description: str
+        self._description: Optional[str]
         self._status: models.GrantaServerApiAsyncJobsJobStatus
         self._type: str
         self._position: Optional[int]
@@ -853,7 +853,7 @@ class AsyncJob:
         """
         self._id = self._get_property(job_obj, name="id", required=True)
         self._name = self._get_property(job_obj, name="name", required=True)
-        self._description = self._get_property(job_obj, name="description", required=True)
+        self._description = self._get_property(job_obj, name="description")
         self._status = self._get_property(job_obj, name="status", required=True)
         self._type = self._get_property(job_obj, name="type", required=True)
         self._position = self._get_property(job_obj, name="position")
