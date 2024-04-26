@@ -129,6 +129,8 @@ class TestUpdateAsyncJob:
             ("id", "New ID", None, None),
             ("name", "New Name", None, None),
             ("description", "New Description", None, None),
+            ("description", None, None, None),
+            ("description", Unset, None, None),
             ("status", models.GrantaServerApiAsyncJobsJobStatus.FAILED, JobStatus["Failed"], None),
             ("type", "TextImportJob", JobType.TextImportJob, None),
             ("position", 51, None, None),
@@ -191,7 +193,6 @@ class TestUpdateAsyncJob:
         [
             "id",
             "name",
-            "description",
             "status",
             "type",
             "submitter_name",
