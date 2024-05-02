@@ -128,6 +128,18 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           doc-artifact-name: documentation-html
 
+  update-changelog:
+    name: "Update CHANGELOG for new tag"
+    if: github.event_name == 'push' && contains(github.ref, 'refs/tags')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - uses: ansys/actions/doc-deploy-changelog@v6
+        with:
+          token: ${{ secrets.PYANSYS_CI_BOT_TOKEN }}
+
   release:
     name: "Release"
     runs-on: ubuntu-latest
