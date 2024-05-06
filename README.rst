@@ -16,7 +16,7 @@
    :target: https://codecov.io/gh/ansys/grantami-jobqueue
    :alt: Codecov
 
-.. |GH-CI| image:: https://github.com/pyansys/grantami-jobqueue/actions/workflows/ci_cd.yml/badge.svg
+.. |GH-CI| image:: https://github.com/ansys/grantami-jobqueue/actions/workflows/ci_cd.yml/badge.svg
    :target: https://github.com/ansys/grantami-jobqueue/actions/workflows/ci_cd.yml
    :alt: GH-CI
 
