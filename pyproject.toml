@@ -5,7 +5,7 @@ build-backend = "poetry.core.masonry.api"
 [tool.poetry]
 # Check https://python-poetry.org/docs/pyproject/ for all available sections
 name = "ansys-grantami-jobqueue"
-version = "1.0.0rc0"
+version = "1.0.0"
 description = "A python wrapper for the Granta MI Job Queue API"
 license = "MIT"
 authors = ["ANSYS, Inc. <pyansys.core@ansys.com>"]
@@ -14,7 +14,7 @@ readme = "README.rst"
 repository = "https://github.com/ansys/grantami-jobqueue"
 documentation = "https://jobqueue.grantami.docs.pyansys.com"
 classifiers = [
-    "Development Status :: 2 - Pre-Alpha",
+    "Development Status :: 5 - Production/Stable",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
