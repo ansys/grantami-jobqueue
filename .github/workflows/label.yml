@@ -28,6 +28,7 @@ jobs:
       contents: read
       pull-requests: write
     runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
     steps:
 
     - name: Label based on changed files and branch names
