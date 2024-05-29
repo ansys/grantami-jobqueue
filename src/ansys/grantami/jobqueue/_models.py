@@ -1325,6 +1325,8 @@ class ImportJob(AsyncJob):
     -----
     .. note::
         Do not instantiate this class directly.
+
+    .. versionadded:: 1.0.1
     """
 
     _job_types = ["TextImportJob", "ExcelImportJob"]
@@ -1359,6 +1361,8 @@ class ExportJob(AsyncJob):
     -----
     .. note::
         Do not instantiate this class directly.
+
+    .. versionadded:: 1.0.1
     """
 
     _job_types = ["ExcelExportJob"]
