@@ -1041,6 +1041,14 @@ class AsyncJob(ABC):
         -------
         JobStatus
             Status of the job.
+
+        Notes
+        -----
+        .. note::
+            A return value of :enum:`JobStatus.Succeeded` does not mean that the import or export
+            operation itself was successful, it only means that the job was successfully
+            attempted. For more detailed information on the job status, check the contents of the
+            :attr:`AsyncJob.output_information` property.
         """
         if self._is_deleted:
             return JobStatus["Deleted"]
@@ -1168,8 +1176,9 @@ class AsyncJob(ABC):
         """
         Additional output information provided by the job (if supported by the job type).
 
-        Additional output information includes record placement or verbose logging.
-        The additional information supported is dependent on the job.
+        Additional output information typically includes record placement, a summary of the
+        success of the job, and more verbose logging. The additional information supported is
+        dependent on the job.
 
         Returns
         -------
