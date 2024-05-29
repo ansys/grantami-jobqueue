@@ -836,8 +836,6 @@ class AsyncJob(ABC):
         """
         Create an instance of a JobQueue AsyncJob subclass.
 
-        The exact subclass created is determined by the contents of the job response.
-
         Returns
         -------
         AsyncJob
