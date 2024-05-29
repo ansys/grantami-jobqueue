@@ -241,6 +241,21 @@ class TestExcelImportJob:
         assert output_info["NumberOfRecordsCreated"] == 1
         assert output_info["NumberOfRecordsUpdated"] == 0
 
+    def test_invalid_excel_import(self, empty_job_queue_api_client):
+        job_req = ExcelImportJobRequest(
+            name="Invalid combined file",
+            description="Invalid combined file",
+            combined_files=[__file__],
+        )
+
+        job = empty_job_queue_api_client.create_job_and_wait(job_req)
+        assert job.status == JobStatus.Failed
+
+        output_info = job.output_information["summary"]
+        assert output_info["NumberOfRecordsCreated"] == 0
+        assert output_info["NumberOfRecordsUpdated"] == 0
+        assert output_info["FinishedSuccessfully"] is False
+
 
 class TestTextImportJob:
     def test_create_text_import(self, completed_text_import_job):
@@ -261,6 +276,22 @@ class TestTextImportJob:
         output_info = job.output_information["summary"]
         assert output_info["NumberOfRecordsCreated"] == 4
         assert output_info["NumberOfRecordsUpdated"] == 0
+
+    def test_invalid_text_import(self, empty_job_queue_api_client):
+        job_req = TextImportJobRequest(
+            name="Invalid template file",
+            description="Invalid template file",
+            template_file=__file__,
+            data_files=[__file__],
+        )
+
+        job = empty_job_queue_api_client.create_job_and_wait(job_req)
+        assert job.status == JobStatus.Failed
+
+        output_info = job.output_information["summary"]
+        assert output_info["NumberOfRecordsCreated"] == 0
+        assert output_info["NumberOfRecordsUpdated"] == 0
+        assert output_info["FinishedSuccessfully"] is False
 
 
 class TestExportJob:
