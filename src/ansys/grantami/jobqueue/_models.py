@@ -1350,12 +1350,13 @@ class ImportJob(AsyncJob):
             attempted. For more detailed information on the job status, check the contents of the
             :attr:`AsyncJob.output_information` property.
         """
+        status = super().status
         if (
-            self._status.value == JobStatus.Succeeded.value
+            status == JobStatus.Succeeded
             and self.output_information["summary"]["FinishedSuccessfully"] is False
         ):
             return JobStatus.Failed
-        return super().status
+        return status
 
 
 class ExportJob(AsyncJob):
