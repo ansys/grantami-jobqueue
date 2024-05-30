@@ -30,7 +30,7 @@ from ansys.grantami.serverapi_openapi import api, models
 from ansys.openapi.common import Unset
 import pytest
 
-from ansys.grantami.jobqueue import AsyncJob, JobStatus, JobType
+from ansys.grantami.jobqueue import AsyncJob, ImportJob, JobStatus, JobType
 from common import generate_now
 
 JOB_ID = str(uuid.uuid4())
@@ -42,7 +42,7 @@ def job_model(now, tomorrow):
     mock_job_obj.id = JOB_ID
     mock_job_obj.name = "Mock Job"
     mock_job_obj.description = "Mock description"
-    mock_job_obj.status = models.GrantaServerApiAsyncJobsJobStatus.PENDING.value
+    mock_job_obj.status = models.GrantaServerApiAsyncJobsJobStatus.PENDING
     mock_job_obj.type = "ExcelImportJob"
     mock_job_obj.position = 1
     mock_job_obj.submitter_name = "User_1"
@@ -206,3 +206,43 @@ class TestUpdateAsyncJob:
         message_id = JOB_ID if name != "id" else value
         with pytest.raises(ValueError, match=f'"{message_id}".*no required field "{name}"'):
             asyncjob._update_job(job_model)
+
+
+class TestImportJobStatus:
+    @pytest.fixture
+    def importjob_pending(self, job_model):
+        import_job = ImportJob(job_obj=job_model, job_queue_api=api.JobQueueApi(Mock()))
+        return import_job
+
+    @pytest.fixture
+    def importjob_success(self, job_model):
+        job_model.status = models.GrantaServerApiAsyncJobsJobStatus.SUCCEEDED
+        job_model.job_specific_outputs = {"summary": json.dumps({"FinishedSuccessfully": True})}
+        import_job = ImportJob(job_obj=job_model, job_queue_api=api.JobQueueApi(Mock()))
+        return import_job
+
+    @pytest.fixture
+    def importjob_failure_success_status(self, job_model):
+        job_model.status = models.GrantaServerApiAsyncJobsJobStatus.SUCCEEDED
+        job_model.job_specific_outputs = {"summary": json.dumps({"FinishedSuccessfully": False})}
+        import_job = ImportJob(job_obj=job_model, job_queue_api=api.JobQueueApi(Mock()))
+        return import_job
+
+    @pytest.fixture
+    def importjob_failure_failed_status(self, job_model):
+        job_model.status = models.GrantaServerApiAsyncJobsJobStatus.FAILED
+        job_model.job_specific_outputs = {"summary": "{}"}
+        import_job = ImportJob(job_obj=job_model, job_queue_api=api.JobQueueApi(Mock()))
+        return import_job
+
+    def test_pending(self, importjob_pending):
+        assert importjob_pending.status == JobStatus.Pending
+
+    def test_success(self, importjob_success):
+        assert importjob_success.status == JobStatus.Succeeded
+
+    def test_failed_success_status(self, importjob_failure_success_status):
+        assert importjob_failure_success_status.status == JobStatus.Failed
+
+    def test_failed_failed_status(self, importjob_failure_failed_status):
+        assert importjob_failure_failed_status.status == JobStatus.Failed
