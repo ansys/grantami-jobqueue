@@ -32,7 +32,9 @@ from ansys.grantami.jobqueue import (
     AsyncJob,
     ExcelExportJobRequest,
     ExcelImportJobRequest,
+    ExportJob,
     ExportRecord,
+    ImportJob,
     JobQueueApiClient,
     JobStatus,
     JobType,
@@ -100,6 +102,7 @@ def check_success(job: AsyncJob) -> None:
     assert job.status == JobStatus.Succeeded
 
     if job.type in (JobType.TextImportJob, JobType.ExcelImportJob):
+        assert isinstance(job, ImportJob)
         assert job.output_information["summary"]["FinishedSuccessfully"]
         assert job.output_information["summary"]["NumberOfErrors"] == 0
         if job.type == JobType.ExcelExportJob:
@@ -109,6 +112,7 @@ def check_success(job: AsyncJob) -> None:
             )
             assert len(recs_found) == 1
     elif job.type == JobType.ExcelExportJob:
+        assert isinstance(job, ExportJob)
         assert not job.output_information["summary"]["Errors"]
     else:
         raise ValueError(f"Unexpected job type {job.type}")
