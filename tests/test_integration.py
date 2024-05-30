@@ -260,6 +260,19 @@ class TestExcelImportJob:
         assert output_info["NumberOfRecordsUpdated"] == 0
         assert output_info["FinishedSuccessfully"] is False
 
+    def test_delete_failed_job(self, empty_job_queue_api_client):
+        job_req = ExcelImportJobRequest(
+            name="Invalid combined file",
+            description="Invalid combined file",
+            combined_files=[__file__],
+        )
+
+        job = empty_job_queue_api_client.create_job_and_wait(job_req)
+        assert job.status == JobStatus.Failed
+
+        empty_job_queue_api_client.delete_jobs([job])
+        assert job.status == JobStatus.Deleted
+
 
 class TestTextImportJob:
     def test_create_text_import(self, completed_text_import_job):
