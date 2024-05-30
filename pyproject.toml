@@ -112,7 +112,8 @@ override_PR02 = [  # numpydoc_validation doesn't support dataclasses
 ]
 
 override_PR01 = [  # User does not need to instantiate these objects and parameter types are not local to this package
-    'Represents a job on the server',  # AsyncJob
+    'Base class that represents a job on the server',  # AsyncJob __init__
+    'Create an instance of a JobQueue AsyncJob subclass', # AsyncJob create_job
     'Communicates with Granta MI'  # JobQueueApiClient
 ]
 

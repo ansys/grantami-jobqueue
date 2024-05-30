@@ -27,7 +27,7 @@ from enum import Enum
 import json
 import os
 import pathlib
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Type, Union
 import warnings
 
 from ansys.grantami.serverapi_openapi import api, models
@@ -511,6 +511,8 @@ class ExcelExportJobRequest(JobRequest):
     An Excel template and references to the records to export
     are required.
 
+    Subclass of :class:`~JobRequest`.
+
     Parameters
     ----------
     name : str
@@ -609,6 +611,8 @@ class ExcelImportJobRequest(ImportJobRequest):
 
     This class supports either combined imports (with a template and data in the same file)
     or separate data and template imports.
+
+    Subclass of :class:`~JobRequest`.
 
     Parameters
     ----------
@@ -714,6 +718,8 @@ class TextImportJobRequest(ImportJobRequest):
 
     This class requires a template file and one or more data files.
 
+    Subclass of :class:`~JobRequest`.
+
     Parameters
     ----------
     name : str
@@ -804,19 +810,49 @@ class TextImportJobRequest(ImportJobRequest):
 
 class AsyncJob:
     """
-    Represents a job on the server.
+    Base class that represents a job on the server.
 
     This class provides information on the current status of the job and any
     job-specific outputs. It allows modification of job metadata, such as the job
     name, description, and scheduled execution date.
-
-    Notes
-    -----
-    .. note::
-        Do not instantiate this class directly. Objects of this type are returned from
-        the :meth:`~JobQueueApiClient.create_job` and
-        :meth:`~JobQueueApiClient.create_job_and_wait` methods.
     """
+
+    _registry: Dict[str, Type["AsyncJob"]] = {}
+    _job_types: List[str] = []
+
+    def __init_subclass__(cls) -> None:
+        """Define the subclass registry for AsyncJob classes."""
+        for job_type in cls._job_types:
+            if job_type in cls._registry:
+                raise ValueError(
+                    f"{job_type} already registered to class {cls._registry[job_type]}"
+                )
+            cls._registry[job_type] = cls
+
+    @classmethod
+    def create_job(
+        cls, job_obj: models.GrantaServerApiAsyncJobsJob, job_queue_api: api.JobQueueApi
+    ) -> "AsyncJob":
+        """
+        Create an instance of a JobQueue AsyncJob subclass.
+
+        Returns
+        -------
+        AsyncJob
+            The appropriate AsyncJob subclass based on the response from the server.
+
+        Notes
+        -----
+        .. note::
+            Do not use this method to create an :class:`~AsyncJob` object. The
+            :meth:`~JobQueueApiClient.create_job` and
+            :meth:`~JobQueueApiClient.create_job_and_wait` methods should be used instead, which
+            will return correctly-instantiated :class:`~AsyncJob` objects.
+        """
+        job_type = cls._get_property(job_obj, name="type", required=True)
+        job_class = cls._registry.get(job_type, AsyncJob)
+        job = job_class(job_obj, job_queue_api)
+        return job
 
     def __init__(
         self, job_obj: models.GrantaServerApiAsyncJobsJob, job_queue_api: api.JobQueueApi
@@ -1006,6 +1042,14 @@ class AsyncJob:
         -------
         JobStatus
             Status of the job.
+
+        Notes
+        -----
+        .. note::
+            A return value of :enum:`JobStatus.Succeeded` does not mean that the import or export
+            operation itself was successful, it only means that the job was successfully
+            attempted. For more detailed information on the job status, check the contents of the
+            :attr:`AsyncJob.output_information` property.
         """
         if self._is_deleted:
             return JobStatus["Deleted"]
@@ -1133,8 +1177,9 @@ class AsyncJob:
         """
         Additional output information provided by the job (if supported by the job type).
 
-        Additional output information includes record placement or verbose logging.
-        The additional information supported is dependent on the job.
+        Additional output information typically includes record placement, a summary of the
+        success of the job, and more verbose logging. The additional information supported is
+        dependent on the job.
 
         Returns
         -------
@@ -1267,3 +1312,67 @@ class AsyncJob:
             job_obj = self._job_queue_api.get_job(id=self.id)
         assert job_obj
         self._update_job(job_obj)
+
+
+class ImportJob(AsyncJob):
+    """
+    Represents an import job on the server. Subclass of :class:`~AsyncJob`.
+
+    Objects of this type are returned from the :meth:`~JobQueueApiClient.create_job` and
+    :meth:`~JobQueueApiClient.create_job_and_wait` methods after submitting a
+    :class:`~ExcelImportJobRequest` or :class:`~TextImportJobRequest` to the server.
+
+    Notes
+    -----
+    .. note::
+        Do not instantiate this class directly.
+
+    .. versionadded:: 1.0.1
+    """
+
+    _job_types = ["TextImportJob", "ExcelImportJob"]
+
+    @property
+    def status(self) -> JobStatus:
+        """
+        Job status of the job on the server.
+
+        Returns
+        -------
+        JobStatus
+            Status of the job.
+
+        Notes
+        -----
+        .. note::
+            A return value of :enum:`JobStatus.Succeeded` does not mean that the import or export
+            operation itself was successful, it only means that the job was successfully
+            attempted. For more detailed information on the job status, check the contents of the
+            :attr:`AsyncJob.output_information` property.
+        """
+        status = super().status
+        if (
+            status == JobStatus.Succeeded
+            and self.output_information["summary"]["FinishedSuccessfully"] is False
+        ):
+            return JobStatus.Failed
+        return status
+
+
+class ExportJob(AsyncJob):
+    """
+    Represents an export job on the server. Subclass of :class:`~AsyncJob`.
+
+    Objects of this type are returned from the :meth:`~JobQueueApiClient.create_job` and
+    :meth:`~JobQueueApiClient.create_job_and_wait` methods after submitting a
+    :class:`~ExcelExportJobRequest` to the server.
+
+    Notes
+    -----
+    .. note::
+        Do not instantiate this class directly.
+
+    .. versionadded:: 1.0.1
+    """
+
+    _job_types = ["ExcelExportJob"]

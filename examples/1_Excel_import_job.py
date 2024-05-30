@@ -94,7 +94,7 @@ completed_job.output_file_names
 #
 # - ``<job name>.log``: Log file of the import operation on the server
 # - ``summary.json``: Data file that summarizes the number of records impacted by the import
-#    job
+#    job and provides details of any errors that occurred during processing.
 
 # This cell shows how to access the content of the log file as ``bytes`` using the
 # ``AsyncJob.get_file_content()`` method:
