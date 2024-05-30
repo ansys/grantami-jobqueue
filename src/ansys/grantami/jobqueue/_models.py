@@ -808,9 +808,9 @@ class TextImportJobRequest(ImportJobRequest):
         return JobType.TextImportJob
 
 
-class AsyncJob(ABC):
+class AsyncJob:
     """
-    Abstract base class that represents a job on the server.
+    Base class that represents a job on the server.
 
     This class provides information on the current status of the job and any
     job-specific outputs. It allows modification of job metadata, such as the job
@@ -850,7 +850,8 @@ class AsyncJob(ABC):
             will return correctly-instantiated :class:`~AsyncJob` objects.
         """
         job_type = cls._get_property(job_obj, name="type", required=True)
-        job = cls._registry[job_type](job_obj, job_queue_api)
+        job_class = cls._registry.get(job_type, AsyncJob)
+        job = job_class(job_obj, job_queue_api)
         return job
 
     def __init__(
@@ -1340,13 +1341,21 @@ class ImportJob(AsyncJob):
         -------
         JobStatus
             Status of the job.
+
+        Notes
+        -----
+        .. note::
+            A return value of :enum:`JobStatus.Succeeded` does not mean that the import or export
+            operation itself was successful, it only means that the job was successfully
+            attempted. For more detailed information on the job status, check the contents of the
+            :attr:`AsyncJob.output_information` property.
         """
         if (
             self._status.value == JobStatus.Succeeded.value
             and self.output_information["summary"]["FinishedSuccessfully"] is False
         ):
             return JobStatus.Failed
-        return JobStatus[self._status.value]
+        return super().status
 
 
 class ExportJob(AsyncJob):
