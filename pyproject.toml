@@ -5,7 +5,7 @@ build-backend = "poetry.core.masonry.api"
 [tool.poetry]
 # Check https://python-poetry.org/docs/pyproject/ for all available sections
 name = "ansys-grantami-jobqueue"
-version = "1.0.0"
+version = "1.0.1"
 description = "A python wrapper for the Granta MI Job Queue API"
 license = "MIT"
 authors = ["ANSYS, Inc. <pyansys.core@ansys.com>"]
@@ -39,7 +39,7 @@ optional = true
 [tool.poetry.group.doc.dependencies]
 sphinx = "^7.0.1"
 numpydoc = "^1.4.0"
-ansys-sphinx-theme = "^0.15.0"
+ansys-sphinx-theme = "^0.16.0"
 sphinx-copybutton = "^0.5.0"
 jupytext = "^1.14.4"
 nbsphinx = "^0.9.0"
@@ -112,7 +112,8 @@ override_PR02 = [  # numpydoc_validation doesn't support dataclasses
 ]
 
 override_PR01 = [  # User does not need to instantiate these objects and parameter types are not local to this package
-    'Represents a job on the server',  # AsyncJob
+    'Base class that represents a job on the server',  # AsyncJob __init__
+    'Create an instance of a JobQueue AsyncJob subclass', # AsyncJob create_job
     'Communicates with Granta MI'  # JobQueueApiClient
 ]
 
@@ -121,3 +122,38 @@ exclude = [  # don't report on objects that match any of these regexes
     '\.__new__$',
     '\.__init__$',
 ]
+
+[tool.towncrier]
+package = "ansys.grantami.jobqueue"
+directory = "doc/changelog.d"
+filename = "CHANGELOG.md"
+start_string = "<!-- towncrier release notes start -->\n"
+underlines = ["", "", ""]
+template = "doc/changelog.d/changelog_template.jinja"
+title_format = "## [{version}](https://github.com/ansys/grantami-jobqueue/releases/tag/v{version}) - {project_date}"
+issue_format = "[#{issue}](https://github.com/ansys/grantami-jobqueue/pull/{issue})"
+
+[[tool.towncrier.type]]
+directory = "added"
+name = "Added"
+showcontent = true
+
+[[tool.towncrier.type]]
+directory = "changed"
+name = "Changed"
+showcontent = true
+
+[[tool.towncrier.type]]
+directory = "fixed"
+name = "Fixed"
+showcontent = true
+
+[[tool.towncrier.type]]
+directory = "dependencies"
+name = "Dependencies"
+showcontent = true
+
+[[tool.towncrier.type]]
+directory = "miscellaneous"
+name = "Miscellaneous"
+showcontent = true

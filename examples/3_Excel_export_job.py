@@ -101,7 +101,8 @@ completed_job.output_file_names
 # In general, an Excel export job returns three files:
 #
 # - ``<job name>.log``: Log file of the import operation on the server
-# - ``summary.json``: Data file that summarizes the number of records exported by the job
+# - ``summary.json``: Data file that summarizes the number of records exported by the job and
+#   provides details of any errors that occurred during processing.
 # - A file containing the data exported from Granta MI
 #
 # The contents of the exported data file depends on the job:

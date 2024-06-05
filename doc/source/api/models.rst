@@ -22,11 +22,18 @@ Job requests
    :members:
 
 
-
-AsyncJob
---------
+Jobs
+----
 
 .. autoclass:: ansys.grantami.jobqueue.AsyncJob
+   :members:
+
+
+.. autoclass:: ansys.grantami.jobqueue.ImportJob
+   :members:
+
+
+.. autoclass:: ansys.grantami.jobqueue.ExportJob
    :members:
 
 
