@@ -50,7 +50,15 @@ on:
       TEST_SERVER_READ_PASS:
         required: true
 
+      PYANSYS_PYPI_PRIVATE_PAT:
+        required: true
+
   workflow_dispatch:
+
+env:
+  PIP_INDEX_URL: "https://${{ secrets.PYANSYS_PYPI_PRIVATE_PAT }}@pkgs.dev.azure.com/pyansys/_packaging/pyansys/pypi/simple/"
+  POETRY_HTTP_BASIC_PRIVATE_PYPI_USERNAME: "PAT"
+  POETRY_HTTP_BASIC_PRIVATE_PYPI_PASSWORD: ${{ secrets.PYANSYS_PYPI_PRIVATE_PAT }}
 
 concurrency:
   group: integration-server
