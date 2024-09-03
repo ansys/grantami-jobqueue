@@ -98,7 +98,7 @@ class JobQueueApiClient(ApiClient):
         super().__init__(session, api_url, configuration)
         self.job_queue_api = api.JobQueueApi(self)
 
-        self._user: Optional[models.GrantaServerApiAsyncJobsCurrentUser] = None
+        self._user: Optional[models.GsaCurrentUser] = None
         self._processing_configuration: Optional[JobQueueProcessingConfiguration] = None
 
         self._jobs: Dict[str, AsyncJob] = {}
@@ -188,7 +188,7 @@ class JobQueueApiClient(ApiClient):
         with warnings.catch_warnings():
             warnings.simplefilter("ignore", UndefinedObjectWarning)
             jobs = self.job_queue_api.get_jobs()
-        return len(cast(List[models.GrantaServerApiAsyncJobsJob], jobs.results))
+        return len(cast(List[models.GsaJob], jobs.results))
 
     def _refetch_user(self) -> None:
         """Refetch the current user information from the server."""
@@ -310,14 +310,14 @@ class JobQueueApiClient(ApiClient):
         self._update_job_list_from_resp(job_resp=job_list, flush_jobs=True)
 
     def _update_job_list_from_resp(
-        self, job_resp: List[models.GrantaServerApiAsyncJobsJob], flush_jobs: bool = False
+        self, job_resp: List[models.GsaJob], flush_jobs: bool = False
     ) -> None:
         """
         Update the internal job list with a list of job objects from the server.
 
         Parameters
         ----------
-        job_resp : List[models.GrantaServerApiAsyncJobsJob]
+        job_resp : List[models.GsaJob]
             List of job objects from the server.
         flush_jobs : bool, default: False
             Whether to remove jobs from the internal list that are not in

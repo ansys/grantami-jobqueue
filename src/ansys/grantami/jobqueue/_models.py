@@ -47,18 +47,18 @@ class _DocumentedEnum(Enum):
 class JobStatus(_DocumentedEnum):
     """Provides possible states of a job in the job queue."""
 
-    Pending = models.GrantaServerApiAsyncJobsJobStatus.PENDING.value, """Job is in the queue."""
+    Pending = models.GsaJobStatus.PENDING.value, """Job is in the queue."""
     Running = (
-        models.GrantaServerApiAsyncJobsJobStatus.RUNNING.value,
+        models.GsaJobStatus.RUNNING.value,
         """Job is currently executing.""",
     )
     Succeeded = (
-        models.GrantaServerApiAsyncJobsJobStatus.SUCCEEDED.value,
+        models.GsaJobStatus.SUCCEEDED.value,
         """Job has completed (does not guarantee that no errors occurred).""",
     )
-    Failed = models.GrantaServerApiAsyncJobsJobStatus.FAILED.value, """Job could not complete."""
+    Failed = models.GsaJobStatus.FAILED.value, """Job could not complete."""
     Cancelled = (
-        models.GrantaServerApiAsyncJobsJobStatus.CANCELLED.value,
+        models.GsaJobStatus.CANCELLED.value,
         """Job was cancelled by the user.""",
     )
     Deleted = "Deleted", """Job was deleted on the server."""
@@ -383,7 +383,7 @@ class JobRequest(ABC):
         """
         pass
 
-    def _get_job_for_submission(self) -> models.GrantaServerApiAsyncJobsCreateJobRequest:
+    def _get_job_for_submission(self) -> models.GsaCreateJobRequest:
         """
         Create an AsyncJobs ``JobRequest`` object ready for submission to the job queue.
 
@@ -395,7 +395,7 @@ class JobRequest(ABC):
             ``JobRequest`` object to be submitted to the server.
         """
         job_parameters = self._render_job_parameters()
-        job_request = models.GrantaServerApiAsyncJobsCreateJobRequest(
+        job_request = models.GsaCreateJobRequest(
             type=self._job_type.value,
             name=self.name,
             description=self.description,
@@ -831,7 +831,7 @@ class AsyncJob:
 
     @classmethod
     def create_job(
-        cls, job_obj: models.GrantaServerApiAsyncJobsJob, job_queue_api: api.JobQueueApi
+        cls, job_obj: models.GsaJob, job_queue_api: api.JobQueueApi
     ) -> "AsyncJob":
         """
         Create an instance of a JobQueue AsyncJob subclass.
@@ -855,7 +855,7 @@ class AsyncJob:
         return job
 
     def __init__(
-        self, job_obj: models.GrantaServerApiAsyncJobsJob, job_queue_api: api.JobQueueApi
+        self, job_obj: models.GsaJob, job_queue_api: api.JobQueueApi
     ) -> None:
         """Initialize the ``AsyncJob`` object."""
         self._job_queue_api = job_queue_api
@@ -864,7 +864,7 @@ class AsyncJob:
         self._id: str
         self._name: str
         self._description: Optional[str]
-        self._status: models.GrantaServerApiAsyncJobsJobStatus
+        self._status: models.GsaJobStatus
         self._type: str
         self._position: Optional[int]
         self._submitter_name: str
@@ -878,13 +878,13 @@ class AsyncJob:
 
         self._update_job(job_obj)
 
-    def _update_job(self, job_obj: models.GrantaServerApiAsyncJobsJob) -> None:
+    def _update_job(self, job_obj: models.GsaJob) -> None:
         """
         Update a job with the latest information from the server.
 
         Parameters
         ----------
-        job_obj : models.GrantaServerApiAsyncJobsJob
+        job_obj : models.GsaJob
             Job object to get from the server.
         """
         self._id = self._get_property(job_obj, name="id", required=True)
@@ -904,14 +904,14 @@ class AsyncJob:
 
     @staticmethod
     def _get_property(
-        job_obj: models.GrantaServerApiAsyncJobsJob, name: str, required: bool = False
+        job_obj: models.GsaJob, name: str, required: bool = False
     ) -> Any:
         """
         Get the value of a property from the job object.
 
         Parameters
         ----------
-        job_obj : models.GrantaServerApiAsyncJobsJob
+        job_obj : models.GsaJob
             Job object returned from the server.
         name : str
             Name of the property to retrieve.
@@ -989,7 +989,7 @@ class AsyncJob:
         """
         if self._is_deleted:
             raise ValueError("Job has been deleted from the job queue.")
-        patch_req = models.GrantaServerApiAsyncJobsUpdateJobRequest(
+        patch_req = models.GsaUpdateJobRequest(
             name=value,
         )
         patch_resp = self._job_queue_api.update_job(id=self.id, body=patch_req)
@@ -1026,7 +1026,7 @@ class AsyncJob:
         """
         if self._is_deleted:
             raise ValueError("Job has been deleted from the job queue.")
-        patch_req = models.GrantaServerApiAsyncJobsUpdateJobRequest(
+        patch_req = models.GsaUpdateJobRequest(
             description=value,
         )
         patch_resp = self._job_queue_api.update_job(id=self.id, body=patch_req)
@@ -1163,7 +1163,7 @@ class AsyncJob:
         """
         if self._is_deleted:
             raise ValueError("Job has been deleted from the job queue.")
-        patch_req = models.GrantaServerApiAsyncJobsUpdateJobRequest(
+        patch_req = models.GsaUpdateJobRequest(
             scheduled_execution_date=value,
         )
         patch_resp = self._job_queue_api.update_job(id=self.id, body=patch_req)
