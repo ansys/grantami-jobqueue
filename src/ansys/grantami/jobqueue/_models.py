@@ -830,9 +830,7 @@ class AsyncJob:
             cls._registry[job_type] = cls
 
     @classmethod
-    def create_job(
-        cls, job_obj: models.GsaJob, job_queue_api: api.JobQueueApi
-    ) -> "AsyncJob":
+    def create_job(cls, job_obj: models.GsaJob, job_queue_api: api.JobQueueApi) -> "AsyncJob":
         """
         Create an instance of a JobQueue AsyncJob subclass.
 
@@ -854,9 +852,7 @@ class AsyncJob:
         job = job_class(job_obj, job_queue_api)
         return job
 
-    def __init__(
-        self, job_obj: models.GsaJob, job_queue_api: api.JobQueueApi
-    ) -> None:
+    def __init__(self, job_obj: models.GsaJob, job_queue_api: api.JobQueueApi) -> None:
         """Initialize the ``AsyncJob`` object."""
         self._job_queue_api = job_queue_api
         self._is_deleted = False
@@ -903,9 +899,7 @@ class AsyncJob:
         self._output_files = self._get_property(job_obj, name="output_file_names")
 
     @staticmethod
-    def _get_property(
-        job_obj: models.GsaJob, name: str, required: bool = False
-    ) -> Any:
+    def _get_property(job_obj: models.GsaJob, name: str, required: bool = False) -> Any:
         """
         Get the value of a property from the job object.
 
