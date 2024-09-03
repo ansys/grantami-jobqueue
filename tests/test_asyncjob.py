@@ -38,11 +38,11 @@ JOB_ID = str(uuid.uuid4())
 
 @pytest.fixture
 def job_model(now, tomorrow):
-    mock_job_obj = Mock(spec_set=models.GrantaServerApiAsyncJobsJob())
+    mock_job_obj = Mock(spec_set=models.GsaJob())
     mock_job_obj.id = JOB_ID
     mock_job_obj.name = "Mock Job"
     mock_job_obj.description = "Mock description"
-    mock_job_obj.status = models.GrantaServerApiAsyncJobsJobStatus.PENDING
+    mock_job_obj.status = models.GsaJobStatus.PENDING
     mock_job_obj.type = "ExcelImportJob"
     mock_job_obj.position = 1
     mock_job_obj.submitter_name = "User_1"
@@ -131,7 +131,7 @@ class TestUpdateAsyncJob:
             ("description", "New Description", None, None),
             ("description", None, None, None),
             ("description", Unset, None, None),
-            ("status", models.GrantaServerApiAsyncJobsJobStatus.FAILED, JobStatus["Failed"], None),
+            ("status", models.GsaJobStatus.FAILED, JobStatus["Failed"], None),
             ("type", "TextImportJob", JobType.TextImportJob, None),
             ("position", 51, None, None),
             ("position", None, None, None),
@@ -216,21 +216,21 @@ class TestImportJobStatus:
 
     @pytest.fixture
     def importjob_success(self, job_model):
-        job_model.status = models.GrantaServerApiAsyncJobsJobStatus.SUCCEEDED
+        job_model.status = models.GsaJobStatus.SUCCEEDED
         job_model.job_specific_outputs = {"summary": json.dumps({"FinishedSuccessfully": True})}
         import_job = ImportJob(job_obj=job_model, job_queue_api=api.JobQueueApi(Mock()))
         return import_job
 
     @pytest.fixture
     def importjob_failure_success_status(self, job_model):
-        job_model.status = models.GrantaServerApiAsyncJobsJobStatus.SUCCEEDED
+        job_model.status = models.GsaJobStatus.SUCCEEDED
         job_model.job_specific_outputs = {"summary": json.dumps({"FinishedSuccessfully": False})}
         import_job = ImportJob(job_obj=job_model, job_queue_api=api.JobQueueApi(Mock()))
         return import_job
 
     @pytest.fixture
     def importjob_failure_failed_status(self, job_model):
-        job_model.status = models.GrantaServerApiAsyncJobsJobStatus.FAILED
+        job_model.status = models.GsaJobStatus.FAILED
         job_model.job_specific_outputs = {"summary": "{}"}
         import_job = ImportJob(job_obj=job_model, job_queue_api=api.JobQueueApi(Mock()))
         return import_job

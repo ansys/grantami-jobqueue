@@ -104,25 +104,25 @@ def search_for_records_by_name(client: ApiClient, name: str) -> List[Tuple[str, 
             )
         time.sleep(DATABASE_CACHE_SLEEP)
 
-    search_criterion = models.GrantaServerApiSearchBooleanCriterion(
+    search_criterion = models.GsaBooleanCriterion(
         any=[
-            models.GrantaServerApiSearchRecordPropertyCriterion(
-                _property=models.GrantaServerApiSearchSearchableRecordProperty.RECORDNAME,
-                inner_criterion=models.GrantaServerApiSearchShortTextDatumCriterion(
+            models.GsaRecordPropertyCriterion(
+                _property=models.GsaSearchableRecordProperty.RECORDNAME,
+                inner_criterion=models.GsaShortTextDatumCriterion(
                     value=name,
-                    text_match_behavior=models.GrantaServerApiSearchTextMatchBehavior.EXACTMATCHCASEINSENSITIVE,
+                    text_match_behavior=models.GsaTextMatchBehavior.EXACTMATCHCASEINSENSITIVE,
                 ),
             ),
-            models.GrantaServerApiSearchRecordPropertyCriterion(
-                _property=models.GrantaServerApiSearchSearchableRecordProperty.TREENAME,
-                inner_criterion=models.GrantaServerApiSearchShortTextDatumCriterion(
+            models.GsaRecordPropertyCriterion(
+                _property=models.GsaSearchableRecordProperty.TREENAME,
+                inner_criterion=models.GsaShortTextDatumCriterion(
                     value=name,
-                    text_match_behavior=models.GrantaServerApiSearchTextMatchBehavior.EXACTMATCHCASEINSENSITIVE,
+                    text_match_behavior=models.GsaTextMatchBehavior.EXACTMATCHCASEINSENSITIVE,
                 ),
             ),
         ]
     )
-    request = models.GrantaServerApiSearchSearchRequest(
+    request = models.GsaSearchRequest(
         criterion=search_criterion,
     )
 
