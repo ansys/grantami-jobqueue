@@ -70,12 +70,12 @@ To install a release compatible with a specific version of Granta MI, install th
 
     pip install pygranta==2024.2.0
 
-Alternatively, to install the latest release from the `PyGranta JobQueue repository <https://github.com/ansys/grantami-jobqueue>`_,
+Alternatively, to install the latest development version from the `PyGranta JobQueue repository <https://github.com/ansys/grantami-jobqueue>`_,
 run this command:
 
 .. code::
 
-    pip install git:https://github.com/ansys/grantami-jobqueue.git
+    pip install git+https://github.com/ansys/grantami-jobqueue.git
 
 
 To install a local *development* version with Git and Poetry, run these commands:
