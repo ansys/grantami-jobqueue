@@ -31,6 +31,8 @@ To verify that you can start the PyGranta JobQueue client from Python, run this 
 
     <JobQueueApiClient url: http://my.server.name/mi_servicelayer>
 
+This example uses Windows-based autologon authentication. For all supported authentication schemes, see the :OpenAPI-Common:`OpenAPI-Common documentation <index.html#authentication-schemes>`.
+
 If you see a response from the server, you have successfully installed PyGranta JobQueue and
 can start using the JobQueue client. For more examples, see :ref:`ref_grantami_jobqueue_examples`.
 For comprehensive information on the API, see :ref:`ref_grantami_jobqueue_api_reference`.
