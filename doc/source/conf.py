@@ -52,8 +52,12 @@ extensions = [
     "nbsphinx",
     "sphinx_design",
     "enum_tools.autoenum",
+    "sphinx.ext.extlinks",
 ]
 
+extlinks = {
+    "OpenAPI-Common": ("https://openapi.docs.pyansys.com/version/stable/%s", None),
+}
 
 # numpydoc configuration
 numpydoc_show_class_members = False
