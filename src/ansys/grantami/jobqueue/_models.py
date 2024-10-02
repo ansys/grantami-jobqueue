@@ -1183,7 +1183,7 @@ class AsyncJob:
         if self._job_specific_outputs is None:
             return None
         parsed = {}
-        for k, v in self._job_specific_outputs.items():  # type: ignore[union-attr]
+        for k, v in self._job_specific_outputs.items():
             assert isinstance(v, str)
             parsed[k] = json.loads(v)
         return parsed
@@ -1349,6 +1349,7 @@ class ImportJob(AsyncJob):
         status = super().status
         if (
             status == JobStatus.Succeeded
+            and self.output_information is not None
             and self.output_information["summary"]["FinishedSuccessfully"] is False
         ):
             return JobStatus.Failed
