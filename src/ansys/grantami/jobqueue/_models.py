@@ -1167,7 +1167,7 @@ class AsyncJob:
         )
 
     @property
-    def output_information(self) -> Dict[str, Any]:
+    def output_information(self) -> Optional[Dict[str, Any]]:
         """
         Additional output information provided by the job (if supported by the job type).
 
@@ -1177,9 +1177,11 @@ class AsyncJob:
 
         Returns
         -------
-        dict
+        dict or None
             Additional output information provided by the job.
         """
+        if self._job_specific_outputs is None:
+            return None
         parsed = {}
         for k, v in self._job_specific_outputs.items():  # type: ignore[union-attr]
             assert isinstance(v, str)
