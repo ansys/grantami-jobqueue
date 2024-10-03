@@ -2,6 +2,11 @@ version: 2
 updates:
   - package-ecosystem: "pip"
     directory: "/"
+    private-pypi:
+        type: pip-registry
+        url: https://pkgs.dev.azure.com/pyansys/_packaging/pyansys/pypi/simple/
+        username: ${{ vars.PYANSYS_PYPI_PRIVATE_USER }}
+        password: ${{ secrets.PYANSYS_PYPI_PRIVATE_PAT }}
     schedule:
       interval: "weekly"
     labels:
