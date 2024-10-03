@@ -246,3 +246,10 @@ class TestImportJobStatus:
 
     def test_failed_failed_status(self, importjob_failure_failed_status):
         assert importjob_failure_failed_status.status == JobStatus.Failed
+
+
+@pytest.mark.parametrize("job_specific_outputs", [None, Unset])
+def test_job_with_no_output(job_model, job_specific_outputs):
+    job_model.job_specific_outputs = job_specific_outputs
+    async_job = AsyncJob(job_model, api.JobQueueApi(Mock()))
+    assert async_job.output_information is None
