@@ -1173,7 +1173,7 @@ class AsyncJob:
         )
 
     @property
-    def output_information(self) -> Dict[str, Any]:
+    def output_information(self) -> Optional[Dict[str, Any]]:
         """
         Additional output information provided by the job (if supported by the job type).
 
@@ -1183,11 +1183,13 @@ class AsyncJob:
 
         Returns
         -------
-        dict
+        dict or None
             Additional output information provided by the job.
         """
+        if self._job_specific_outputs is None:
+            return None
         parsed = {}
-        for k, v in self._job_specific_outputs.items():  # type: ignore[union-attr]
+        for k, v in self._job_specific_outputs.items():
             assert isinstance(v, str)
             parsed[k] = json.loads(v)
         return parsed
@@ -1353,6 +1355,7 @@ class ImportJob(AsyncJob):
         status = super().status
         if (
             status == JobStatus.Succeeded
+            and self.output_information is not None
             and self.output_information["summary"]["FinishedSuccessfully"] is False
         ):
             return JobStatus.Failed
