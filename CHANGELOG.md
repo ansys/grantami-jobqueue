@@ -6,6 +6,19 @@ changes for the upcoming release can be found in
 
 <!-- towncrier release notes start -->
 
+## [1.0.2](https://github.com/ansys/grantami-jobqueue/releases/tag/v1.0.2) - 2024-10-03
+
+
+### Changed
+
+- Use Release VM [#105](https://github.com/ansys/grantami-jobqueue/pull/105)
+
+
+### Fixed
+
+- Handle lack of job specific outputs [#139](https://github.com/ansys/grantami-jobqueue/pull/139)
+- Prepare 1.0.2 release [#140](https://github.com/ansys/grantami-jobqueue/pull/140)
+
 ## [1.0.1](https://github.com/ansys/grantami-jobqueue/releases/tag/v1.0.1) - 2024-06-10
 
 
