@@ -13,6 +13,15 @@ changes for the upcoming release can be found in
 
 - Use Release VM [#105](https://github.com/ansys/grantami-jobqueue/pull/105)
 
+### Documentation
+
+- Fix installation example for git dependency [#134](https://github.com/ansys/grantami-jobqueue/pull/134)
+- Add link to supported authentication schemes [#135](https://github.com/ansys/grantami-jobqueue/pull/135)
+- Add link to PyGranta version compatibility documentation [#136](https://github.com/ansys/grantami-jobqueue/pull/136)
+
+### Maintenance
+
+- Improve VM management in CI [#137](https://github.com/ansys/grantami-jobqueue/pull/137)
 
 ### Fixed
 
