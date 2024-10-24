@@ -138,61 +138,101 @@ class ExportRecord:
         }
 
 
+class JobFile:
+    """
+    Represents a file associated with a JobRequest.
+
+    Parameters
+    ----------
+    path : str or pathlib.Path
+        Path to the local file to use in a JobRequest. Can be absolute or relative.
+    virtual_path : str or pathlib.Path
+        Virtual path to use to refer to the file in the JobRequest. Must be relative.
+    """
+
+    def __init__(self, path: Union[str, pathlib.Path], virtual_path: Union[str, pathlib.Path]):
+        self._path: pathlib.Path = pathlib.Path(path)
+        virtual_path = pathlib.Path(virtual_path)
+        self._validate_virtual_path(virtual_path)
+        self._virtual_path: pathlib.Path = virtual_path
+
+    @staticmethod
+    def _validate_virtual_path(path: pathlib.Path) -> None:
+        """
+        Validate the provided virtual path. It must be relative and within the working directory.
+
+        Parameters
+        ----------
+        path : pathlib.Path
+            Path to validate.
+        """
+        if path.is_absolute():
+            raise ValueError("Virtual path must be relative.")
+        if not path.resolve().is_relative_to(os.getcwd()):
+            raise ValueError("Virtual path must be safe.")
+
+    @property
+    def path(self) -> pathlib.Path:
+        """
+        Path to the local file.
+
+        Returns
+        -------
+        pathlib.Path
+            Path to the local file.
+        """
+        return self._path
+
+    @property
+    def virtual_path(self) -> pathlib.Path:
+        """
+        Virtual path in the JobRequest context.
+
+        Returns
+        -------
+        pathlib.Path
+            Path to use in the context of the request.
+        """
+        return self._virtual_path
+
+
 class _JobFile:
     """
     Represents a file associated with a job request.
 
     Parameters
     ----------
+    path : pathlib.Path
+        Path to the local file.
     file_type : _FileType
         Type of file being represented.
     """
 
-    def __init__(self, file_type: _FileType):
+    def __init__(self, path: pathlib.Path, file_type: _FileType):
         self.file_type = file_type
-        self._path: Union[pathlib.Path, None] = None
+        self._path: pathlib.Path = path
         self._id: Optional[str] = None
+        self._virtual_path: Optional[pathlib.Path] = None
 
     @classmethod
-    def from_pathlib_path(cls, path: pathlib.Path, file_type: _FileType) -> "_JobFile":
+    def from_job_file(cls, file: JobFile, file_type: _FileType) -> "_JobFile":
         """
-        Create a ``JobFile`` object from a ``pathlib.Path`` object.
+        Create a ``JobFile`` object from a ``JobFile`` object.
 
         Parameters
         ----------
-        path : pathlib.Path
-            Path to the file.
+        file : JobFile
+           Wrapped filepath, possibly including a virtual path.
         file_type : _FileType
-            Type of file to create.
+           Type of file to create.
 
         Returns
         -------
         _JobFile
-            Created ``JobFile`` object.
+           Created ``_JobFile`` object.
         """
-        new_obj = cls(file_type)
-        new_obj.path = path
-        return new_obj
-
-    @classmethod
-    def from_string(cls, file_path: str, file_type: _FileType) -> "_JobFile":
-        """
-        Create a ``JobFile`` object from a string path.
-
-        Parameters
-        ----------
-        file_path : str
-            Path to the file.
-        file_type : _FileType
-            Type of file to create.
-
-        Returns
-        -------
-        _JobFile
-            Created ``JobFile`` object.
-        """
-        path = pathlib.Path(file_path)
-        new_obj = cls.from_pathlib_path(path, file_type)
+        new_obj = cls(file.path, file_type)
+        new_obj.virtual_path = file.virtual_path
         return new_obj
 
     @property
@@ -243,7 +283,8 @@ class _JobFile:
         str
             Path of the file as a string.
         """
-        assert self._path
+        if self.virtual_path is not None:
+            return str(self.virtual_path)
         return str(self._path)
 
     @property
@@ -277,6 +318,30 @@ class _JobFile:
         """
         self._id = value
 
+    @property
+    def virtual_path(self) -> Optional[pathlib.Path]:
+        """
+        Virtual path for the file.
+
+        Returns
+        -------
+        pathlib.Path or None
+            Virtual path for the file.
+        """
+        return self._virtual_path
+
+    @virtual_path.setter
+    def virtual_path(self, value: pathlib.Path) -> None:
+        """
+        Set the virtual path for the file.
+
+        Parameters
+        ----------
+        value : pathlib.Path
+            Virtual path to set for the file.
+        """
+        self._virtual_path = value
+
 
 class JobRequest(ABC):
     """
@@ -291,7 +356,7 @@ class JobRequest(ABC):
         Name of the job as shown in the job queue.
     description : Optional[str]
         Description of the job as shown in the job queue.
-    template_file : str or pathlib.Path, default: None
+    template_file : str or pathlib.Path or JobFile, default: None
         Template to use the job.
     scheduled_execution_date : datetime.datetime, default: None
         Earliest date and time to run the job. If no date and time are
@@ -303,7 +368,7 @@ class JobRequest(ABC):
         self,
         name: str,
         description: Optional[str],
-        template_file: Optional[Union[str, pathlib.Path]],
+        template_file: Optional[Union[str, pathlib.Path, JobFile]],
         scheduled_execution_date: Optional[datetime.datetime] = None,
     ) -> None:
         self.name = name
@@ -318,14 +383,14 @@ class JobRequest(ABC):
         return f'<{type(self).__name__}: name: "{self.name}">'
 
     def _process_files(
-        self, file_struct: Dict[_FileType, Optional[List[Union[str, pathlib.Path]]]]
+        self, file_struct: Dict[_FileType, Optional[List[Union[str, pathlib.Path, JobFile]]]]
     ) -> None:
         """
         Parse the file structure for the job request.
 
         Parameters
         ----------
-        file_struct : Dict[_FileType, Optional[List[Union[str, pathlib.Path]]]]
+        file_struct : Dict[_FileType, Optional[List[Union[str, pathlib.Path, JobFile]]]]
             Dictionary containing lists of file paths for each file type.
         """
         for file_type, file_list in file_struct.items():
@@ -334,7 +399,7 @@ class JobRequest(ABC):
             for file in file_list:
                 self._add_file(file, file_type)
 
-    def _add_file(self, file_obj: Union[str, pathlib.Path], type_: _FileType) -> None:
+    def _add_file(self, file_obj: Union[str, pathlib.Path, JobFile], type_: _FileType) -> None:
         """
         Add a file to the job request.
 
@@ -351,12 +416,18 @@ class JobRequest(ABC):
             If the file object is not a string or ``pathlib.Path`` object.
         """
         if isinstance(file_obj, pathlib.Path):
-            new_file = _JobFile.from_pathlib_path(file_type=type_, path=file_obj)
+            new_file = _JobFile(
+                path=file_obj,
+                file_type=type_,
+            )
         elif isinstance(file_obj, str):
-            new_file = _JobFile.from_string(file_type=type_, file_path=file_obj)
+            new_file = _JobFile(path=pathlib.Path(file_obj), file_type=type_)
+        elif isinstance(file_obj, JobFile):
+            new_file = _JobFile.from_job_file(file_obj, file_type=type_)
         else:
+            # TODO add JobFile to err msg
             raise TypeError(
-                "file_obj must be a pathlib.Path, BinaryIO, or str object. "
+                "file_obj must be a pathlib.Path, BinaryIO, or str object. "  # TODO binaryIO? what handles it?
                 f"Object provided was of type {type(file_obj)}."
             )
         self._files.append(new_file)
@@ -435,7 +506,7 @@ class ImportJobRequest(JobRequest, ABC):
     """Provides the abstract base class representing an import job request."""
 
     def _process_files(
-        self, file_struct: Dict[_FileType, Optional[List[Union[str, pathlib.Path]]]]
+        self, file_struct: Dict[_FileType, Optional[List[Union[str, pathlib.Path, JobFile]]]]
     ) -> None:
         """
         Check the validity of the file structure for importing.
@@ -620,13 +691,13 @@ class ExcelImportJobRequest(ImportJobRequest):
         Name of the job as shown in the job queue.
     description : Optional[str]
         Description of the job as shown in the job queue.
-    template_file : str or pathlib.Path, default: None
+    template_file : str, pathlib.Path, or JobFile, default: None
         Excel template file.
-    data_files : list of str or pathlib.Path, default: None
+    data_files : list of str or pathlib.Path or JobFile, default: None
         Excel files containing the data to import.
-    combined_files : list of str or pathlib.Path, default: None
+    combined_files : list of str or pathlib.Path or JobFile, default: None
         Excel files containing data and template information.
-    attachment_files : list of str or pathlib.Path, default: None
+    attachment_files : list of str or pathlib.Path or JobFile, default: None
         Any other files referenced in the data or combined files.
     scheduled_execution_date : datetime.datetime, default: None
         Earliest date and time to run the job. If no date and time are
@@ -660,10 +731,10 @@ class ExcelImportJobRequest(ImportJobRequest):
         self,
         name: str,
         description: Optional[str],
-        template_file: Optional[Union[str, pathlib.Path]] = None,
-        data_files: Optional[List[Union[str, pathlib.Path]]] = None,
-        combined_files: Optional[List[Union[str, pathlib.Path]]] = None,
-        attachment_files: Optional[List[Union[str, pathlib.Path]]] = None,
+        template_file: Optional[Union[str, pathlib.Path, JobFile]] = None,
+        data_files: Optional[List[Union[str, pathlib.Path, JobFile]]] = None,
+        combined_files: Optional[List[Union[str, pathlib.Path, JobFile]]] = None,
+        attachment_files: Optional[List[Union[str, pathlib.Path, JobFile]]] = None,
         scheduled_execution_date: Optional[datetime.datetime] = None,
     ):
         """Initialize the ``ExcelImportJobRequest`` object."""
@@ -726,11 +797,11 @@ class TextImportJobRequest(ImportJobRequest):
         Name of the job as shown in the job queue.
     description : Optional[str]
         Description of the job as shown in the job queue.
-    template_file : str or pathlib.Path, default: None
+    template_file : str or pathlib.Path or JobFile, default: None
         Text import template file.
-    data_files : list of str or pathlib.Path, default: None
+    data_files : list of str or pathlib.Path or JobFile, default: None
         Text files containing the data to import.
-    attachment_files : list of str or pathlib.Path, default: None
+    attachment_files : list of str or pathlib.Path or JobFile, default: None
         Any other files referenced in the data files.
     scheduled_execution_date : datetime.datetime, default: None
         Earliest date and time to run the job. If no date and time are
@@ -764,9 +835,9 @@ class TextImportJobRequest(ImportJobRequest):
         self,
         name: str,
         description: Optional[str],
-        template_file: Optional[Union[str, pathlib.Path]] = None,
-        data_files: Optional[List[Union[str, pathlib.Path]]] = None,
-        attachment_files: Optional[List[Union[str, pathlib.Path]]] = None,
+        template_file: Optional[Union[str, pathlib.Path, JobFile]] = None,
+        data_files: Optional[List[Union[str, pathlib.Path, JobFile]]] = None,
+        attachment_files: Optional[List[Union[str, pathlib.Path, JobFile]]] = None,
         scheduled_execution_date: Optional[datetime.datetime] = None,
     ):
         """Initialize the ``TextImportJobRequest`` object."""
