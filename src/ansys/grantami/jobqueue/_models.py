@@ -148,52 +148,10 @@ class _JobFile:
         Type of file being represented.
     """
 
-    def __init__(self, file_type: _FileType):
+    def __init__(self, path: pathlib.Path, file_type: _FileType):
         self.file_type = file_type
-        self._path: Union[pathlib.Path, None] = None
+        self._path: pathlib.Path = path
         self._id: Optional[str] = None
-
-    @classmethod
-    def from_pathlib_path(cls, path: pathlib.Path, file_type: _FileType) -> "_JobFile":
-        """
-        Create a ``JobFile`` object from a ``pathlib.Path`` object.
-
-        Parameters
-        ----------
-        path : pathlib.Path
-            Path to the file.
-        file_type : _FileType
-            Type of file to create.
-
-        Returns
-        -------
-        _JobFile
-            Created ``JobFile`` object.
-        """
-        new_obj = cls(file_type)
-        new_obj.path = path
-        return new_obj
-
-    @classmethod
-    def from_string(cls, file_path: str, file_type: _FileType) -> "_JobFile":
-        """
-        Create a ``JobFile`` object from a string path.
-
-        Parameters
-        ----------
-        file_path : str
-            Path to the file.
-        file_type : _FileType
-            Type of file to create.
-
-        Returns
-        -------
-        _JobFile
-            Created ``JobFile`` object.
-        """
-        path = pathlib.Path(file_path)
-        new_obj = cls.from_pathlib_path(path, file_type)
-        return new_obj
 
     @property
     def name(self) -> str:
@@ -243,7 +201,7 @@ class _JobFile:
         str
             Path of the file as a string.
         """
-        assert self._path
+        assert self._path # TODO remove
         return str(self._path)
 
     @property
@@ -351,12 +309,12 @@ class JobRequest(ABC):
             If the file object is not a string or ``pathlib.Path`` object.
         """
         if isinstance(file_obj, pathlib.Path):
-            new_file = _JobFile.from_pathlib_path(file_type=type_, path=file_obj)
+            new_file = _JobFile(path=file_obj, file_type=type_, )
         elif isinstance(file_obj, str):
-            new_file = _JobFile.from_string(file_type=type_, file_path=file_obj)
+            new_file = _JobFile(path=pathlib.Path(file_obj), file_type=type_)
         else:
             raise TypeError(
-                "file_obj must be a pathlib.Path, BinaryIO, or str object. "
+                "file_obj must be a pathlib.Path, BinaryIO, or str object. " # TODO binaryIO? what handles it?
                 f"Object provided was of type {type(file_obj)}."
             )
         self._files.append(new_file)
