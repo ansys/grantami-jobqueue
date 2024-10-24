@@ -138,6 +138,30 @@ class ExportRecord:
         }
 
 
+class JobFile:
+    # TODO docs
+    @staticmethod
+    def _validate_virtual_path(path: pathlib.Path):
+        if path.is_absolute():
+            raise ValueError("Virtual path must be relative.")
+        if not path.resolve().is_relative_to(os.getcwd()):
+            raise ValueError("Virtual path must be safe.")
+
+    def __init__(self, path: Union[str, pathlib.Path], virtual_path: Union[str, pathlib.Path]):
+        self._path: pathlib.Path = pathlib.Path(path)
+        virtual_path = pathlib.Path(virtual_path)
+        self._validate_virtual_path(virtual_path)
+        self._virtual_path: pathlib.Path = virtual_path
+
+    @property
+    def path(self) -> pathlib.Path:
+        return self._path
+
+    @property
+    def virtual_path(self) -> pathlib.Path:
+        return self._virtual_path
+
+
 class _JobFile:
     """
     Represents a file associated with a job request.
@@ -152,6 +176,13 @@ class _JobFile:
         self.file_type = file_type
         self._path: pathlib.Path = path
         self._id: Optional[str] = None
+        self._virtual_path: Optional[pathlib.Path] = None
+
+    @classmethod
+    def from_job_file(cls, file: JobFile, file_type: _FileType) -> "_JobFile":
+        new_obj = cls(file.path, file_type)
+        new_obj.virtual_path = file.virtual_path
+        return new_obj
 
     @property
     def name(self) -> str:
@@ -201,7 +232,8 @@ class _JobFile:
         str
             Path of the file as a string.
         """
-        assert self._path # TODO remove
+        if self.virtual_path is not None:
+            return str(self.virtual_path)
         return str(self._path)
 
     @property
@@ -234,6 +266,15 @@ class _JobFile:
             ID to set for the file.
         """
         self._id = value
+
+    @property
+    def virtual_path(self) -> pathlib.Path:
+        # TODO docs
+        return self._virtual_path
+
+    @virtual_path.setter
+    def virtual_path(self, value: pathlib.Path) -> None:
+        self._virtual_path = value
 
 
 class JobRequest(ABC):
@@ -309,12 +350,18 @@ class JobRequest(ABC):
             If the file object is not a string or ``pathlib.Path`` object.
         """
         if isinstance(file_obj, pathlib.Path):
-            new_file = _JobFile(path=file_obj, file_type=type_, )
+            new_file = _JobFile(
+                path=file_obj,
+                file_type=type_,
+            )
         elif isinstance(file_obj, str):
             new_file = _JobFile(path=pathlib.Path(file_obj), file_type=type_)
+        elif isinstance(file_obj, JobFile):
+            new_file = _JobFile.from_job_file(file_obj, file_type=type_)
         else:
+            # TODO add JobFile to err msg
             raise TypeError(
-                "file_obj must be a pathlib.Path, BinaryIO, or str object. " # TODO binaryIO? what handles it?
+                "file_obj must be a pathlib.Path, BinaryIO, or str object. "  # TODO binaryIO? what handles it?
                 f"Object provided was of type {type(file_obj)}."
             )
         self._files.append(new_file)
@@ -618,10 +665,10 @@ class ExcelImportJobRequest(ImportJobRequest):
         self,
         name: str,
         description: Optional[str],
-        template_file: Optional[Union[str, pathlib.Path]] = None,
-        data_files: Optional[List[Union[str, pathlib.Path]]] = None,
-        combined_files: Optional[List[Union[str, pathlib.Path]]] = None,
-        attachment_files: Optional[List[Union[str, pathlib.Path]]] = None,
+        template_file: Optional[Union[str, pathlib.Path, JobFile]] = None,
+        data_files: Optional[List[Union[str, pathlib.Path, JobFile]]] = None,
+        combined_files: Optional[List[Union[str, pathlib.Path, JobFile]]] = None,
+        attachment_files: Optional[List[Union[str, pathlib.Path, JobFile]]] = None,
         scheduled_execution_date: Optional[datetime.datetime] = None,
     ):
         """Initialize the ``ExcelImportJobRequest`` object."""
@@ -722,9 +769,9 @@ class TextImportJobRequest(ImportJobRequest):
         self,
         name: str,
         description: Optional[str],
-        template_file: Optional[Union[str, pathlib.Path]] = None,
-        data_files: Optional[List[Union[str, pathlib.Path]]] = None,
-        attachment_files: Optional[List[Union[str, pathlib.Path]]] = None,
+        template_file: Optional[Union[str, pathlib.Path, JobFile]] = None,
+        data_files: Optional[List[Union[str, pathlib.Path, JobFile]]] = None,
+        attachment_files: Optional[List[Union[str, pathlib.Path, JobFile]]] = None,
         scheduled_execution_date: Optional[datetime.datetime] = None,
     ):
         """Initialize the ``TextImportJobRequest`` object."""
