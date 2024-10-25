@@ -40,6 +40,9 @@ Jobs
 Other models
 ------------
 
+.. autoclass:: ansys.grantami.jobqueue.JobFile
+
+
 .. autoclass:: ansys.grantami.jobqueue.ExportRecord
 
 

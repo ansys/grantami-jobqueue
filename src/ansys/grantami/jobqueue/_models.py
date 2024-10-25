@@ -139,8 +139,11 @@ class ExportRecord:
 
 
 class JobFile:
-    """
+    r"""
     Represents a file associated with a JobRequest.
+
+    JobFile can be used instead of paths in import requests. This allows building a virtual file structure for the
+    import, to work around some path limitations and makes working with attachments easier.
 
     Parameters
     ----------
@@ -148,6 +151,20 @@ class JobFile:
         Path to the local file to use in a JobRequest. Can be absolute or relative.
     virtual_path : str or pathlib.Path
         Virtual path to use to refer to the file in the JobRequest. Must be relative.
+
+    Examples
+    --------
+    Using an import template from a shared network location and placing it at the root of the isolated job environment.
+
+    >>> template_file = JobFile(pathlib.Path(r"\\server\share\Tensile_Import_Template_v1.xslx"), "template.xslx")
+
+    JobFiles can be used to set up a file structure that matches the expectation of the import, without moving or
+    copying files to the client machine or requiring the script to run in a specific location. For example, if the
+    import is configured to import a picture to a Picture attribute, the data file includes a reference to the picture
+    by relative path, e.g. ``/assets/panel_front.jpg``.
+
+    >>> data_file = JobFile(pathlib.Path(r"C:\test_results\tensile\sample_001\data.xslx"), "data.xslx")
+    >>> attachment_file = JobFile(pathlib.Path(r"C:\test_results\pictures\sample_001\panel_front.png"), "./assets/panel_front.png")
     """
 
     def __init__(self, path: Union[str, pathlib.Path], virtual_path: Union[str, pathlib.Path]):
