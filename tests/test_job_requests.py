@@ -21,6 +21,7 @@
 # SOFTWARE.
 from contextlib import nullcontext as does_not_raise
 from pathlib import Path
+import sys
 
 import pytest
 
@@ -197,7 +198,11 @@ def test_identical_paths_raise_exception(
         (Path("data.txt"), does_not_raise()),
         (Path("../data.txt"), pytest.raises(ValueError, match="safe")),
         (Path(r"C:\some\folder\data.txt"), pytest.raises(ValueError, match="relative")),
-        (Path(r"\\server\share\data.txt"), pytest.raises(ValueError, match="relative")),
+        pytest.param(
+            Path(r"\\server\share\data.txt"),
+            pytest.raises(ValueError, match="relative"),
+            marks=pytest.mark.skipif(not sys.platform.startswith("win"), reason="Not windows"),
+        ),
     ],
 )
 def test_virtual_path_validation(virtual_path, expectation):
