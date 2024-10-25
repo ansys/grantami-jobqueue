@@ -314,8 +314,8 @@ class TestTextImportJob:
         job_req = TextImportJobRequest(
             name="Invalid template file",
             description="Invalid template file",
-            template_file=JobFile(__file__, "test_integration.py"),
-            data_files=[JobFile(__file__, "test_integration.py")],
+            template_file=JobFile(__file__, "file_1.py"),
+            data_files=[JobFile(__file__, "file_2.py")],
         )
 
         job = empty_job_queue_api_client.create_job_and_wait(job_req)
