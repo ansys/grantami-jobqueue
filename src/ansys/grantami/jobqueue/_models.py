@@ -185,7 +185,7 @@ class JobFile:
         """
         if path.is_absolute():
             raise ValueError("Virtual path must be relative.")
-        if not path.resolve().is_relative_to(os.getcwd()):
+        if not path.absolute().resolve().is_relative_to(pathlib.Path.cwd()):
             raise ValueError("Virtual path must be safe.")
 
     @property
