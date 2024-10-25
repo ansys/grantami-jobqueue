@@ -426,7 +426,7 @@ class JobRequest(ABC):
             new_file = _JobFile.from_job_file(file_obj, file_type=type_)
         else:
             raise TypeError(
-                "file_obj must be a pathlib.Path, or str object, or JobFile object. " 
+                "file_obj must be a pathlib.Path, or str object, or JobFile object. "
                 f"Object provided was of type {type(file_obj)}."
             )
         self._files.append(new_file)
@@ -520,7 +520,6 @@ class ImportJobRequest(JobRequest, ABC):
         """
         super()._process_files(file_struct=file_struct)
 
-    @abstractmethod
     def _check_files_valid_for_import(self) -> None:
         """
         Check that the import job can run with the provided files.
@@ -530,7 +529,9 @@ class ImportJobRequest(JobRequest, ABC):
         ValueError
             If the files provided are not valid.
         """
-        pass
+        paths = set(file.serializable_path for file in self._files)
+        if len(paths) != len(self._files):
+            raise ValueError("File paths in import are not unique.")
 
     def _generate_file_list_for_import(self) -> List[Dict[str, str]]:
         """
@@ -759,6 +760,7 @@ class ExcelImportJobRequest(ImportJobRequest):
         ValueError
             If not enough files have been provided for the job to successfully complete.
         """
+        super()._check_files_valid_for_import()
         if _FileType.Combined in self._file_types:
             if _FileType.Data in self._file_types or _FileType.Template in self._file_types:
                 raise ValueError(
@@ -860,6 +862,7 @@ class TextImportJobRequest(ImportJobRequest):
         ValueError
             If not enough files have been provided for the job to successfully complete.
         """
+        super()._check_files_valid_for_import()
         if not (_FileType.Data in self._file_types and _FileType.Template in self._file_types):
             raise ValueError(
                 "Text import jobs must contain one or more data files and a template file."
