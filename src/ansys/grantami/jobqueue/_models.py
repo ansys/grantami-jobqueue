@@ -217,7 +217,7 @@ class _JobFile:
     @classmethod
     def from_job_file(cls, file: JobFile, file_type: _FileType) -> "_JobFile":
         """
-        Create a ``JobFile`` object from a ``JobFile`` object.
+        Create a ``_JobFile`` object from a ``JobFile`` object.
 
         Parameters
         ----------
@@ -425,9 +425,8 @@ class JobRequest(ABC):
         elif isinstance(file_obj, JobFile):
             new_file = _JobFile.from_job_file(file_obj, file_type=type_)
         else:
-            # TODO add JobFile to err msg
             raise TypeError(
-                "file_obj must be a pathlib.Path, BinaryIO, or str object. "  # TODO binaryIO? what handles it?
+                "file_obj must be a pathlib.Path, or str object, or JobFile object. " 
                 f"Object provided was of type {type(file_obj)}."
             )
         self._files.append(new_file)
@@ -524,12 +523,12 @@ class ImportJobRequest(JobRequest, ABC):
     @abstractmethod
     def _check_files_valid_for_import(self) -> None:
         """
-        Check that the import job can run based on the combination of file types.
+        Check that the import job can run with the provided files.
 
         Raises
         ------
         ValueError
-            If not enough files have been provided for the job to successfully complete.
+            If the files provided are not valid.
         """
         pass
 
