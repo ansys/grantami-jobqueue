@@ -19,10 +19,12 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+from contextlib import nullcontext as does_not_raise
+from pathlib import Path
 
 import pytest
 
-from ansys.grantami.jobqueue import ExcelImportJobRequest, TextImportJobRequest
+from ansys.grantami.jobqueue import ExcelImportJobRequest, JobFile, TextImportJobRequest
 from common import (
     ATTACHMENT,
     EXCEL_IMPORT_COMBINED_FILE,
@@ -115,3 +117,89 @@ def test_text_invalid_files_raise_exception(data, template, attachment):
             template_file=template,
             attachment_files=attachment,
         )
+
+
+@pytest.mark.parametrize(
+    ["template_file", "data_files", "combined_files", "attachment_files"],
+    [
+        pytest.param(
+            None,
+            [JobFile("", "data.xslx"), JobFile("", "data.xslx")],
+            None,
+            None,
+            id="clash-between-virtual-paths",
+        ),
+        pytest.param(
+            None,
+            ["data_1.xslx", JobFile("data_2.xlsx", "data_1.xslx")],
+            None,
+            None,
+            id="clash-between-virtual-path-and-local-path",
+        ),
+        pytest.param(
+            "template.xslx",
+            [JobFile("data_2.xlsx", "template.xslx")],
+            None,
+            None,
+            id="clash-between-different-file-types-0-data",
+        ),
+        pytest.param(
+            "files/template.xslx",
+            [JobFile("data_2.xlsx", Path("files", "template.xslx"))],
+            None,
+            None,
+            id="clash-between-different-file-types-with-paths",
+        ),
+        pytest.param(
+            None,
+            None,
+            ["combined_1.xslx", JobFile("combined_2.xlsx", "combined_1.xslx")],
+            None,
+            id="combined-files",
+        ),
+        pytest.param(
+            None,
+            None,
+            None,
+            ["attachment_1.png", JobFile("attachment_2.png", "attachment_1.png")],
+            id="attachments-files",
+        ),
+        pytest.param(
+            None,
+            None,
+            None,
+            [
+                "attachment_1.png",
+                "attachment_1.png",
+            ],
+            id="attachments-files-duplicated-string-paths",
+        ),
+    ],
+)
+def test_identical_paths_raise_exception(
+    template_file, data_files, combined_files, attachment_files
+):
+    with pytest.raises(ValueError, match="are not unique"):
+        job = ExcelImportJobRequest(
+            name="TestIdenticalPaths",
+            description=None,
+            template_file=template_file,
+            data_files=data_files,
+            combined_files=combined_files,
+            attachment_files=attachment_files,
+        )
+
+
+@pytest.mark.parametrize(
+    ["virtual_path", "expectation"],
+    [
+        (Path("./some/folder/data.txt"), does_not_raise()),
+        (Path("data.txt"), does_not_raise()),
+        (Path("../data.txt"), pytest.raises(ValueError, match="safe")),
+        (Path(r"C:\some\folder\data.txt"), pytest.raises(ValueError, match="relative")),
+        (Path(r"\\server\share\data.txt"), pytest.raises(ValueError, match="relative")),
+    ],
+)
+def test_virtual_path_validation(virtual_path, expectation):
+    with expectation:
+        JobFile._validate_virtual_path(virtual_path)
