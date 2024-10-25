@@ -145,6 +145,8 @@ class JobFile:
     JobFile can be used instead of paths in import requests. This allows building a virtual file structure for the
     import, to work around some path limitations and makes working with attachments easier.
 
+    .. versionadded:: 1.1
+
     Parameters
     ----------
     path : str or pathlib.Path
