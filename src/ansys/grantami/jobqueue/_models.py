@@ -185,7 +185,6 @@ class JobFile:
         path : pathlib.Path
             Path to validate.
         """
-
         if (
             path.is_absolute()
             or path.expanduser() != path
