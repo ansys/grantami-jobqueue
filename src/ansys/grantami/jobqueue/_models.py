@@ -724,6 +724,11 @@ class ExcelImportJobRequest(ImportJobRequest):
         Earliest date and time to run the job. If no date and time are
         provided, the job begins as soon as possible.
 
+    Notes
+    -----
+    .. versionchanged:: 1.1
+       Path parameters now accept :class:`JobFile` inputs.
+
     Examples
     --------
     >>> template_file: pathlib.Path  # pathlib Path object for the template
@@ -828,6 +833,11 @@ class TextImportJobRequest(ImportJobRequest):
     scheduled_execution_date : datetime.datetime, default: None
         Earliest date and time to run the job. If no date and time are
         provided, the job begins as soon as possible.
+
+    Notes
+    -----
+    .. versionchanged:: 1.1
+       Path parameters now accept :class:`JobFile` inputs.
 
     Examples
     --------
