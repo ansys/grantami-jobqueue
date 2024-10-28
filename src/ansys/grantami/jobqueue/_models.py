@@ -185,10 +185,13 @@ class JobFile:
         path : pathlib.Path
             Path to validate.
         """
-        if path.is_absolute():
-            raise ValueError("Virtual path must be relative.")
-        if not path.absolute().resolve().is_relative_to(pathlib.Path.cwd()):
-            raise ValueError("Virtual path must be safe.")
+
+        if (
+            path.is_absolute()
+            or path.expanduser() != path
+            or not path.absolute().resolve().is_relative_to(pathlib.Path.cwd())
+        ):
+            raise ValueError("Virtual path must be a relative path within the current directory.")
 
     @property
     def path(self) -> pathlib.Path:

@@ -191,35 +191,40 @@ def test_identical_paths_raise_exception(
         )
 
 
+path_error = pytest.raises(
+    ValueError, match="Virtual path must be a relative path within the current directory." ""
+)
+
+
 @pytest.mark.parametrize(
     ["virtual_path", "expectation"],
     [
         (Path("./some/folder/data.txt"), does_not_raise()),
         (Path("data.txt"), does_not_raise()),
-        (Path("../data.txt"), pytest.raises(ValueError, match="safe")),
+        (Path("../data.txt"), path_error),
         pytest.param(
             Path("C:/some/folder/data.txt"),
-            pytest.raises(ValueError, match="relative"),
+            path_error,
             marks=pytest.mark.skipif(not sys.platform.startswith("win"), reason="Windows only"),
         ),
         pytest.param(
             Path("//server/share/data.txt"),
-            pytest.raises(ValueError, match="relative"),
+            path_error,
             marks=pytest.mark.skipif(not sys.platform.startswith("win"), reason="Windows only"),
         ),
         pytest.param(
             Path("\\\\remote\\c$"),
-            pytest.raises(ValueError, match="relative"),
+            path_error,
             marks=pytest.mark.skipif(not sys.platform.startswith("win"), reason="Windows only"),
         ),
         pytest.param(
             Path("/etc/file.txt"),
-            pytest.raises(ValueError, match="relative"),
+            path_error,
             marks=pytest.mark.skipif(sys.platform.startswith("win"), reason="Linux only"),
         ),
         pytest.param(
             Path("~/folder/file.txt"),
-            pytest.raises(ValueError, match="safe"),
+            path_error,
             marks=pytest.mark.skipif(sys.platform.startswith("win"), reason="Linux only"),
         ),
     ],
