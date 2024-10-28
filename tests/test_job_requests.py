@@ -197,11 +197,30 @@ def test_identical_paths_raise_exception(
         (Path("./some/folder/data.txt"), does_not_raise()),
         (Path("data.txt"), does_not_raise()),
         (Path("../data.txt"), pytest.raises(ValueError, match="safe")),
-        (Path(r"C:\some\folder\data.txt"), pytest.raises(ValueError, match="relative")),
         pytest.param(
-            Path(r"\\server\share\data.txt"),
+            Path("C:/some/folder/data.txt"),
             pytest.raises(ValueError, match="relative"),
-            marks=pytest.mark.skipif(not sys.platform.startswith("win"), reason="Not windows"),
+            marks=pytest.mark.skipif(not sys.platform.startswith("win"), reason="Windows only"),
+        ),
+        pytest.param(
+            Path("//server/share/data.txt"),
+            pytest.raises(ValueError, match="relative"),
+            marks=pytest.mark.skipif(not sys.platform.startswith("win"), reason="Windows only"),
+        ),
+        pytest.param(
+            Path("\\\\remote\\c$"),
+            pytest.raises(ValueError, match="relative"),
+            marks=pytest.mark.skipif(not sys.platform.startswith("win"), reason="Windows only"),
+        ),
+        pytest.param(
+            Path("/etc/file.txt"),
+            pytest.raises(ValueError, match="relative"),
+            marks=pytest.mark.skipif(sys.platform.startswith("win"), reason="Linux only"),
+        ),
+        pytest.param(
+            Path("~/folder/file.txt"),
+            pytest.raises(ValueError, match="safe"),
+            marks=pytest.mark.skipif(sys.platform.startswith("win"), reason="Linux only"),
         ),
     ],
 )
