@@ -23,9 +23,12 @@
 import datetime
 import json
 import os
+from pathlib import Path
+import shutil
 import tempfile
 import time
 
+from ansys.openapi.common import ApiException
 import pytest
 
 from ansys.grantami.jobqueue import (
@@ -35,6 +38,7 @@ from ansys.grantami.jobqueue import (
     ExportJob,
     ExportRecord,
     ImportJob,
+    JobFile,
     JobQueueApiClient,
     JobStatus,
     JobType,
@@ -62,7 +66,7 @@ def completed_excel_combined_import_job(empty_job_queue_api_client: JobQueueApiC
     job_req = ExcelImportJobRequest(
         name="ExcelImportTest",
         description="Import test 1",
-        combined_files=[str(EXCEL_IMPORT_COMBINED_FILE)],
+        combined_files=[JobFile(str(EXCEL_IMPORT_COMBINED_FILE), EXCEL_IMPORT_DATA_FILE.name)],
     )
     job = empty_job_queue_api_client.create_job_and_wait(job_req)
     check_success(job)
@@ -74,8 +78,8 @@ def completed_text_import_job(empty_job_queue_api_client: JobQueueApiClient) -> 
     job_req = TextImportJobRequest(
         name="TextImportTest",
         description="Import test with text",
-        data_files=[TEXT_IMPORT_DATA_FILE],
-        template_file=TEXT_IMPORT_TEMPLATE_FILE,
+        data_files=[JobFile(TEXT_IMPORT_DATA_FILE, TEXT_IMPORT_DATA_FILE.name)],
+        template_file=JobFile(TEXT_IMPORT_TEMPLATE_FILE, TEXT_IMPORT_TEMPLATE_FILE.name),
     )
     job = empty_job_queue_api_client.create_job_and_wait(job_req)
     check_success(job)
@@ -128,8 +132,13 @@ class TestExcelImportJob:
         job_req = ExcelImportJobRequest(
             name="ExcelImportTest combined file with attachment",
             description="Import test 1",
-            combined_files=[str(EXCEL_IMPORT_COMBINED_FILE_WITH_ATTACHMENT)],
-            attachment_files=[ATTACHMENT],
+            combined_files=[
+                JobFile(
+                    str(EXCEL_IMPORT_COMBINED_FILE_WITH_ATTACHMENT),
+                    EXCEL_IMPORT_COMBINED_FILE_WITH_ATTACHMENT.name,
+                )
+            ],
+            attachment_files=[JobFile(ATTACHMENT, ATTACHMENT.name)],
         )
 
         job = empty_job_queue_api_client.create_job_and_wait(job_req)
@@ -142,8 +151,8 @@ class TestExcelImportJob:
         job_req = ExcelImportJobRequest(
             name="ExcelImportTest separate files",
             description="Import test 1",
-            template_file=EXCEL_IMPORT_TEMPLATE_FILE,
-            data_files=[EXCEL_IMPORT_DATA_FILE],
+            template_file=JobFile(EXCEL_IMPORT_TEMPLATE_FILE, EXCEL_IMPORT_TEMPLATE_FILE.name),
+            data_files=[JobFile(EXCEL_IMPORT_DATA_FILE, EXCEL_IMPORT_DATA_FILE.name)],
         )
 
         job = empty_job_queue_api_client.create_job_and_wait(job_req)
@@ -158,9 +167,14 @@ class TestExcelImportJob:
         job_req = ExcelImportJobRequest(
             name="ExcelImportTest separate files with attachment",
             description="Import test 1",
-            template_file=EXCEL_IMPORT_TEMPLATE_FILE,
-            data_files=[EXCEL_IMPORT_DATA_FILE_WITH_ATTACHMENT],
-            attachment_files=[ATTACHMENT],
+            template_file=JobFile(EXCEL_IMPORT_TEMPLATE_FILE, EXCEL_IMPORT_TEMPLATE_FILE.name),
+            data_files=[
+                JobFile(
+                    EXCEL_IMPORT_DATA_FILE_WITH_ATTACHMENT,
+                    EXCEL_IMPORT_DATA_FILE_WITH_ATTACHMENT.name,
+                )
+            ],
+            attachment_files=[JobFile(ATTACHMENT, ATTACHMENT.name)],
         )
 
         job = empty_job_queue_api_client.create_job_and_wait(job_req)
@@ -175,7 +189,7 @@ class TestExcelImportJob:
         job_req = ExcelImportJobRequest(
             name="ExcelImportTest",
             description="Import test 1",
-            combined_files=[EXCEL_IMPORT_COMBINED_FILE],
+            combined_files=[JobFile(EXCEL_IMPORT_COMBINED_FILE, EXCEL_IMPORT_COMBINED_FILE.name)],
         )
         job_req.scheduled_execution_date = tomorrow
         job = empty_job_queue_api_client.create_job(job_req)
@@ -192,7 +206,7 @@ class TestExcelImportJob:
         job_req = ExcelImportJobRequest(
             name="ExcelImportTest",
             description="Import test 1",
-            combined_files=[EXCEL_IMPORT_COMBINED_FILE],
+            combined_files=[JobFile(EXCEL_IMPORT_COMBINED_FILE, EXCEL_IMPORT_COMBINED_FILE.name)],
         )
         job = empty_job_queue_api_client.create_job(job_req)
 
@@ -212,7 +226,7 @@ class TestExcelImportJob:
         job_req = ExcelImportJobRequest(
             name="ExcelImportTest",
             description="Import test 1",
-            combined_files=[EXCEL_IMPORT_COMBINED_FILE],
+            combined_files=[JobFile(EXCEL_IMPORT_COMBINED_FILE, EXCEL_IMPORT_COMBINED_FILE.name)],
         )
         job_req.scheduled_execution_date = tomorrow
         job = empty_job_queue_api_client.create_job(job_req)
@@ -234,8 +248,10 @@ class TestExcelImportJob:
         job_req = ExcelImportJobRequest(
             name="ExcelImportTest combined file with attachment",
             description=None,
-            combined_files=[str(EXCEL_IMPORT_COMBINED_FILE_WITH_ATTACHMENT)],
-            attachment_files=[ATTACHMENT],
+            combined_files=[
+                JobFile(str(EXCEL_IMPORT_COMBINED_FILE_WITH_ATTACHMENT), "datafile.xlsx")
+            ],
+            attachment_files=[JobFile(ATTACHMENT, ATTACHMENT.name)],
         )
 
         job = empty_job_queue_api_client.create_job_and_wait(job_req)
@@ -249,7 +265,7 @@ class TestExcelImportJob:
         job_req = ExcelImportJobRequest(
             name="Invalid combined file",
             description="Invalid combined file",
-            combined_files=[__file__],
+            combined_files=[JobFile(__file__, "test_integration.py")],
         )
 
         job = empty_job_queue_api_client.create_job_and_wait(job_req)
@@ -264,7 +280,7 @@ class TestExcelImportJob:
         job_req = ExcelImportJobRequest(
             name="Invalid combined file",
             description="Invalid combined file",
-            combined_files=[__file__],
+            combined_files=[JobFile(__file__, "test_integration.py")],
         )
 
         job = empty_job_queue_api_client.create_job_and_wait(job_req)
@@ -284,8 +300,8 @@ class TestTextImportJob:
         job_req = TextImportJobRequest(
             name="TextImportTest",
             description=None,
-            data_files=[TEXT_IMPORT_DATA_FILE],
-            template_file=TEXT_IMPORT_TEMPLATE_FILE,
+            data_files=[JobFile(TEXT_IMPORT_DATA_FILE, TEXT_IMPORT_DATA_FILE.name)],
+            template_file=JobFile(TEXT_IMPORT_TEMPLATE_FILE, TEXT_IMPORT_TEMPLATE_FILE.name),
         )
         job = empty_job_queue_api_client.create_job_and_wait(job_req)
         assert job.description is None
@@ -298,8 +314,8 @@ class TestTextImportJob:
         job_req = TextImportJobRequest(
             name="Invalid template file",
             description="Invalid template file",
-            template_file=__file__,
-            data_files=[__file__],
+            template_file=JobFile(__file__, "file_1.py"),
+            data_files=[JobFile(__file__, "file_2.py")],
         )
 
         job = empty_job_queue_api_client.create_job_and_wait(job_req)
@@ -309,6 +325,108 @@ class TestTextImportJob:
         assert output_info["NumberOfRecordsCreated"] == 0
         assert output_info["NumberOfRecordsUpdated"] == 0
         assert output_info["FinishedSuccessfully"] is False
+
+
+class TestPaths:
+    template_filename = "template.xml"
+    datafile_filename = "data.dat"
+    attachment_filename = "picture.bmp"
+
+    @pytest.fixture(scope="class")
+    def directory(self, tmp_path_factory):
+        yield tmp_path_factory.mktemp("directory")
+
+    @pytest.fixture(scope="class")
+    def template_path_absolute(self, directory):
+        template_path = Path(directory, self.template_filename)
+        shutil.copy(TEXT_IMPORT_TEMPLATE_FILE, template_path)
+        yield template_path.absolute()
+
+    @pytest.fixture(scope="class")
+    def datafile_path_absolute(self, directory):
+        datafile_path = Path(directory, self.datafile_filename)
+        shutil.copy(TEXT_IMPORT_DATA_FILE, datafile_path)
+        yield datafile_path.absolute()
+
+    @pytest.fixture(scope="class")
+    def attachment_path_absolute(self, directory):
+        attachment_path = Path(directory, self.attachment_filename)
+        shutil.copy(ATTACHMENT, attachment_path)
+        yield attachment_path.absolute()
+
+    @pytest.fixture(scope="class")
+    def populated_directory(
+        self, directory, template_path_absolute, datafile_path_absolute, attachment_path_absolute
+    ):
+        yield directory
+
+    def make_request(self, queue, template, datafile, attachment) -> AsyncJob:
+        job_request = TextImportJobRequest(
+            name="TextImportTest",
+            description="TextImportTestDescription",
+            template_file=template,
+            data_files=[datafile],
+            attachment_files=[attachment],
+        )
+        return queue.create_job(job_request)
+
+    def test_using_filenames(self, empty_job_queue_api_client, populated_directory, monkeypatch):
+        monkeypatch.chdir(populated_directory)
+        job = self.make_request(
+            queue=empty_job_queue_api_client,
+            template=self.template_filename,
+            datafile=self.datafile_filename,
+            attachment=self.attachment_filename,
+        )
+        assert job.status in [JobStatus.Pending, JobStatus.Running, JobStatus.Succeeded]
+
+    def test_using_relative_paths(
+        self, empty_job_queue_api_client, populated_directory, monkeypatch
+    ):
+        cwd = populated_directory.parent
+        monkeypatch.chdir(cwd)
+        job = self.make_request(
+            queue=empty_job_queue_api_client,
+            template=Path(populated_directory.name, self.template_filename),
+            datafile=Path(populated_directory.name, self.datafile_filename),
+            attachment=Path(populated_directory.name, self.attachment_filename),
+        )
+        assert job.status in [JobStatus.Pending, JobStatus.Running, JobStatus.Succeeded]
+
+    @pytest.mark.parametrize("argument_name", ["template", "datafile", "attachment"])
+    def test_any_absolute_path_raises_exception(
+        self, empty_job_queue_api_client, populated_directory, monkeypatch, argument_name
+    ):
+        monkeypatch.chdir(populated_directory)
+        kwargs = {
+            "template": self.template_filename,
+            "datafile": self.datafile_filename,
+            "attachment": self.attachment_filename,
+        }
+        kwargs[argument_name] = Path(kwargs[argument_name]).absolute()
+        with pytest.raises(ApiException, match="not safe relative paths"):
+            job = self.make_request(
+                queue=empty_job_queue_api_client,
+                **kwargs,
+            )
+
+    def test_wrapped_absolute_path_work(
+        self,
+        empty_job_queue_api_client,
+        populated_directory,
+        monkeypatch,
+        template_path_absolute,
+        datafile_path_absolute,
+        attachment_path_absolute,
+    ):
+        monkeypatch.chdir(populated_directory)
+        job = self.make_request(
+            queue=empty_job_queue_api_client,
+            template=JobFile(template_path_absolute, Path(self.template_filename)),
+            datafile=JobFile(datafile_path_absolute, Path(self.datafile_filename)),
+            attachment=JobFile(attachment_path_absolute, Path(self.attachment_filename)),
+        )
+        assert job.status in [JobStatus.Pending, JobStatus.Running, JobStatus.Succeeded]
 
 
 class TestExportJob:
@@ -468,7 +586,7 @@ class TestSchedule:
         job_req = ExcelImportJobRequest(
             name="ExcelImportTest",
             description="Import test 1",
-            combined_files=[EXCEL_IMPORT_COMBINED_FILE],
+            combined_files=[JobFile(EXCEL_IMPORT_COMBINED_FILE, EXCEL_IMPORT_COMBINED_FILE.name)],
         )
         job_req.scheduled_execution_date = now + datetime.timedelta(seconds=6)
         job = empty_job_queue_api_client.create_job(job_req)
@@ -485,7 +603,7 @@ class TestSchedule:
         job_req = ExcelImportJobRequest(
             name="ExcelImportTest",
             description="Import test 1",
-            combined_files=[EXCEL_IMPORT_COMBINED_FILE],
+            combined_files=[JobFile(EXCEL_IMPORT_COMBINED_FILE, EXCEL_IMPORT_COMBINED_FILE.name)],
         )
         job_req.scheduled_execution_date = tomorrow
         job = empty_job_queue_api_client.create_job(job_req)
