@@ -44,7 +44,7 @@ Dependencies
 ------------
 .. readme_software_requirements
 
-To use PyGranta JobQueue, you must have access to a Granta MI 2025 R1 deployment.
+To use PyGranta JobQueue, you must have access to a Granta MI 2024 R2 deployment.
 
 The ``ansys.grantami.jobqueue`` package currently supports Python version 3.10 through 3.13.
 
