@@ -247,18 +247,14 @@ class JobQueueApiClient(ApiClient):
         list of AsyncJob
             List of jobs on the server matching the query.
         """
-        kwargs = {
-            "name_filter": name,
-            "job_type": job_type.value if job_type else None,
-            "status": status.value if status else None,
-            "description_filter": description,
-            "submitter_name_filter": submitter_name,
-        }
-
         with warnings.catch_warnings():
             warnings.simplefilter("ignore", UndefinedObjectWarning)
             filtered_job_resp = self.job_queue_api.get_jobs(
-                **{k: v for k, v in kwargs.items() if v is not None}
+                name_filter=name,
+                job_type=job_type.value if job_type else None,
+                status=status.value if status else None,
+                description_filter=description,
+                submitter_name_filter=submitter_name,
             )
 
         job_list = filtered_job_resp.results
