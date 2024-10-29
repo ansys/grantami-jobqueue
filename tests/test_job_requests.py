@@ -192,7 +192,7 @@ def test_identical_paths_raise_exception(
 
 
 path_error = pytest.raises(
-    ValueError, match="Virtual path must be a relative path within the current directory." ""
+    ValueError, match="Virtual path must be a relative path within the current directory."
 )
 
 

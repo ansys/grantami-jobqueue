@@ -161,9 +161,9 @@ class JobFile:
     >>> template_file = JobFile(pathlib.Path(r"\\server\share\Tensile_Import_Template_v1.xslx"), "template.xslx")
 
     JobFiles can be used to set up a file structure that matches the expectation of the import, without moving or
-    copying files to the client machine or requiring the script to run in a specific location. For example, if the
-    import is configured to import a picture to a Picture attribute, the data file includes a reference to the picture
-    by relative path, e.g. ``/assets/panel_front.jpg``.
+    copying files to the client machine or requiring the script to run in a specific location. For example, if the Excel
+    or text import template is configured to import a picture to a Picture attribute, the data file includes a reference
+    to the picture by relative path, e.g. ``/assets/panel_front.jpg``.
 
     >>> data_file = JobFile(pathlib.Path(r"C:\test_results\tensile\sample_001\data.xslx"), "data.xslx")
     >>> attachment_file = JobFile(pathlib.Path(r"C:\test_results\pictures\sample_001\panel_front.png"), "./assets/panel_front.png")
