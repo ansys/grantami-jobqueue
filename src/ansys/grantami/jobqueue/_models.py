@@ -377,7 +377,7 @@ class JobRequest(ABC):
         Name of the job as shown in the job queue.
     description : Optional[str]
         Description of the job as shown in the job queue.
-    template_file : str or pathlib.Path or JobFile, default: None
+    template_file : str or pathlib.Path, default: None
         Template to use the job.
     scheduled_execution_date : datetime.datetime, default: None
         Earliest date and time to run the job. If no date and time are
@@ -403,15 +403,13 @@ class JobRequest(ABC):
         """Represent the object in string format."""
         return f'<{type(self).__name__}: name: "{self.name}">'
 
-    def _process_files(
-        self, file_struct: Dict[_FileType, Optional[List[Union[str, pathlib.Path, JobFile]]]]
-    ) -> None:
+    def _process_files(self, file_struct: Dict[_FileType, Optional[List[Any]]]) -> None:
         """
         Parse the file structure for the job request.
 
         Parameters
         ----------
-        file_struct : Dict[_FileType, Optional[List[Union[str, pathlib.Path, JobFile]]]]
+        file_struct : Dict[_FileType, Optional[List[Any]]]
             Dictionary containing lists of file paths for each file type.
         """
         for file_type, file_list in file_struct.items():
@@ -420,13 +418,14 @@ class JobRequest(ABC):
             for file in file_list:
                 self._add_file(file, file_type)
 
-    def _add_file(self, file_obj: Union[str, pathlib.Path, JobFile], type_: _FileType) -> None:
+    @abstractmethod
+    def _add_file(self, file_obj: Any, type_: _FileType) -> None:
         """
         Add a file to the job request.
 
         Parameters
         ----------
-        file_obj : Union[str, pathlib.Path]
+        file_obj : Any
             File to add to the job request.
         type_ : _FileType
             Type of the file.
@@ -434,23 +433,9 @@ class JobRequest(ABC):
         Raises
         ------
         TypeError
-            If the file object is not a string or ``pathlib.Path`` object.
+            If the file object is not valid.
         """
-        if isinstance(file_obj, pathlib.Path):
-            new_file = _JobFile(
-                path=file_obj,
-                file_type=type_,
-            )
-        elif isinstance(file_obj, str):
-            new_file = _JobFile(path=pathlib.Path(file_obj), file_type=type_)
-        elif isinstance(file_obj, JobFile):
-            new_file = _JobFile.from_job_file(file_obj, file_type=type_)
-        else:
-            raise TypeError(
-                "file_obj must be a pathlib.Path, or str object, or JobFile object. "
-                f"Object provided was of type {type(file_obj)}."
-            )
-        self._files.append(new_file)
+        raise NotImplementedError
 
     def _post_files(self, api_client: api.JobQueueApi) -> None:
         """
@@ -536,10 +521,42 @@ class ImportJobRequest(JobRequest, ABC):
 
         Parameters
         ----------
-        file_struct : Dict[_FileType, Optional[List[Union[str, pathlib.Path]]]]
+        file_struct : Dict[_FileType, Optional[List[Union[str, pathlib.Path, JobFile]]]]
             Dictionary containing lists of file paths for each file type.
         """
-        super()._process_files(file_struct=file_struct)
+        super()._process_files(file_struct)
+
+    def _add_file(self, file_obj: Union[str, pathlib.Path, JobFile], type_: _FileType) -> None:
+        """
+        Add a file to the job request.
+
+        Parameters
+        ----------
+        file_obj : Union[str, pathlib.Path, JobFile]
+            File to add to the job request.
+        type_ : _FileType
+            Type of the file.
+
+        Raises
+        ------
+        TypeError
+            If the file object is not a string, ``pathlib.Path``, or JobFile object.
+        """
+        if isinstance(file_obj, pathlib.Path):
+            new_file = _JobFile(
+                path=file_obj,
+                file_type=type_,
+            )
+        elif isinstance(file_obj, str):
+            new_file = _JobFile(path=pathlib.Path(file_obj), file_type=type_)
+        elif isinstance(file_obj, JobFile):
+            new_file = _JobFile.from_job_file(file_obj, file_type=type_)
+        else:
+            raise TypeError(
+                "file_obj must be a pathlib.Path, str, or JobFile object. "
+                f"Object provided was of type {type(file_obj)}."
+            )
+        self._files.append(new_file)
 
     def _check_files_valid_for_import(self) -> None:
         """
@@ -661,6 +678,52 @@ class ExcelExportJobRequest(JobRequest):
         super().__init__(name, description, template_file, scheduled_execution_date)
         self._database_key = database_key
         self._records = records
+
+    def _process_files(
+        self, file_struct: Dict[_FileType, Optional[List[Union[str, pathlib.Path]]]]
+    ) -> None:
+        """
+        Check the validity of the file structure for importing.
+
+        This method is required because only certain combinations of file types are
+        permitted, and these combinations vary based on job type.
+
+        Parameters
+        ----------
+        file_struct : Dict[_FileType, Optional[List[Union[str, pathlib.Path]]]]
+            Dictionary containing lists of file paths for each file type.
+        """
+        super()._process_files(file_struct)
+
+    def _add_file(self, file_obj: Union[str, pathlib.Path], type_: _FileType) -> None:
+        """
+        Add a file to the job request.
+
+        Parameters
+        ----------
+        file_obj : Union[str, pathlib.Path]
+            File to add to the job request.
+        type_ : _FileType
+            Type of the file.
+
+        Raises
+        ------
+        TypeError
+            If the file object is not a string or ``pathlib.Path`` object.
+        """
+        if isinstance(file_obj, pathlib.Path):
+            new_file = _JobFile(
+                path=file_obj,
+                file_type=type_,
+            )
+        elif isinstance(file_obj, str):
+            new_file = _JobFile(path=pathlib.Path(file_obj), file_type=type_)
+        else:
+            raise TypeError(
+                "file_obj must be a pathlib.Path or str object. "
+                f"Object provided was of type {type(file_obj)}."
+            )
+        self._files.append(new_file)
 
     def _render_job_parameters(self) -> str:
         """
