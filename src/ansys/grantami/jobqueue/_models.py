@@ -30,10 +30,9 @@ import pathlib
 from typing import Any, Dict, List, Optional, Type, Union
 import warnings
 
-from typeguard import typechecked
-
 from ansys.grantami.serverapi_openapi import api, models
 from ansys.openapi.common import UndefinedObjectWarning, Unset
+from typeguard import typechecked
 
 
 class _DocumentedEnum(Enum):
