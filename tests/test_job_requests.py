@@ -24,6 +24,7 @@ from pathlib import Path
 import sys
 
 import pytest
+from typeguard import TypeCheckError
 
 from ansys.grantami.jobqueue import ExcelImportJobRequest, JobFile, TextImportJobRequest
 from common import (
@@ -232,3 +233,24 @@ path_error = pytest.raises(
 def test_virtual_path_validation(virtual_path, expectation):
     with expectation:
         JobFile._validate_virtual_path(virtual_path)
+
+
+class TestInvalidArgumentTypes:
+    def test_data_file(self):
+        with pytest.raises(TypeCheckError, match='argument "data_files" (.*) did not match any element in the union'):
+            ExcelImportJobRequest(
+                name="Test name",
+                description=None,
+                data_files=Path("file.data"),
+            )
+
+    def test_date(self):
+        with pytest.raises(
+            TypeCheckError, match='argument "scheduled_execution_date" (.*) did not match any element in the union'
+        ):
+            ExcelImportJobRequest(
+                name="Test name",
+                description=None,
+                data_files=[Path("file.data")],
+                scheduled_execution_date="2024-11-15T20:50:20+00:00"
+            )

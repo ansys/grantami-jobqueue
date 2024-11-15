@@ -30,6 +30,8 @@ import pathlib
 from typing import Any, Dict, List, Optional, Type, Union
 import warnings
 
+from typeguard import typechecked
+
 from ansys.grantami.serverapi_openapi import api, models
 from ansys.openapi.common import UndefinedObjectWarning, Unset
 
@@ -169,6 +171,7 @@ class JobFile:
     >>> attachment_file = JobFile(pathlib.Path(r"C:\test_results\pictures\sample_001\panel_front.png"), "./assets/panel_front.png")
     """
 
+    @typechecked()
     def __init__(self, path: Union[str, pathlib.Path], virtual_path: Union[str, pathlib.Path]):
         self._path: pathlib.Path = pathlib.Path(path)
         virtual_path = pathlib.Path(virtual_path)
@@ -665,6 +668,7 @@ class ExcelExportJobRequest(JobRequest):
     <ExcelExportJobRequest: name: "Excel export job (future execution)">
     """
 
+    @typechecked()
     def __init__(
         self,
         name: str,
@@ -816,6 +820,7 @@ class ExcelImportJobRequest(ImportJobRequest):
     <ExcelImportJobRequest: name: "Excel import job (future execution)">
     """
 
+    @typechecked()
     def __init__(
         self,
         name: str,
@@ -926,6 +931,7 @@ class TextImportJobRequest(ImportJobRequest):
     <TextImportJobRequest: name: "Text import job (future execution)">
     """
 
+    @typechecked()
     def __init__(
         self,
         name: str,
