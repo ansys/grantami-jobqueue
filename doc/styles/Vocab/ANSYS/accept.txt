@@ -9,3 +9,4 @@ AsyncJob
 AsyncJobs
 mypy
 autologon
+socio-economic

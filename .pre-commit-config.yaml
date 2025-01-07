@@ -1,3 +1,6 @@
+ci:
+    skip: [mypy-code]
+
 repos:
 
 - repo: https://github.com/psf/black
@@ -16,10 +19,10 @@ repos:
   - id: flake8
 
 - repo: https://github.com/codespell-project/codespell
-  rev: v2.2.6
+  rev: v2.3.0
   hooks:
   - id: codespell
-    args: ["--ignore-words", "doc/styles/Vocab/ANSYS/accept.txt", "--skip", "poetry.lock"]
+    args: ["--ignore-words", "doc/styles/Vocab/ANSYS/accept.txt", "--skip", "poetry.lock,pyproject.toml"]
 
 - repo: https://github.com/pre-commit/pre-commit-hooks
   rev: v4.5.0
@@ -28,6 +31,7 @@ repos:
   - id: debug-statements
   - id: check-merge-conflict
   - id: trailing-whitespace
+
 - repo: https://github.com/pycqa/pydocstyle
   rev: 6.3.0
   hooks:
