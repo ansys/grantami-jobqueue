@@ -1,9 +1,16 @@
 version: 2
+registries:
+  private-pypi:
+    type: python-index
+    url: "https://pkgs.dev.azure.com/pyansys/_packaging/pyansys/pypi/simple/"
+    username: pat
+    password: ${{ secrets.PYANSYS_PYPI_PRIVATE_PAT }}
 updates:
   - package-ecosystem: "pip"
     directory: "/"
     schedule:
       interval: "weekly"
+    registries: "*"
     labels:
       - "maintenance"
       - "dependencies"
