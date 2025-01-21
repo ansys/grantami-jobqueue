@@ -98,11 +98,9 @@ completed_job = client.create_job_and_wait(excel_export_request)
 
 completed_job.output_file_names
 
-# In general, an Excel export job returns three files:
+# In general, an Excel export job returns two files:
 #
 # - ``<job name>.log``: Log file of the import operation on the server
-# - ``summary.json``: Data file that summarizes the number of records exported by the job and
-#   provides details of any errors that occurred during processing.
 # - A file containing the data exported from Granta MI
 #
 # The contents of the exported data file depends on the job:
@@ -123,17 +121,11 @@ print(f"{log_file_name} (first 200 characters):")
 print(f"{log_file_string[:500]}...")
 # -
 
-# This next cell shows how to download the Excel file and export summary file to disk using the
-# ``AsyncJob.download_file()`` method.
+# This next cell shows how to download the Excel file to disk using the ``AsyncJob.download_file()`` method.
 
 # +
 output_file_name = next(name for name in completed_job.output_file_names if name.endswith("xlsx"))
 output_path = f"./{output_file_name}"
 completed_job.download_file(output_file_name, output_path)
 print(f"{output_file_name} saved to disk")
-
-summary_file_name = next(name for name in completed_job.output_file_names if name == "summary.json")
-output_path = f"./{summary_file_name}"
-completed_job.download_file(summary_file_name, output_path)
-print(f"{summary_file_name} saved to disk")
 # -

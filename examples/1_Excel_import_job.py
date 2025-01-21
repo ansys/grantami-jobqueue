@@ -47,7 +47,7 @@ client = Connection(server_url).with_credentials("user_name", "password").connec
 #
 # Different job types require different input files. For example, an Excel import can use a
 # *template*, one or more *data* files, or *combined* files, which include both the template
-# and data files. You should specicy any additional files to imported as file or picture attributes
+# and data files. You should specify any additional files to imported as file or picture attributes
 # as *attachment* files. You can provide these additional files as relative or absolute paths or as
 # ``pathlib.Path`` objects.
 
@@ -90,11 +90,7 @@ completed_job = client.create_job_and_wait(separate_excel_import_request)
 
 completed_job.output_file_names
 
-# In general, an Excel import job returns two files:
-#
-# - ``<job name>.log``: Log file of the import operation on the server
-# - ``summary.json``: Data file that summarizes the number of records impacted by the import
-#    job and provides details of any errors that occurred during processing.
+# In general, an Excel import job includes a log of the import operation on the server as ``<job name>.log``.
 
 # This cell shows how to access the content of the log file as ``bytes`` using the
 # ``AsyncJob.get_file_content()`` method:
@@ -105,14 +101,4 @@ log_file_content = completed_job.get_file_content(log_file_name)
 log_file_string = log_file_content.decode("utf-8")
 print(f"{log_file_name} (first 200 characters):")
 print(f"{log_file_string[:500]}...")
-# -
-
-# This next cell shows how to download the import summary file to disk using the
-# ``AsyncJob.download_file()`` method:
-
-# +
-summary_file_name = next(name for name in completed_job.output_file_names if name == "summary.json")
-output_path = f"./{summary_file_name}"
-completed_job.download_file(summary_file_name, output_path)
-f"{summary_file_name} saved to disk"
 # -
