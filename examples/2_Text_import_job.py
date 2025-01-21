@@ -93,11 +93,7 @@ text_import_job
 
 text_import_job.output_file_names
 
-# In general, a text import job returns two files:
-#
-# - ``<job name>.log``: Log file of the import operation on the server
-# - ``summary.json``: Data file that summarizes the number of records impacted by the import
-#    job and provides details of any errors that occurred during processing.
+# In general, a text import job includes a log of the import operation on the server as ``<job name>.log``.
 
 # This cell shows how to access the content of the log file as ``bytes`` using the
 # ``AsyncJob.get_file_content()`` method:
@@ -108,16 +104,4 @@ log_file_content = text_import_job.get_file_content(log_file_name)
 log_file_string = log_file_content.decode("utf-8")
 print(f"{log_file_name} (first 200 characters):")
 print(f"{log_file_string[:500]}...")
-# -
-
-# This next cell shows how to download the import summary file to disk using the
-# ``AsyncJob.download_file()`` method.
-
-# +
-summary_file_name = next(
-    name for name in text_import_job.output_file_names if name == "summary.json"
-)
-output_path = f"./{summary_file_name}"
-text_import_job.download_file(summary_file_name, output_path)
-print(f"{summary_file_name} saved to disk")
 # -
