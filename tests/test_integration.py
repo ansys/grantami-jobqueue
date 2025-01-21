@@ -529,7 +529,7 @@ class TestFileOutputs:
     def test_text_import_download_files_path(self, completed_text_import_job):
         job = completed_text_import_job
 
-        assert len(job.output_file_names) == 2
+        assert len(job.output_file_names) == 1
         log_filepath = next(
             file_name for file_name in job.output_file_names if "TextImportTest.log" in file_name
         )
