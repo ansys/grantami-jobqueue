@@ -477,88 +477,76 @@ class TestFileOutputs:
     def test_excel_import_output_files(self, completed_excel_combined_import_job):
         job = completed_excel_combined_import_job
 
-        assert len(job.output_file_names) == 2
-        summary_filename = next(
-            file_name for file_name in job.output_file_names if "summary.json" in file_name
-        )
-        summary = job.get_file_content(summary_filename)
-        parsed_summary = json.loads(summary.decode("utf-8"))
-        assert parsed_summary["NumberOfTasks"] == 1
-        assert parsed_summary["NumberOfErrors"] == 0
+        assert len(job.output_file_names) == 1
+        summary = job.output_information["summary"]
+        assert summary["NumberOfTasks"] == 1
+        assert summary["NumberOfErrors"] == 0
 
     def test_excel_import_download_files_name(self, completed_excel_combined_import_job):
         job = completed_excel_combined_import_job
 
-        assert len(job.output_file_names) == 2
-        summary_filepath = next(
-            file_name for file_name in job.output_file_names if "summary.json" in file_name
+        assert len(job.output_file_names) == 1
+        log_filepath = next(
+            file_name for file_name in job.output_file_names if "ExcelImportTest.log" in file_name
         )
         with tempfile.TemporaryDirectory() as td:
-            output_file = os.path.join(td, "file_name.json")
-            job.download_file(summary_filepath, output_file)
+            output_file = os.path.join(td, "file_name.log")
+            job.download_file(log_filepath, output_file)
             assert os.path.exists(output_file)
 
     def test_excel_import_download_files_path(self, completed_excel_combined_import_job):
         job = completed_excel_combined_import_job
 
-        assert len(job.output_file_names) == 2
-        summary_filepath = next(
-            file_name for file_name in job.output_file_names if "summary.json" in file_name
+        assert len(job.output_file_names) == 1
+        log_filepath = next(
+            file_name for file_name in job.output_file_names if "ExcelImportTest.log" in file_name
         )
-        summary_filename = summary_filepath.split("\\")[-1]
+        log_filename = log_filepath.split("\\")[-1]
         with tempfile.TemporaryDirectory() as td:
-            job.download_file(summary_filepath, td)
-            output_file = os.path.join(td, summary_filename)
+            job.download_file(log_filepath, td)
+            output_file = os.path.join(td, log_filename)
             assert os.path.exists(output_file)
 
     def test_text_import_output_files(self, completed_text_import_job):
         job = completed_text_import_job
 
-        assert len(job.output_file_names) == 2
-        summary_filename = next(
-            file_name for file_name in job.output_file_names if "summary.json" in file_name
-        )
-        summary = job.get_file_content(summary_filename)
-        parsed_summary = json.loads(summary.decode("utf-8"))
-        assert parsed_summary["NumberOfTasks"] == 1
-        assert parsed_summary["NumberOfErrors"] == 0
+        assert len(job.output_file_names) == 1
+        summary = job.output_information["summary"]
+        assert summary["NumberOfTasks"] == 1
+        assert summary["NumberOfErrors"] == 0
 
     def test_text_import_download_files_name(self, completed_text_import_job):
         job = completed_text_import_job
 
-        assert len(job.output_file_names) == 2
-        summary_filepath = next(
-            file_name for file_name in job.output_file_names if "summary.json" in file_name
+        assert len(job.output_file_names) == 1
+        log_filepath = next(
+            file_name for file_name in job.output_file_names if "TextImportTest.log" in file_name
         )
         with tempfile.TemporaryDirectory() as td:
-            output_file = os.path.join(td, "file_name.json")
-            job.download_file(summary_filepath, output_file)
+            output_file = os.path.join(td, "file_name.log")
+            job.download_file(log_filepath, output_file)
             assert os.path.exists(output_file)
 
     def test_text_import_download_files_path(self, completed_text_import_job):
         job = completed_text_import_job
 
         assert len(job.output_file_names) == 2
-        summary_filepath = next(
-            file_name for file_name in job.output_file_names if "summary.json" in file_name
+        log_filepath = next(
+            file_name for file_name in job.output_file_names if "TextImportTest.log" in file_name
         )
-        summary_filename = summary_filepath.split("\\")[-1]
+        log_filename = log_filepath.split("\\")[-1]
         with tempfile.TemporaryDirectory() as td:
-            job.download_file(summary_filepath, td)
-            output_file = os.path.join(td, summary_filename)
+            job.download_file(log_filepath, td)
+            output_file = os.path.join(td, log_filename)
             assert os.path.exists(output_file)
 
     def test_export_output_files(self, completed_excel_export_job):
         job = completed_excel_export_job
 
-        assert len(job.output_file_names) == 3
-        summary_filename = next(
-            file_name for file_name in job.output_file_names if "summary.json" in file_name
-        )
-        summary = job.get_file_content(summary_filename)
-        parsed_summary = json.loads(summary.decode("utf-8"))
-        assert parsed_summary["ExportedRecords"] == 2
-        assert parsed_summary["Errors"] == []
+        assert len(job.output_file_names) == 2
+        summary = job.output_information["summary"]
+        assert summary["ExportedRecords"] == 2
+        assert summary["Errors"] == []
 
 
 class TestSearch:
