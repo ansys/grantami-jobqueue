@@ -1,0 +1,5 @@
+User-agent: *
+
+Disallow: /version/1.0
+
+Sitemap: https://jobqueue.grantami.docs.pyansys.com/sitemap.xml
