@@ -19,39 +19,44 @@ on:
         type: boolean
 
     secrets:
-
+      # Azure secrets
       AZURE_APP_ID:
         required: true
-
       AZURE_SECRET:
         required: true
-
       AZURE_TENANT_ID:
         required: true
-
       AZURE_RESOURCE_GROUP:
         required: true
 
-      AZURE_VM_NAME_NEXT:
+      # Test server names
+      AZURE_VM_NAME_DEV:
+        required: true
+      AZURE_VM_NAME_25R1:
+        required: true
+      AZURE_VM_NAME_24R2:
+        required: true
+      AZURE_VM_NAME_24R1:
         required: true
 
+      # Test server URLs
       TEST_SERVER_URL_NEXT:
         required: true
 
+      # Test server credentials
       TEST_SERVER_ADMIN_USER:
         required: true
-
       TEST_SERVER_ADMIN_PASS:
         required: true
-
       TEST_SERVER_READ_USER:
         required: true
-
       TEST_SERVER_READ_PASS:
         required: true
 
       PYANSYS_PYPI_PRIVATE_PAT:
         required: true
+#      CODECOV_TOKEN:
+#        required: true
 
   workflow_dispatch:
 
@@ -81,7 +86,7 @@ jobs:
           azcliversion: 2.32.0
           inlineScript: |
             az login --service-principal -u ${{ secrets.AZURE_APP_ID }} -p ${{ secrets.AZURE_SECRET }} --tenant ${{ secrets.AZURE_TENANT_ID }}
-            az vm start -g ${{ secrets.AZURE_RESOURCE_GROUP }} -n ${{ secrets.AZURE_VM_NAME_NEXT }}
+            az vm start -g ${{ secrets.AZURE_RESOURCE_GROUP }} -n ${{ secrets.AZURE_VM_NAME_DEV }}
 
       - name: "Set up Python ${{ inputs.python-version }}"
         uses: actions/setup-python@v5
@@ -177,10 +182,17 @@ jobs:
     runs-on: ubuntu-latest
     needs: check-workflow-runs
     if: ${{ !cancelled() && !(inputs.skip-vm-management) && needs.check-workflow-runs.outputs.active-runs != 'true' }}
+    strategy:
+      matrix:
+        server:
+          - "AZURE_VM_NAME_DEV"
+          - "AZURE_VM_NAME_25R1"
+          - "AZURE_VM_NAME_24R2"
+          - "AZURE_VM_NAME_24R1"
     steps:
       - uses: azure/CLI@v2
         with:
           azcliversion: 2.32.0
           inlineScript: |
             az login --service-principal -u ${{ secrets.AZURE_APP_ID }} -p ${{ secrets.AZURE_SECRET }} --tenant ${{ secrets.AZURE_TENANT_ID }}
-            az vm deallocate -g ${{ secrets.AZURE_RESOURCE_GROUP }} -n ${{ secrets.AZURE_VM_NAME_NEXT }} --no-wait
+            az vm deallocate -g ${{ secrets.AZURE_RESOURCE_GROUP }} -n ${{ secrets[matrix.server] }} --no-wait
