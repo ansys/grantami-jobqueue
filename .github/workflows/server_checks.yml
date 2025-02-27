@@ -78,6 +78,15 @@ jobs:
   start-vm:
     name: "Start Azure VM"
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        server:
+          - name: "AZURE_VM_NAME_DEV"
+            url: "TEST_SERVER_DEV_URL"
+          - name: "AZURE_VM_NAME_25R1"
+            url: "TEST_SERVER_25R1_URL"
+          - name: "AZURE_VM_NAME_24R2"
+            url: "TEST_SERVER_24R2_URL"
     steps:
       - name: "Checkout the repository"
         uses: actions/checkout@v4
@@ -90,7 +99,7 @@ jobs:
           azcliversion: 2.32.0
           inlineScript: |
             az login --service-principal -u ${{ secrets.AZURE_APP_ID }} -p ${{ secrets.AZURE_SECRET }} --tenant ${{ secrets.AZURE_TENANT_ID }}
-            az vm start -g ${{ secrets.AZURE_RESOURCE_GROUP }} -n ${{ secrets.AZURE_VM_NAME_DEV }}
+            az vm start -g ${{ secrets.AZURE_RESOURCE_GROUP }} -n ${{ secrets[matrix.server.name] }}
 
       - name: "Set up Python ${{ inputs.python-version }}"
         uses: actions/setup-python@v5
@@ -105,7 +114,7 @@ jobs:
           pip freeze
           python .github/scripts/check_server.py
         env:
-          TEST_SL_URL: ${{secrets.TEST_SERVER_URL_NEXT}}
+          TEST_SL_URL: ${{ secrets[matrix.server.url] }}
           TEST_USER: ${{secrets.TEST_SERVER_ADMIN_USER}}
           TEST_PASS: ${{secrets.TEST_SERVER_ADMIN_PASS}}
 
@@ -174,7 +183,7 @@ jobs:
       - name: "Run Ansys documentation building action"
         uses: ansys/actions/doc-build@v8
         env:
-          TEST_SL_URL: ${{secrets.TEST_SERVER_URL_NEXT}}
+          TEST_SL_URL: ${{secrets.TEST_SERVER_DEV_URL}}
           TEST_USER: ${{secrets.TEST_SERVER_ADMIN_USER}}
           TEST_PASS: ${{secrets.TEST_SERVER_ADMIN_PASS}}
           BUILD_EXAMPLES: "true"
