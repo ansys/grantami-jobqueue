@@ -40,7 +40,11 @@ on:
         required: true
 
       # Test server URLs
-      TEST_SERVER_URL_NEXT:
+      TEST_SERVER_DEV_URL:
+        required: true
+      TEST_SERVER_25R1_URL:
+        required: true
+      TEST_SERVER_24R2_URL:
         required: true
 
       # Test server credentials
@@ -106,13 +110,21 @@ jobs:
           TEST_PASS: ${{secrets.TEST_SERVER_ADMIN_PASS}}
 
   integration-tests:
-    name: "Integration tests in ${{ matrix.os }}"
+    name: "Integration tests: ${{ matrix.os }}, ${{ matrix.server }}"
     runs-on: ${{ matrix.os }}
     needs: start-vm
     strategy:
-      max-parallel: 1
       matrix:
-        os: [ubuntu-latest, windows-latest]
+        os:
+          - "ubuntu-latest"
+          - "windows-latest"
+        server:
+          - "TEST_SERVER_DEV_URL"
+          - "TEST_SERVER_25R1_URL"
+          - "TEST_SERVER_24R2_URL"
+    concurrency:
+      group: ${{ matrix.server }}
+      cancel-in-progress: false
     steps:
       - name: "Checkout the repository"
         uses: actions/checkout@v4
@@ -129,7 +141,7 @@ jobs:
       - name: "Test with tox (integration tests only)"
         run: tox -e tests
         env:
-          TEST_SL_URL: ${{secrets.TEST_SERVER_URL_NEXT}}
+          TEST_SL_URL: ${{ secrets[matrix.server] }}
           TEST_ADMIN_USER: ${{secrets.TEST_SERVER_ADMIN_USER}}
           TEST_ADMIN_PASS: ${{secrets.TEST_SERVER_ADMIN_PASS}}
           TEST_READ_USER: ${{secrets.TEST_SERVER_READ_USER}}
