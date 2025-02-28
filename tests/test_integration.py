@@ -264,7 +264,7 @@ class TestExcelImportJob:
         job_req = ExcelImportJobRequest(
             name="Invalid combined file",
             description="Invalid combined file",
-            combined_files=[JobFile(__file__, "test_integration_25_1_24_2.py")],
+            combined_files=[JobFile(__file__, "test_integration.py")],
         )
 
         job = empty_job_queue_api_client.create_job_and_wait(job_req)
@@ -279,7 +279,7 @@ class TestExcelImportJob:
         job_req = ExcelImportJobRequest(
             name="Invalid combined file",
             description="Invalid combined file",
-            combined_files=[JobFile(__file__, "test_integration_25_1_24_2.py")],
+            combined_files=[JobFile(__file__, "test_integration.py")],
         )
 
         job = empty_job_queue_api_client.create_job_and_wait(job_req)

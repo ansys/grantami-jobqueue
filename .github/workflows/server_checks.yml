@@ -59,8 +59,8 @@ on:
 
       PYANSYS_PYPI_PRIVATE_PAT:
         required: true
-#      CODECOV_TOKEN:
-#        required: true
+      CODECOV_TOKEN:
+        required: true
 
   workflow_dispatch:
 
@@ -156,24 +156,14 @@ jobs:
           TEST_READ_USER: ${{secrets.TEST_SERVER_READ_USER}}
           TEST_READ_PASS: ${{secrets.TEST_SERVER_READ_PASS}}
 
-      - name: "Upload coverage artifacts"
-        uses: actions/upload-artifact@v4
-        if: ${{ matrix.os == 'ubuntu-latest' && !startsWith( github.event.pull_request.head.ref, 'dependabot/') }}
+      - name: "Upload coverage to Codecov"
+        uses: codecov/codecov-action@v5
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
         with:
-          name: coverage-html-unittests
-          path: .cov/html
-          retention-days: 7
-
-  #      - name: "Upload coverage to Codecov"
-  #        uses: codecov/codecov-action@v4
-  #        if: ${{ matrix.python-version == env.MAIN_PYTHON_VERSION && matrix.os == 'ubuntu-latest' && !startsWith( github.event.pull_request.head.ref, 'dependabot/') }}
-  #        env:
-  #         CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
-  #          with:
-  #          files: .cov/xml
-  #          flags: unittests
-  #          fail_ci_if_error: true
-
+          files: .cov/xml
+          flags: integration-${{ matrix.os }}-${{ matrix.server }}
+          fail_ci_if_error: true
 
   doc-build:
     name: "Build documentation"
