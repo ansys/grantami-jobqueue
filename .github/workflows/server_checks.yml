@@ -59,8 +59,8 @@ on:
 
       PYANSYS_PYPI_PRIVATE_PAT:
         required: true
-      CODECOV_TOKEN:
-        required: true
+#      CODECOV_TOKEN:
+#        required: true
 
   workflow_dispatch:
 
@@ -156,14 +156,14 @@ jobs:
           TEST_READ_USER: ${{secrets.TEST_SERVER_READ_USER}}
           TEST_READ_PASS: ${{secrets.TEST_SERVER_READ_PASS}}
 
-      - name: "Upload coverage to Codecov"
-        uses: codecov/codecov-action@v5
-        env:
-          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
-        with:
-          files: .cov/xml
-          flags: integration-${{ matrix.os }}-${{ matrix.server }}
-          fail_ci_if_error: true
+#      - name: "Upload coverage to Codecov"
+#        uses: codecov/codecov-action@v5
+#        env:
+#          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+#        with:
+#          files: .cov/xml
+#          flags: integration-${{ matrix.os }}-${{ matrix.server }}
+#          fail_ci_if_error: true
 
   doc-build:
     name: "Build documentation"
