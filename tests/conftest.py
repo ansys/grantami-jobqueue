@@ -29,26 +29,44 @@ import pytest
 from ansys.grantami.jobqueue import Connection, JobQueueApiClient
 from common import FOLDER_NAME, delete_record, generate_now, get_granta_mi_version
 
-sl_url = os.getenv("TEST_SL_URL", "http://localhost/mi_servicelayer")
-admin_username = os.getenv("TEST_ADMIN_USER")
-admin_password = os.getenv("TEST_ADMIN_PASS")
 
-
-def _get_configured_connection():
-    if all([admin_username, admin_password]):
-        return Connection(sl_url).with_credentials(admin_username, admin_password)
-    if not any([admin_username, admin_password]):
-        return Connection(sl_url).with_autologon()
-    raise ValueError("Specify both or neither of username and password.")
+@pytest.fixture(scope="session")
+def sl_url():
+    return os.getenv("TEST_SL_URL", "http://localhost/mi_servicelayer")
 
 
 @pytest.fixture(scope="session")
-def job_queue_api_client():
+def admin_username():
+    return os.getenv("TEST_ADMIN_USER")
+
+
+@pytest.fixture(scope="session")
+def admin_password():
+    return os.getenv("TEST_ADMIN_PASS")
+
+
+@pytest.fixture(scope="session")
+def username_read_permissions():
+    return os.getenv("TEST_READ_USER")
+
+
+@pytest.fixture(scope="session")
+def password_read_permissions():
+    return os.getenv("TEST_READ_PASS")
+
+
+@pytest.fixture(scope="session")
+def job_queue_api_client(sl_url, admin_username, admin_password):
     """
     Fixture providing a real ApiClient to run integration tests against an instance of Granta MI
     Server API.
     """
-    connection = _get_configured_connection()
+    if all([admin_username, admin_password]):
+        connection = Connection(sl_url).with_credentials(admin_username, admin_password)
+    elif not any([admin_username, admin_password]):
+        connection = Connection(sl_url).with_autologon()
+    else:
+        raise ValueError("Specify both or neither of TEST_ADMIN_USER and TEST_ADMIN_PASS.")
     client: JobQueueApiClient = connection.connect()
     clear_job_queue(client)
     delete_record(
@@ -100,7 +118,7 @@ def clear_job_queue(client: JobQueueApiClient):
 
 
 @pytest.fixture(scope="session")
-def mi_version(sl_url, admin_username, admin_password) -> tuple[int, int] | None:
+def mi_version(request) -> tuple[int, int] | None:
     """The version of MI referenced by the test url.
 
     Returns
@@ -115,7 +133,7 @@ def mi_version(sl_url, admin_username, admin_password) -> tuple[int, int] | None
     """
     if os.getenv("CI") and not os.getenv("TEST_SL_URL"):
         return None
-    client = _get_configured_connection().connect()
+    client = request.getfixturevalue("job_queue_api_client")
     return get_granta_mi_version(client)
 
 
