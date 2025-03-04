@@ -23,7 +23,7 @@
 import datetime
 import pathlib
 import time
-from typing import List, Tuple
+from typing import List, Tuple, cast
 
 from ansys.grantami.serverapi_openapi import api, models
 from ansys.openapi.common import ApiClient
@@ -132,3 +132,11 @@ def search_for_records_by_name(client: ApiClient, name: str) -> List[Tuple[str, 
         database_key=DB_KEY, table_guid=table_guid, body=request
     )
     return [(r.record_history_guid, r.record_guid) for r in response.results]
+
+
+def get_granta_mi_version(client: ApiClient) -> tuple[int, int] | None:
+    schema_api = api.SchemaApi(client)
+    version = schema_api.get_version()
+    parsed_version = [int(v) for v in version.major_minor_version.split(".")]
+    assert len(parsed_version) == 2
+    return cast(tuple[int, int], tuple(parsed_version))
