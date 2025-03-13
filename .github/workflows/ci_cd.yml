@@ -107,15 +107,15 @@ jobs:
       - name: "Test with tox"
         run: tox -e tests -- -m "not integration"
 
-#      - name: "Upload coverage to Codecov"
-#        uses: codecov/codecov-action@v5
-#        if: ${{ matrix.python-version == env.MAIN_PYTHON_VERSION && !startsWith( github.event.pull_request.head.ref, 'dependabot/') }}
-#        env:
-#          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
-#        with:
-#          files: .cov/xml
-#          flags: unittests
-#          fail_ci_if_error: true
+      - name: "Upload coverage to Codecov"
+        uses: codecov/codecov-action@v5
+        if: ${{ matrix.python-version == env.MAIN_PYTHON_VERSION && !startsWith( github.event.pull_request.head.ref, 'dependabot/') }}
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+        with:
+          files: .cov/xml
+          flags: unittests
+          fail_ci_if_error: true
 
   build-library:
     name: "Build library"
