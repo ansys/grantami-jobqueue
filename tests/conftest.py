@@ -27,7 +27,8 @@ import warnings
 import pytest
 
 from ansys.grantami.jobqueue import Connection, JobQueueApiClient
-from common import FOLDER_NAME, delete_record, generate_now, get_granta_mi_version
+from ansys.grantami.jobqueue._connection import MINIMUM_GRANTA_MI_VERSION
+from common import FOLDER_NAME, delete_record, generate_now
 
 
 @pytest.fixture(scope="session")
@@ -56,7 +57,7 @@ def password_read_permissions():
 
 
 @pytest.fixture(scope="session")
-def job_queue_api_client(sl_url, admin_username, admin_password):
+def job_queue_api_client(sl_url, admin_username, admin_password, mi_version):
     """
     Fixture providing a real ApiClient to run integration tests against an instance of Granta MI
     Server API.
@@ -67,7 +68,16 @@ def job_queue_api_client(sl_url, admin_username, admin_password):
         connection = Connection(sl_url).with_autologon()
     else:
         raise ValueError("Specify both or neither of TEST_ADMIN_USER and TEST_ADMIN_PASS.")
-    client: JobQueueApiClient = connection.connect()
+
+    try:
+        client: JobQueueApiClient = connection.connect()
+    except ConnectionError as e:
+        if mi_version < MINIMUM_GRANTA_MI_VERSION:
+            pytest.skip(
+                f"Client not available for Granta MI v{'.'.join(str(v) for v in mi_version)}"
+            )
+        else:
+            raise e
     clear_job_queue(client)
     delete_record(
         client=client,
@@ -117,24 +127,20 @@ def clear_job_queue(client: JobQueueApiClient):
         warnings.warn(f"Cleanup failed because of {e}\n continuing tests for now")
 
 
+def pytest_addoption(parser):
+    parser.addoption("--mi-version", action="store", default=None)
+
+
 @pytest.fixture(scope="session")
-def mi_version(request) -> tuple[int, int] | None:
-    """The version of MI referenced by the test url.
-
-    Returns
-    -------
-    tuple[int, int] | None
-        A 2-tuple containing the (MAJOR, MINOR) Granta MI release version, or None if a test URL is not available.
-
-    Notes
-    -----
-    This fixture returns None if the ``sl_url`` variable is not available. This is typically because the tests are
-    running in CI and the TEST_SL_URL environment variable was not populated.
-    """
-    if os.getenv("CI") and not os.getenv("TEST_SL_URL"):
+def mi_version(request):
+    mi_version: str = request.config.getoption("--mi-version")
+    if not mi_version:
         return None
-    client = request.getfixturevalue("job_queue_api_client")
-    return get_granta_mi_version(client)
+    parsed_version = mi_version.split(".")
+    if len(parsed_version) != 2:
+        raise ValueError("--mi-version argument must be a MAJOR.MINOR version number")
+    version_number = tuple(int(e) for e in parsed_version)
+    return version_number
 
 
 @pytest.fixture(autouse=True)
