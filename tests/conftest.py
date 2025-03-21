@@ -27,6 +27,7 @@ import warnings
 import pytest
 
 from ansys.grantami.jobqueue import Connection, JobQueueApiClient
+from ansys.grantami.jobqueue._connection import MINIMUM_GRANTA_MI_VERSION
 from common import FOLDER_NAME, delete_record, generate_now
 
 
@@ -60,6 +61,9 @@ def job_queue_api_client(sl_url, admin_username, admin_password, mi_version):
     """
     Fixture providing a real ApiClient to run integration tests against an instance of Granta MI
     Server API.
+
+    If client cannot be created because an unsupported Granta MI version is under test, skip the
+    test with a suitable error message.
     """
     if all([admin_username, admin_password]):
         connection = Connection(sl_url).with_credentials(admin_username, admin_password)
@@ -68,7 +72,13 @@ def job_queue_api_client(sl_url, admin_username, admin_password, mi_version):
     else:
         raise ValueError("Specify both or neither of TEST_ADMIN_USER and TEST_ADMIN_PASS.")
 
-    client: JobQueueApiClient = connection.connect()
+    try:
+        client: JobQueueApiClient = connection.connect()
+    except ConnectionError as e:
+        if mi_version < MINIMUM_GRANTA_MI_VERSION:
+            skip_unsupported_version(mi_version)
+        else:
+            raise e
     clear_job_queue(client)
     delete_record(
         client=client,
@@ -80,6 +90,11 @@ def job_queue_api_client(sl_url, admin_username, admin_password, mi_version):
         client=client,
         name=FOLDER_NAME,
     )
+
+
+def skip_unsupported_version(mi_version):
+    formatted_version = ".".join(str(v) for v in mi_version)
+    pytest.skip(f"Client not available for Granta MI v{formatted_version}")
 
 
 @pytest.fixture(scope="function")
@@ -168,6 +183,4 @@ def process_integration_marks(request, mi_version):
     if not isinstance(allowed_versions, list):
         raise TypeError("mi_versions argument type must be of type 'list'")
     if mi_version not in allowed_versions:
-        formatted_version = ".".join(str(x) for x in mi_version)
-        skip_message = f'Test skipped for Granta MI release version "{formatted_version}"'
-        pytest.skip(skip_message)
+        skip_unsupported_version(mi_version)
