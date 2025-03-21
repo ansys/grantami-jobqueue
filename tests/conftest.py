@@ -27,7 +27,6 @@ import warnings
 import pytest
 
 from ansys.grantami.jobqueue import Connection, JobQueueApiClient
-from ansys.grantami.jobqueue._connection import MINIMUM_GRANTA_MI_VERSION
 from common import FOLDER_NAME, delete_record, generate_now
 
 
@@ -69,15 +68,7 @@ def job_queue_api_client(sl_url, admin_username, admin_password, mi_version):
     else:
         raise ValueError("Specify both or neither of TEST_ADMIN_USER and TEST_ADMIN_PASS.")
 
-    try:
-        client: JobQueueApiClient = connection.connect()
-    except ConnectionError as e:
-        if mi_version < MINIMUM_GRANTA_MI_VERSION:
-            pytest.skip(
-                f"Client not available for Granta MI v{'.'.join(str(v) for v in mi_version)}"
-            )
-        else:
-            raise e
+    client: JobQueueApiClient = connection.connect()
     clear_job_queue(client)
     delete_record(
         client=client,
@@ -160,10 +151,11 @@ def process_integration_marks(request, mi_version):
         # No integration marker anywhere in the stack
         return
     if mi_version is None:
-        # We didn't get an MI version
-        # Unlikely to occur, since if we didn't get an MI version we don't have a URL, so we can't run integration
-        # tests anyway
-        return
+        # We didn't get an MI version. If integration tests were requested, an MI version must be provided. Raise
+        # an exception to fail all tests.
+        raise ValueError(
+            "No Granta MI Version provided to pytest. Specify Granta MI version with --mi-version MAJOR.MINOR."
+        )
 
     # Process integration mark arguments
     mark: pytest.Mark = request.node.get_closest_marker("integration")
