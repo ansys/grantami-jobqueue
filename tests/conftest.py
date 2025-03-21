@@ -62,8 +62,9 @@ def job_queue_api_client(sl_url, admin_username, admin_password, mi_version):
     Fixture providing a real ApiClient to run integration tests against an instance of Granta MI
     Server API.
 
-    If client cannot be created because an unsupported Granta MI version is under test, skip the
-    test with a suitable error message.
+    If client cannot be created because an unsupported Granta MI version is under test, instead yield
+    None and skip teardown. Tests that rely on a client being successfully generated should be
+    skipped via the 'mi_version' argument to the integration mark.
     """
     if all([admin_username, admin_password]):
         connection = Connection(sl_url).with_credentials(admin_username, admin_password)
@@ -72,29 +73,28 @@ def job_queue_api_client(sl_url, admin_username, admin_password, mi_version):
     else:
         raise ValueError("Specify both or neither of TEST_ADMIN_USER and TEST_ADMIN_PASS.")
 
+    skip_teardown = False
     try:
         client: JobQueueApiClient = connection.connect()
     except ConnectionError as e:
         if mi_version < MINIMUM_GRANTA_MI_VERSION:
-            skip_unsupported_version(mi_version)
+            client = None
+            skip_teardown = True
         else:
             raise e
-    clear_job_queue(client)
-    delete_record(
-        client=client,
-        name=FOLDER_NAME,
-    )
+    else:
+        clear_job_queue(client)
+        delete_record(
+            client=client,
+            name=FOLDER_NAME,
+        )
     yield client
-    clear_job_queue(client)
-    delete_record(
-        client=client,
-        name=FOLDER_NAME,
-    )
-
-
-def skip_unsupported_version(mi_version):
-    formatted_version = ".".join(str(v) for v in mi_version)
-    pytest.skip(f"Client not available for Granta MI v{formatted_version}")
+    if not skip_teardown:
+        clear_job_queue(client)
+        delete_record(
+            client=client,
+            name=FOLDER_NAME,
+        )
 
 
 @pytest.fixture(scope="function")
@@ -183,4 +183,6 @@ def process_integration_marks(request, mi_version):
     if not isinstance(allowed_versions, list):
         raise TypeError("mi_versions argument type must be of type 'list'")
     if mi_version not in allowed_versions:
-        skip_unsupported_version(mi_version)
+        formatted_version = ".".join(str(v) for v in mi_version)
+        skip_message = f'Test skipped for Granta MI release version "{formatted_version}"'
+        pytest.skip(skip_message)
