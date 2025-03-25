@@ -30,7 +30,7 @@ import pathlib
 from typing import Any, Dict, List, Optional, Type, Union
 import warnings
 
-from ansys.grantami.serverapi_openapi import api, models
+from ansys.grantami.serverapi_openapi.v2025r2 import api, models
 from ansys.openapi.common import UndefinedObjectWarning, Unset
 
 

@@ -24,7 +24,7 @@ import time
 from typing import Dict, List, Optional, Tuple, cast
 import warnings
 
-from ansys.grantami.serverapi_openapi import api, models
+from ansys.grantami.serverapi_openapi.v2025r2 import api, models
 from ansys.openapi.common import (
     ApiClient,
     ApiClientFactory,
