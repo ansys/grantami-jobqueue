@@ -1,9 +1,14 @@
 version: 2
 registries:
-  private-pypi:
+  python-pyansys-private-pypi:
     type: python-index
-    url: "https://pkgs.dev.azure.com/pyansys/_packaging/pyansys/pypi/simple/"
-    username: pat
+    url: https://pkgs.dev.azure.com/pyansys/_packaging/pyansys/pypi/simple/
+    username: dependabot@ansys.com
+    password: ${{ secrets.PYANSYS_PYPI_PRIVATE_PAT }}
+  python-pyansys-private-pypi-guid:
+    type: python-index
+    url: https://pkgs.dev.azure.com/pyansys/_packaging/705e121a-9631-49f5-8aaf-c7142856f923/simple/
+    username: dependabot@ansys.com
     password: ${{ secrets.PYANSYS_PYPI_PRIVATE_PAT }}
 updates:
   - package-ecosystem: "pip"
