@@ -25,7 +25,7 @@ import pathlib
 import time
 from typing import List, Tuple, cast
 
-from ansys.grantami.serverapi_openapi import api, models
+from ansys.grantami.serverapi_openapi.v2025r2 import api, models
 from ansys.openapi.common import ApiClient
 
 TEST_ARTIFACT_DIR = pathlib.Path(__file__).parent / "test_artifacts"
