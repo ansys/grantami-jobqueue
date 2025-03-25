@@ -26,7 +26,7 @@ from typing import Any, Dict, Optional, Tuple
 from unittest.mock import Mock
 import uuid
 
-from ansys.grantami.serverapi_openapi import api, models
+from ansys.grantami.serverapi_openapi.v2025r2 import api, models
 from ansys.openapi.common import Unset
 import pytest
 
