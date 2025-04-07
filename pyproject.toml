@@ -5,7 +5,7 @@ build-backend = "poetry.core.masonry.api"
 [tool.poetry]
 # Check https://python-poetry.org/docs/pyproject/ for all available sections
 name = "ansys-grantami-jobqueue"
-version = "1.2.0dev0"
+version = "1.2.0dev1"
 description = "A python wrapper for the Granta MI Job Queue API"
 license = "MIT"
 authors = ["ANSYS, Inc. <pyansys.core@ansys.com>"]
@@ -31,7 +31,7 @@ packages = [
 python = ">=3.10,<4.0"
 ansys-openapi-common = "^2.0.0"
 # Ensure PIP_INDEX_URL is not set in CI when reverting to a public version of the package.
-ansys-grantami-serverapi-openapi = { version = ">=5.0.0.dev383, <6.0", allow-prereleases = true, source = "private-pypi" }
+ansys-grantami-serverapi-openapi = { version = ">=5.0.0.dev460, <6.0", allow-prereleases = true, source = "private-pypi" }
 
 # Optional documentation dependencies
 [tool.poetry.group.doc]
