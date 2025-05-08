@@ -45,7 +45,7 @@ Dependencies
 .. readme_software_requirements
 
 This version of the ``ansys.grantami.jobqueue`` package requires Granta MI 2024 R2 or newer. Use
-`the PyGranta documentation <https://grantami.docs.pyansys.com/version/stable/package_versions.html/>`_ to find the
+`the PyGranta documentation <https://grantami.docs.pyansys.com/version/stable/package_versions>`_ to find the
 version of this package compatible with older Granta MI versions.
 
 The ``ansys.grantami.jobqueue`` package currently supports Python from version 3.10 to version 3.13.
