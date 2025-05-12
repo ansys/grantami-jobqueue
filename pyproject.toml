@@ -59,11 +59,6 @@ requests-mock = "^1.10.0"
 pre-commit = "^4.0.1"
 mypy = "^1.8.0"
 
-[[tool.poetry.source]]
-name = "private-pypi"
-url = "https://pkgs.dev.azure.com/pyansys/_packaging/pyansys/pypi/simple/"
-priority = "explicit"
-
 [tool.black]
 line-length = 100
 
