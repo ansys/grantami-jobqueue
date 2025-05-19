@@ -10,6 +10,61 @@ in `CHANGELOG.md <https://github.com/ansys/grantami-jobqueue/blob/main/CHANGELOG
 
 .. towncrier release notes start
 
+`1.0.2 <https://github.com/ansys/grantami-jobqueue/releases/tag/v1.0.2>`_ - 2024-10-03
+======================================================================================
+
+.. tab-set::
+
+
+  .. tab-item:: Changed
+
+    .. list-table::
+        :header-rows: 0
+        :widths: auto
+
+        * - Use Release VM
+          - `#105 <https://github.com/ansys/grantami-jobqueue/pull/105>`_
+
+
+  .. tab-item:: Fixed
+
+    .. list-table::
+        :header-rows: 0
+        :widths: auto
+
+        * - Handle lack of job specific outputs
+          - `#139 <https://github.com/ansys/grantami-jobqueue/pull/139>`_
+
+        * - Prepare 1.0.2 release
+          - `#140 <https://github.com/ansys/grantami-jobqueue/pull/140>`_
+
+
+  .. tab-item:: Documentation
+
+    .. list-table::
+        :header-rows: 0
+        :widths: auto
+
+        * - Fix installation example for git dependency
+          - `#134 <https://github.com/ansys/grantami-jobqueue/pull/134>`_
+
+        * - Add link to supported authentication schemes
+          - `#135 <https://github.com/ansys/grantami-jobqueue/pull/135>`_
+
+        * - Add link to PyGranta version compatibility documentation
+          - `#136 <https://github.com/ansys/grantami-jobqueue/pull/136>`_
+
+
+  .. tab-item:: Maintenance
+
+    .. list-table::
+        :header-rows: 0
+        :widths: auto
+
+        * - Improve VM management in CI
+          - `#137 <https://github.com/ansys/grantami-jobqueue/pull/137>`_
+
+
 `1.0.1 <https://github.com/ansys/grantami-jobqueue/releases/tag/v1.0.1>`_ - 2024-06-10
 ======================================================================================
 
