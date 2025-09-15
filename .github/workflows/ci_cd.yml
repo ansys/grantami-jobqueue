@@ -35,7 +35,7 @@ jobs:
     name: "Code style"
     runs-on: ubuntu-latest
     steps:
-      - uses: ansys/actions/code-style@33399106dc8b62d83c8aad1fb2c333c8055df180  # v10.0.20
+      - uses: ansys/actions/code-style@ed773aba3478d311decff2d4313e0cd19a945dd8  # v10.1.0
         with:
           skip-install: false
 
@@ -43,7 +43,7 @@ jobs:
     name: "Documentation style"
     runs-on: ubuntu-latest
     steps:
-      - uses: ansys/actions/doc-style@33399106dc8b62d83c8aad1fb2c333c8055df180  # v10.0.20
+      - uses: ansys/actions/doc-style@ed773aba3478d311decff2d4313e0cd19a945dd8  # v10.1.0
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           vale-version: "2.29.6"
@@ -53,11 +53,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: "Run Ansys documentation building action"
-      uses: ansys/actions/doc-build@33399106dc8b62d83c8aad1fb2c333c8055df180  # v10.0.20
+      uses: ansys/actions/doc-build@ed773aba3478d311decff2d4313e0cd19a945dd8  # v10.1.0
       with:
         check-links: false
         dependencies: "pandoc"
         sphinxopts: "-j 1 -n -W --keep-going"
+        optional-dependencies-name: ''
+        group-dependencies-name: 'doc'
 
     - name: "Delete unneeded doc artifact"
       if: ${{ !startsWith( github.event.pull_request.head.ref, 'dependabot/') }}
@@ -79,7 +81,7 @@ jobs:
       id-token: write
       attestations: write
     steps:
-      - uses: ansys/actions/build-wheelhouse@33399106dc8b62d83c8aad1fb2c333c8055df180  # v10.0.20
+      - uses: ansys/actions/build-wheelhouse@ed773aba3478d311decff2d4313e0cd19a945dd8  # v10.1.0
         with:
           library-name: ${{ env.LIBRARY_NAME }}
           operating-system: ${{ matrix.os }}
@@ -129,7 +131,7 @@ jobs:
       id-token: write
       attestations: write
     steps:
-      - uses: ansys/actions/build-library@33399106dc8b62d83c8aad1fb2c333c8055df180  # v10.0.20
+      - uses: ansys/actions/build-library@ed773aba3478d311decff2d4313e0cd19a945dd8  # v10.1.0
         with:
           library-name: ${{ env.LIBRARY_NAME }}
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
@@ -160,7 +162,7 @@ jobs:
     needs: [server-checks]
     if: github.event_name == 'push' && !contains(github.ref, 'refs/tags')
     steps:
-      - uses: ansys/actions/doc-deploy-dev@33399106dc8b62d83c8aad1fb2c333c8055df180  # v10.0.20
+      - uses: ansys/actions/doc-deploy-dev@ed773aba3478d311decff2d4313e0cd19a945dd8  # v10.1.0
         with:
           cname: ${{ env.DOCUMENTATION_CNAME }}
           token: ${{ secrets.GITHUB_TOKEN }}
@@ -175,7 +177,7 @@ jobs:
     if: (github.event_name == 'workflow_dispatch') && (github.ref == 'refs/heads/main') && (inputs.publish-to-private-pypi == 'true')
     steps:
       - name: "Release to private PyPI"
-        uses: ansys/actions/release-pypi-private@33399106dc8b62d83c8aad1fb2c333c8055df180  # v10.0.20
+        uses: ansys/actions/release-pypi-private@ed773aba3478d311decff2d4313e0cd19a945dd8  # v10.1.0
         with:
           library-name: ${{ env.LIBRARY_NAME }}
           twine-username: "__token__"
@@ -189,7 +191,7 @@ jobs:
       contents: write
       pull-requests: write
     steps:
-      - uses: ansys/actions/doc-deploy-changelog@33399106dc8b62d83c8aad1fb2c333c8055df180  # v10.0.20
+      - uses: ansys/actions/doc-deploy-changelog@ed773aba3478d311decff2d4313e0cd19a945dd8  # v10.1.0
         with:
           token: ${{ secrets.PYANSYS_CI_BOT_TOKEN }}
           bot-user: ${{ secrets.PYANSYS_CI_BOT_USERNAME }}
@@ -219,7 +221,7 @@ jobs:
           packages-dir: ${{ env.LIBRARY_NAME }}-artifacts
           skip-existing: false
 
-      - uses: ansys/actions/release-github@33399106dc8b62d83c8aad1fb2c333c8055df180  # v10.0.20
+      - uses: ansys/actions/release-github@ed773aba3478d311decff2d4313e0cd19a945dd8  # v10.1.0
         name: "Release to GitHub"
         with:
           library-name: ${{ env.LIBRARY_NAME }}
@@ -231,7 +233,7 @@ jobs:
     needs: release
     if: github.event_name == 'push' && contains(github.ref, 'refs/tags')
     steps:
-      - uses: ansys/actions/doc-deploy-stable@33399106dc8b62d83c8aad1fb2c333c8055df180  # v10.0.20
+      - uses: ansys/actions/doc-deploy-stable@ed773aba3478d311decff2d4313e0cd19a945dd8  # v10.1.0
         with:
           cname: ${{ env.DOCUMENTATION_CNAME }}
           token: ${{ secrets.GITHUB_TOKEN }}
