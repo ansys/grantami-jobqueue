@@ -328,7 +328,7 @@ class JobQueueApiClient(ApiClient):
             job_id = cast(str, job_obj.id)
             if job_id not in self._jobs:
                 self._jobs[job_id] = AsyncJob.create_job(job_obj, self.job_queue_api)
-            elif job_obj is not self._jobs[job_id]:
+            else:
                 self._jobs[job_id]._update_job(job_obj)
 
     def create_job_and_wait(self, job_request: "JobRequest") -> "AsyncJob":  # noqa: D205, D400
