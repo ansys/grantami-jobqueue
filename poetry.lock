@@ -154,6 +154,7 @@ description = "An abstract syntax tree for Python with inference support."
 optional = false
 python-versions = ">=3.9.0"
 groups = ["doc"]
+markers = "python_version < \"3.12\""
 files = [
     {file = "astroid-3.3.10-py3-none-any.whl", hash = "sha256:104fb9cb9b27ea95e847a94c003be03a9e039334a8ebca5ee27dafaf5c5711eb"},
     {file = "astroid-3.3.10.tar.gz", hash = "sha256:c332157953060c6deb9caa57303ae0d20b0fbdb2e59b4a4f2a6ba49d0a7961ce"},
@@ -161,6 +162,19 @@ files = [
 
 [package.dependencies]
 typing-extensions = {version = ">=4", markers = "python_version < \"3.11\""}
+
+[[package]]
+name = "astroid"
+version = "4.0.0"
+description = "An abstract syntax tree for Python with inference support."
+optional = false
+python-versions = ">=3.10.0"
+groups = ["doc"]
+markers = "python_version >= \"3.12\""
+files = [
+    {file = "astroid-4.0.0-py3-none-any.whl", hash = "sha256:235980d60cdf94f63d1084d6e7fb4c1718a7f461149fc5800834e4625632f5ac"},
+    {file = "astroid-4.0.0.tar.gz", hash = "sha256:b1bf640a2dbd198e26516fce7757f6484a28fb6e77d8d19eb965bf84d4c0997b"},
+]
 
 [[package]]
 name = "asttokens"
@@ -2833,20 +2847,20 @@ test = ["cython (>=3.0)", "defusedxml (>=0.7.1)", "pytest (>=8.0)", "setuptools 
 
 [[package]]
 name = "sphinx-autoapi"
-version = "3.6.0"
+version = "3.6.1"
 description = "Sphinx API documentation generator"
 optional = false
 python-versions = ">=3.9"
 groups = ["doc"]
 files = [
-    {file = "sphinx_autoapi-3.6.0-py3-none-any.whl", hash = "sha256:f3b66714493cab140b0e896d33ce7137654a16ac1edb6563edcbd47bf975f711"},
-    {file = "sphinx_autoapi-3.6.0.tar.gz", hash = "sha256:c685f274e41d0842ae7e199460c322c4bd7fec816ccc2da8d806094b4f64af06"},
+    {file = "sphinx_autoapi-3.6.1-py3-none-any.whl", hash = "sha256:6b7af0d5650f6eac1f4b85c1eb9f9a4911160ec7138bdc4451c77a5e94d5832c"},
+    {file = "sphinx_autoapi-3.6.1.tar.gz", hash = "sha256:1ff2992b7d5e39ccf92413098a376e0f91e7b4ca532c4f3e71298dbc8a4a9900"},
 ]
 
 [package.dependencies]
 astroid = [
-    {version = ">=2.7", markers = "python_version < \"3.12\""},
-    {version = ">=3", markers = "python_version >= \"3.12\""},
+    {version = ">=3.0,<4.0", markers = "python_version < \"3.12\""},
+    {version = ">=4.0,<5.0", markers = "python_version >= \"3.12\""},
 ]
 Jinja2 = "*"
 PyYAML = "*"
