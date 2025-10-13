@@ -73,14 +73,14 @@ oidc = ["keyring (>=22,<26)", "requests_auth (>=8.0.0,<9.0.0)"]
 
 [[package]]
 name = "ansys-sphinx-theme"
-version = "1.6.1"
+version = "1.6.3"
 description = "A theme devised by ANSYS, Inc. for Sphinx documentation."
 optional = false
 python-versions = "<4,>=3.10"
 groups = ["doc"]
 files = [
-    {file = "ansys_sphinx_theme-1.6.1-py3-none-any.whl", hash = "sha256:1ef36ecd11d2eac7dbe4f10a478f8a358c8a71d584a602aa585f5dbc83734529"},
-    {file = "ansys_sphinx_theme-1.6.1.tar.gz", hash = "sha256:9988df0bc969edf5e06238cc1b7c8e33211a20e774ccbf5f4aa5d3304988964b"},
+    {file = "ansys_sphinx_theme-1.6.3-py3-none-any.whl", hash = "sha256:5bc501e160d824fce37ea176eb8120be460419846276ec507c36dca1a984097b"},
+    {file = "ansys_sphinx_theme-1.6.3.tar.gz", hash = "sha256:167f3d1111be45f5fd9303f257ffb1bfa6ba0afa87e22c2fa83791e41b405314"},
 ]
 
 [package.dependencies]
@@ -88,13 +88,13 @@ importlib-metadata = ">=4.0"
 Jinja2 = ">=3.1.2"
 pdf2image = ">=1.17.0"
 pydata-sphinx-theme = ">=0.15.4,<0.17"
-PyYAML = "6.0.2"
+PyYAML = ">=6.0"
 Sphinx = ">=6.1.0"
 
 [package.extras]
-autoapi = ["astroid (>=3.0,<4.0)", "sphinx-autoapi (==3.6.0)", "sphinx-design (==0.6.1)", "sphinx-jinja (==2.0.2)"]
+autoapi = ["sphinx-autoapi (==3.6.1)", "sphinx-design (==0.6.1)", "sphinx-jinja (==2.0.2)"]
 changelog = ["PyYAML (==6.0.2)", "sphinx-design (==0.6.1)"]
-doc = ["Pillow (>=9.0)", "PyGitHub (==2.7.0)", "PyYAML (==6.0.2)", "jupytext (==1.17.2)", "nbsphinx (==0.9.7)", "notebook (==7.4.5)", "numpydoc (==1.9.0)", "pandas (==2.3.2)", "plotly (==6.3.0)", "pyvista[jupyter] (==0.46.2)", "requests (==2.32.5)", "sphinx-autoapi (==3.6.0)", "sphinx-copybutton (==0.5.2)", "sphinx-design (==0.6.1)", "sphinx-gallery (==0.19.0)", "sphinx-jinja (==2.0.2)", "sphinx-notfound-page (==1.1.0)", "sphinx-theme-builder[cli] (==0.2.0b2)", "tox (==4.28.4)"]
+doc = ["Pillow (>=9.0)", "PyGitHub (==2.7.0)", "PyYAML (==6.0.2)", "jupytext (==1.17.3)", "nbsphinx (==0.9.7)", "notebook (==7.4.5)", "numpydoc (==1.9.0)", "pandas (==2.3.2)", "plotly (==6.3.0)", "pyvista[jupyter] (==0.46.2)", "requests (==2.32.5)", "sphinx-autoapi (==3.6.1)", "sphinx-copybutton (==0.5.2)", "sphinx-design (==0.6.1)", "sphinx-gallery (==0.19.0)", "sphinx-jinja (==2.0.2)", "sphinx-notfound-page (==1.1.0)", "sphinx-theme-builder[cli] (==0.2.0b2)", "tox (==4.28.4)"]
 
 [[package]]
 name = "apeye"
@@ -1035,14 +1035,14 @@ files = [
 
 [[package]]
 name = "ipykernel"
-version = "6.30.1"
+version = "7.0.0"
 description = "IPython Kernel for Jupyter"
 optional = false
-python-versions = ">=3.9"
+python-versions = ">=3.10"
 groups = ["doc"]
 files = [
-    {file = "ipykernel-6.30.1-py3-none-any.whl", hash = "sha256:aa6b9fb93dca949069d8b85b6c79b2518e32ac583ae9c7d37c51d119e18b3fb4"},
-    {file = "ipykernel-6.30.1.tar.gz", hash = "sha256:6abb270161896402e76b91394fcdce5d1be5d45f456671e5080572f8505be39b"},
+    {file = "ipykernel-7.0.0-py3-none-any.whl", hash = "sha256:28793cecaa6a669e3be80eb6d24803202388b6a955929b0a4e13404d8c92062b"},
+    {file = "ipykernel-7.0.0.tar.gz", hash = "sha256:06aef83f27adbce00b23345aa70f749f907dc4ac6f4a41fe7bf5f780dc506225"},
 ]
 
 [package.dependencies]
@@ -1062,7 +1062,7 @@ traitlets = ">=5.4.0"
 
 [package.extras]
 cov = ["coverage[toml]", "matplotlib", "pytest-cov", "trio"]
-docs = ["intersphinx-registry", "myst-parser", "pydata-sphinx-theme", "sphinx", "sphinx-autodoc-typehints", "sphinxcontrib-github-alt", "sphinxcontrib-spelling", "trio"]
+docs = ["intersphinx-registry", "myst-parser", "pydata-sphinx-theme", "sphinx (<8.2.0)", "sphinx-autodoc-typehints", "sphinxcontrib-github-alt", "sphinxcontrib-spelling", "trio"]
 pyqt5 = ["pyqt5"]
 pyside6 = ["pyside6"]
 test = ["flaky", "ipyparallel", "pre-commit", "pytest (>=7.0,<9)", "pytest-asyncio (>=0.23.5)", "pytest-cov", "pytest-timeout"]
@@ -3468,4 +3468,4 @@ type = ["pytest-mypy"]
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.10,<4.0"
-content-hash = "72ee4f181ca2151eb6ffd57c35dbdf15b10cbfbbbdcb250413b80167bf230e23"
+content-hash = "474796192e7cbc381b44351c2a79798f4502932e0df500a1c1e4b6d9e429eda0"
