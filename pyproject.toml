@@ -53,7 +53,7 @@ sphinx-autoapi = "^3.1.0a2"
 sphinxcontrib-napoleon = "^0.7.0"
 
 [tool.poetry.group.dev.dependencies]
-pytest = "^8.0.2"
+pytest = "^9.0.0"
 pytest-cov = "^7.0.0"
 requests-mock = "^1.10.0"
 pre-commit = "^4.0.1"
