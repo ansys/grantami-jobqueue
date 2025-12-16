@@ -14,6 +14,7 @@ To run these examples, install dependencies with this command:
 And launch ``jupyterlab`` with this command:
 
 .. code::
+
    jupyter lab
 
 
