@@ -41,6 +41,11 @@ packages = [
     { include = "ansys", from = "src" },
 ]
 
+[project.optional-dependencies]
+examples = [
+    "jupyterlab>=4.0.0",
+]
+
 # Optional documentation dependencies
 [tool.poetry.group.doc]
 optional = true
