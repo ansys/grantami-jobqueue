@@ -2,17 +2,18 @@
 requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
 
-[tool.poetry]
-# Check https://python-poetry.org/docs/pyproject/ for all available sections
+[project]
 name = "ansys-grantami-jobqueue"
 version = "1.3.0.dev0"
 description = "A python wrapper for the Granta MI Job Queue API"
 license = "MIT"
-authors = ["ANSYS, Inc. <pyansys.core@ansys.com>"]
-maintainers = ["ANSYS, Inc. <pyansys.core@ansys.com>"]
+authors = [
+    {name = "ANSYS, Inc.", email = "pyansys.core@ansys.com"}
+]
+maintainers = [
+    {name = "ANSYS, Inc.", email = "pyansys.core@ansys.com"}
+]
 readme = "README.rst"
-repository = "https://github.com/ansys/grantami-jobqueue"
-documentation = "https://jobqueue.grantami.docs.pyansys.com"
 classifiers = [
     "Development Status :: 5 - Production/Stable",
     "Programming Language :: Python :: 3",
@@ -24,15 +25,21 @@ classifiers = [
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
 ]
+requires-python = ">=3.10,<4.0"
+dependencies = [
+    "ansys-openapi-common>=2.0.0,<3.0.0",
+    # Ensure PIP_INDEX_URL is not set in CI when building on release branches.
+    "ansys-grantami-serverapi-openapi~=5.1.0rc0",
+]
+
+[project.urls]
+repository = "https://github.com/ansys/grantami-jobqueue"
+documentation = "https://jobqueue.grantami.docs.pyansys.com"
+
+[tool.poetry]
 packages = [
     { include = "ansys", from = "src" },
 ]
-
-[tool.poetry.dependencies]
-python = ">=3.10,<4.0"
-ansys-openapi-common = "^2.0.0"
-# Ensure PIP_INDEX_URL is not set in CI when building on release branches.
-ansys-grantami-serverapi-openapi = "~=5.1.0rc0"
 
 # Optional documentation dependencies
 [tool.poetry.group.doc]
