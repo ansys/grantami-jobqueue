@@ -11,6 +11,12 @@ To run these examples, install dependencies with this command:
 
    pip install ansys-grantami-jobqueue[examples]
 
+And launch ``jupyterlab`` with this command:
+
+.. code::
+   jupyter lab
+
+
 .. jinja:: examples
 
     {% if build_examples %}
