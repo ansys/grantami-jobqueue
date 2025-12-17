@@ -1,3 +1,4 @@
+name: "Server Checks and Integration Tests"
 on:
   workflow_call:
 
@@ -181,13 +182,14 @@ jobs:
           pip install poetry 'tox<4' --disable-pip-version-check
 
       - name: "Test with tox (integration tests only)"
-        run: tox -e tests -- -m "integration" --mi-version ${{ matrix.server.version }}
+        run: tox -e tests -- -m "integration" --mi-version ${TEST_MI_VERSION}
         env:
           TEST_SL_URL: ${{ secrets[matrix.server.url] }}  # zizmor: ignore[overprovisioned-secrets,obfuscation] - No support in matrix for variable interpolation
           TEST_ADMIN_USER: ${{secrets.TEST_SERVER_ADMIN_USER}}
           TEST_ADMIN_PASS: ${{secrets.TEST_SERVER_ADMIN_PASS}}
           TEST_READ_USER: ${{secrets.TEST_SERVER_READ_USER}}
           TEST_READ_PASS: ${{secrets.TEST_SERVER_READ_PASS}}
+          TEST_MI_VERSION: ${{ matrix.server.version }}
 
       - name: "Upload coverage to Codecov"
         uses: codecov/codecov-action@671740ac38dd9b0130fbe1cec585b89eea48d3de  # v5.5.2
