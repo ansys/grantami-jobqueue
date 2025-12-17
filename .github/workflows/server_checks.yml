@@ -117,11 +117,11 @@ jobs:
           SECRET: ${{ secrets.AZURE_SECRET }}
           RESOURCE_GROUP: ${{ secrets.AZURE_RESOURCE_GROUP }}
           SERVER_NAME: ${{ secrets[matrix.server.name] }}  # zizmor: ignore[overprovisioned-secrets,obfuscation] - No support in matrix for variable interpolation
-          with:
-            azcliversion: 2.32.0
-            inlineScript: |
-              az login --service-principal -u ${APP_ID} -p ${SECRET} --tenant ${TENANT_ID}
-              az vm start -g ${RESOURCE_GROUP} -n ${SERVER_NAME}
+        with:
+          azcliversion: 2.32.0
+          inlineScript: |
+            az login --service-principal -u ${APP_ID} -p ${SECRET} --tenant ${TENANT_ID}
+            az vm start -g ${RESOURCE_GROUP} -n ${SERVER_NAME}
 
       - name: "Set up Python ${{ inputs.python-version }}"
         uses: actions/setup-python@83679a892e2d95755f2dac6acb0bfd1e9ac5d548  # v6.1.0
