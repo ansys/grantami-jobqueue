@@ -4,7 +4,7 @@ build-backend = "poetry.core.masonry.api"
 
 [project]
 name = "ansys-grantami-jobqueue"
-version = "1.3.0.dev0"
+version = "1.3.0rc0"
 description = "A python wrapper for the Granta MI Job Queue API"
 license = "MIT"
 authors = [
@@ -28,7 +28,6 @@ classifiers = [
 requires-python = ">=3.10,<4.0"
 dependencies = [
     "ansys-openapi-common>=2.0.0,<3.0.0",
-    # Ensure PIP_INDEX_URL is not set in CI when building on release branches.
     "ansys-grantami-serverapi-openapi>=5.1,<6.0",
 ]
 
@@ -71,11 +70,6 @@ pytest-cov = "^7.0.0"
 requests-mock = "^1.10.0"
 pre-commit = "^4.0.1"
 mypy = "^1.8.0"
-
-[[tool.poetry.source]]
-name = "private-pypi"
-url = "https://pkgs.dev.azure.com/pyansys/_packaging/pyansys/pypi/simple/"
-priority = "explicit"
 
 [tool.black]
 line-length = 100
