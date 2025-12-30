@@ -9,9 +9,6 @@ This document contains the release notes for the project.
 
 .. towncrier release notes start
 
-`1.3.0rc0 <https://github.com/ansys/grantami-jobqueue/releases/tag/v1.3.0rc0>`_ - December 30, 2025
-===================================================================================================
-No significant changes.
 `1.3.0r0 <https://github.com/ansys/grantami-jobqueue/releases/tag/v1.3.0r0>`_ - December 30, 2025
 =================================================================================================
 
