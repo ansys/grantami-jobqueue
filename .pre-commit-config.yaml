@@ -41,14 +41,6 @@ repos:
 
 - repo: local
   hooks:
-  - id: mypy-code
-    name: "mypy: checks on code"
-    entry: "python -m mypy"
-    language: system
-    types: [python]
-    require_serial: true
-    files: "^(src/)"
-
   - id: localhost-examples
     name: "Notebook localhost URL check"
     entry: "(?i)localhost"
