@@ -130,8 +130,8 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: Install uv  # zizmor: ignore[cache-poisoning] - This job does not produce artifacts used by release
-        uses: astral-sh/setup-uv@681c641aba71e4a1c380be3ab5e12ad51f415867  # v7.1.6
+      - name: Install uv
+        uses: astral-sh/setup-uv@681c641aba71e4a1c380be3ab5e12ad51f415867  # v7.1.6 - zizmor: ignore[cache-poisoning] - This job does not produce artifacts used by release
         with:
           python-version: ${{ matrix.python-version }}
 

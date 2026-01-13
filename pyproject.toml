@@ -90,6 +90,7 @@ show_missing = true
 
 [tool.pytest.ini_options]
 filterwarnings = "error"
+addopts = ["--cov=ansys.grantami.jobqueue", "--cov-report=term", "--cov-report=xml:.cov/xml", "--cov-report=html:.cov/html"]
 markers = [
     """integration(*, mi_versions: None | list[tuple[int, int]] = None): The test requires a real database.
     The optional keyword-only argument \"mi_versions\" represents a MAJOR, MINOR version of Granta MI. The test will \
