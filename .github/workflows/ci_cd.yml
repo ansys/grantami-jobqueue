@@ -25,8 +25,8 @@ env:
   LIBRARY_NAME: 'ansys-grantami-jobqueue'
   LIBRARY_NAMESPACE: 'ansys.grantami.jobqueue'
   PIP_INDEX_URL: "https://${{ secrets.PYANSYS_PYPI_PRIVATE_PAT }}@pkgs.dev.azure.com/pyansys/_packaging/pyansys/pypi/simple/"
-  POETRY_HTTP_BASIC_PRIVATE_PYPI_USERNAME: "PAT"
-  POETRY_HTTP_BASIC_PRIVATE_PYPI_PASSWORD: ${{ secrets.PYANSYS_PYPI_PRIVATE_PAT }}
+  UV_INDEX_PRIVATE_PYPI_USERNAME: "PAT"
+  UV_INDEX_PRIVATE_PYPI_PASSWORD: ${{ secrets.PYANSYS_PYPI_PRIVATE_PAT }}
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -130,7 +130,7 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: Install uv
+      - name: Install uv  # zizmor: ignore[cache-poisoning] - This job does not produce artifacts used by release
         uses: astral-sh/setup-uv@681c641aba71e4a1c380be3ab5e12ad51f415867  # v7.1.6
         with:
           python-version: ${{ matrix.python-version }}
