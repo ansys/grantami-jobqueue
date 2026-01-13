@@ -35,6 +35,11 @@ dependencies = [
 repository = "https://github.com/ansys/grantami-jobqueue"
 documentation = "https://jobqueue.grantami.docs.pyansys.com"
 
+[[tool.uv.index]]
+name = "private-pypi"
+url = "https://pkgs.dev.azure.com/pyansys/_packaging/pyansys/pypi/simple/"
+explicit = true
+
 [dependency-groups]
 dev = [
     "pytest>=9.0.0",
