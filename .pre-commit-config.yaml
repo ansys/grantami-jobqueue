@@ -22,7 +22,7 @@ repos:
   rev: v2.4.1
   hooks:
   - id: codespell
-    args: ["--ignore-words", "doc/styles/Vocab/ANSYS/accept.txt", "--skip", "poetry.lock,pyproject.toml"]
+    args: ["--ignore-words", "doc/styles/Vocab/ANSYS/accept.txt", "--skip", "uv.lock,pyproject.toml"]
 
 - repo: https://github.com/pre-commit/pre-commit-hooks
   rev: v6.0.0
