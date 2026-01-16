@@ -131,8 +131,7 @@ jobs:
 
       - name: "Check if server is ready"
         run: |
-          chmod +x .github/scripts/check_server.py
-          ./.github/scripts/check_server.py
+          uv run ./.github/scripts/check_server.py
         env:
           TEST_SL_URL: ${{ secrets[matrix.server.url] }}   # zizmor: ignore[overprovisioned-secrets,obfuscation] - No support in matrix for variable interpolation
           TEST_USER: ${{secrets.TEST_SERVER_ADMIN_USER}}
