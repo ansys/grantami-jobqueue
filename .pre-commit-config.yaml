@@ -1,6 +1,3 @@
-ci:
-    skip: [mypy-code]
-
 repos:
 
 - repo: https://github.com/psf/black-pre-commit-mirror
@@ -22,7 +19,7 @@ repos:
   rev: v2.4.1
   hooks:
   - id: codespell
-    args: ["--ignore-words", "doc/styles/Vocab/ANSYS/accept.txt", "--skip", "poetry.lock,pyproject.toml"]
+    args: ["--ignore-words", "doc/styles/Vocab/ANSYS/accept.txt", "--skip", "uv.lock,pyproject.toml"]
 
 - repo: https://github.com/pre-commit/pre-commit-hooks
   rev: v6.0.0
@@ -41,14 +38,6 @@ repos:
 
 - repo: local
   hooks:
-  - id: mypy-code
-    name: "mypy: checks on code"
-    entry: "python -m mypy"
-    language: system
-    types: [python]
-    require_serial: true
-    files: "^(src/)"
-
   - id: localhost-examples
     name: "Notebook localhost URL check"
     entry: "(?i)localhost"

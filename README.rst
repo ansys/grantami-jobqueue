@@ -84,13 +84,13 @@ run this command:
     pip install git+https://github.com/ansys/grantami-jobqueue.git
 
 
-To install a local *development* version with Git and Poetry, run these commands:
+To install a local *development* version with Git and uv, run these commands:
 
 .. code::
 
     git clone https://github.com/ansys/grantami-jobqueue
     cd grantami-jobqueue
-    poetry install
+    uv sync
 
 
 The preceding commands install the package in development mode so that you can modify

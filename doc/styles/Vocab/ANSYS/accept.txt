@@ -10,3 +10,5 @@ AsyncJobs
 mypy
 autologon
 socio-economic
+uv
+pytest
