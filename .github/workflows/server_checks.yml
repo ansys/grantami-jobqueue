@@ -168,7 +168,7 @@ jobs:
         with:
           python-version: ${{ inputs.python-version }}
 
-      - name: "Test with tox (integration tests only)"
+      - name: "Test with pytest (integration tests only)"
         shell: bash
         run: uv run pytest ./tests -m "integration" --mi-version ${TEST_MI_VERSION}
         env:
