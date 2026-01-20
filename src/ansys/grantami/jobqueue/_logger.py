@@ -20,6 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 """Logger module."""
+
 import logging
 
 logger = logging.getLogger("ansys.grantami.jobqueue")
