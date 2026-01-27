@@ -57,7 +57,7 @@ from common import (
     search_for_records_by_name,
 )
 
-pytestmark = pytest.mark.integration(mi_versions=[(25, 2)])
+pytestmark = pytest.mark.integration(mi_versions=[(25, 2), (26, 1)])
 
 
 @pytest.fixture(scope="function")
