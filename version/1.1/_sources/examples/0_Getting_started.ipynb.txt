@@ -1,0 +1,204 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "id": "4e43760c",
+   "metadata": {},
+   "source": [
+    "# Connect and access the job queue"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "6e4c106a",
+   "metadata": {},
+   "source": [
+    "This example shows how to connect to Granta MI and access the job queue. For more information\n",
+    "on creating and interacting with jobs, see the subsequent examples."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "ae38b39f",
+   "metadata": {},
+   "source": [
+    "## Connect to Granta MI"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "4c01ed4c",
+   "metadata": {},
+   "source": [
+    "First, use the ``ansys.grantami.jobqueue.Connection`` class to connect to the Granta MI\n",
+    "server. The ``Connection`` class uses a fluent interface to build the connection, which is always\n",
+    "invoked in the following sequence:\n",
+    "\n",
+    "1. Specify the URL for your Granta MI service layer as a parameter to the ``Connection`` class.\n",
+    "2. Specify the authentication method using a ``Connection.with_*()`` method.\n",
+    "3. Use the ``Connection.connect()`` method to finalize the connection.\n",
+    "\n",
+    "This returns an ``ansys.grantami.jobqueue.JobQueueApiClient`` object, which is called ``client``\n",
+    "in these examples."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "252a1e45",
+   "metadata": {
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "from ansys.grantami.jobqueue import Connection\n",
+    "\n",
+    "server_url = \"http://my_grantami_server/mi_servicelayer\""
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "aa72cab9",
+   "metadata": {},
+   "source": [
+    "If you are running your Python script on Windows, you are generally able to use ``.with_autologon()``."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "3a0518f9",
+   "metadata": {
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "client = Connection(server_url).with_autologon().connect()\n",
+    "client"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "5adc885c",
+   "metadata": {},
+   "source": [
+    "If the Python script is running on Linux without Kerberos enabled, or you want to use an account\n",
+    "other than your logged-in account, you can specify credentials explicitly."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "8f4d268c",
+   "metadata": {
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "client = Connection(server_url).with_credentials(\"my_username\", \"my_password\").connect()\n",
+    "client"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "610d891d",
+   "metadata": {},
+   "source": [
+    "OIDC and anonymous authentication methods are also available, but they are beyond the scope of\n",
+    "this example. For more information, see the PyAnsys [OpenAPI-Common documentation](https://github.com/pyansys/openapi-common)."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "749d88a4",
+   "metadata": {},
+   "source": [
+    "## Access the job queue\n",
+    "You use the ``client`` object to determine the activities that you can perform with the job queue."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "215f9a5a",
+   "metadata": {
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "f\"The current user is an administrator: {client.is_admin_user}\""
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "4e104a3e",
+   "metadata": {
+    "tags": []
+   },
+   "outputs": [],
+   "source": [
+    "f\"The current user can write jobs: {client.can_write_job}\""
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "3f4754d3",
+   "metadata": {},
+   "source": [
+    "You can also access information on how the job queue processes jobs."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "c683a963",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "f\"Concurrency enabled: {'Yes' if client.processing_configuration.concurrency else 'No'}\""
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "0dc64507",
+   "metadata": {},
+   "source": [
+    "Finally, you can access the job queue itself. The job queue might be empty if no\n",
+    "jobs have been submitted recently.)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "1ec5ada1",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "client.jobs"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "ff7cd1d1",
+   "metadata": {},
+   "source": [
+    "Note: The jobs accessible in the queue depend on the user's role.\n",
+    "Standard users can only access their own jobs, whereas administrator users\n",
+    "can access jobs created by all users."
+   ]
+  }
+ ],
+ "metadata": {
+  "jupytext": {
+   "formats": "ipynb,py:light"
+  },
+  "kernelspec": {
+   "display_name": "Python 3 (ipykernel)",
+   "language": "python",
+   "name": "python3"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 5
+}

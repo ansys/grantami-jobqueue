@@ -1,0 +1,1536 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Models &#8212; PyGranta JobQueue</title>
+  
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/ansys-sphinx-theme.css?v=9e79609d" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/ansys-sphinx-theme.css?v=9e79609d" />
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.23/css/jquery.dataTables.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://www.nerdfonts.com/assets/css/webfont.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+
+  <!-- Include desired assets -->
+  <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+  
+
+  
+    <link href="../_static/css/breadcrumbs.css" rel="stylesheet" />
+  
+    <script src="../_static/documentation_options.js?v=a3d185d5"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="https://cdn.datatables.net/1.10.23/js/jquery.dataTables.min.js"></script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'api/models';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.16.1';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://jobqueue.grantami.docs.pyansys.com/versions.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = '1.3';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner =
+            false;
+        </script>
+    <link rel="icon" href="../_static/ansys-favicon.png"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Examples" href="../examples/index.html" />
+    <link rel="prev" title="Granta MI connection" href="connection.html" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="1.3.0rc0" />
+  <link rel="canonical" href="https://jobqueue.grantami.docs.pyansys.com/version/stable/api/models.html" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/pyansys_logo_transparent_black.png" class="logo__image only-light" alt="PyGranta JobQueue - Home"/>
+    <img src="../_static/pyansys_logo_transparent_white.png" class="logo__image only-dark pst-js-only" alt="PyGranta JobQueue - Home"/>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../index.html" title="PyGranta JobQueue home">Home</a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../getting_started/index.html">
+    Getting started
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../user_guide/index.html">
+    User guide
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="index.html">
+    API reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../examples/index.html">
+    Examples
+  </a>
+</li>
+
+            <li class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button"
+                data-bs-toggle="dropdown" aria-expanded="false"
+                aria-controls="pst-nav-more-links">
+                    More
+                </button>
+                <ul id="pst-nav-more-links" class="dropdown-menu">
+                    
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../contributing.html">
+    Contribute
+  </a>
+</li>
+
+
+<li class=" ">
+  <a class="nav-link dropdown-item nav-internal" href="../changelog.html">
+    Release notes
+  </a>
+</li>
+
+                </ul>
+            </li>
+            
+  </ul>
+</nav>
+</div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+      
+        <div class="navbar-item">
+<div class="search-bar pst-js-only" id="search-bar">
+  <form class="bd-search d-flex align-items-center" action="../search.html" method="get">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <input type="search" class="form-control" name="q" placeholder="Search the docs ..."
+      aria-label="Search the docs ..." autocomplete="off" autocorrect="off"
+      autocapitalize="off" spellcheck="false" />
+    <span class="search-button__kbd-shortcut">
+      <kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd>
+    </span>
+  </form>
+  <div id="static-search-results" class="static-search-results" style="display:none;" tabindex="0"></div>
+</div></div>
+      
+        <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-2"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-2"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-2"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-2">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/grantami-jobqueue" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+  
+    <div id="announcement_msg"></div>
+<script>
+  fetch("announcement.html")
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error(`HTTP error: ${response.status}`);
+      }
+      return response.text();
+    })
+    .then(
+      (text) => (document.getElementById("announcement_msg").innerHTML = text),
+    )
+    .catch((error) => console.error(`Fetch problem: ${error.message}`));
+</script>
+  
+
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../index.html" title="PyGranta JobQueue home">Home</a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../getting_started/index.html">
+    Getting started
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../user_guide/index.html">
+    User guide
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="index.html">
+    API reference
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../examples/index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../contributing.html">
+    Contribute
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../changelog.html">
+    Release notes
+  </a>
+</li>
+
+  </ul>
+</nav>
+</div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+<div class="search-bar pst-js-only" id="search-bar">
+  <form class="bd-search d-flex align-items-center" action="../search.html" method="get">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <input type="search" class="form-control" name="q" placeholder="Search the docs ..."
+      aria-label="Search the docs ..." autocomplete="off" autocorrect="off"
+      autocapitalize="off" spellcheck="false" />
+    <span class="search-button__kbd-shortcut">
+      <kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd>
+    </span>
+  </form>
+  <div id="static-search-results" class="static-search-results" style="display:none;" tabindex="0"></div>
+</div></div>
+        
+          <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-3"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-3"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-3"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-3">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/grantami-jobqueue" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="connection.html">Granta MI connection</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Models</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+<nav aria-label="Breadcrumb">
+  <ul class="bd-breadcrumbs">
+         
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="https://docs.pyansys.com/" class="nav-link">PyAnsys</a>
+    </li>
+       
+    <li class="breadcrumb-item">
+      <a href="https://grantami.docs.pyansys.com/" class="nav-link">PyGranta</a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a
+        href="../index.html"
+        class="nav-link"
+        aria-label="Home"
+      >
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a href="index.html" class="nav-link">API reference</a>
+    </li>
+      
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Models</span></li>
+    
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="models">
+<span id="ref-grantami-jobqueue-models"></span><h1>Models<a class="headerlink" href="#models" title="Link to this heading">#</a></h1>
+<section id="job-requests">
+<h2>Job requests<a class="headerlink" href="#job-requests" title="Link to this heading">#</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="ansys.grantami.jobqueue.JobRequest">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">JobRequest</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">description</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">template_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scheduled_execution_date</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ansys.grantami.jobqueue.JobRequest" title="Link to this definition">#</a></dt>
+<dd><p>Provides the abstract base class representing a job request.</p>
+<p>Each subclass represents a specific job type and may override some steps of the submission
+process. They also add additional file types and properties as required.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>name</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a></span></dt><dd><p>Name of the job as shown in the job queue.</p>
+</dd>
+<dt><strong>description</strong><span class="classifier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Optional</span></code>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a>]</span></dt><dd><p>Description of the job as shown in the job queue.</p>
+</dd>
+<dt><strong>template_file</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pathlib.Path</span></code></a>, default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="docutils literal notranslate"><span class="pre">None</span></code></a></span></dt><dd><p>Template to use the job.</p>
+</dd>
+<dt><strong>scheduled_execution_date</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">datetime.datetime</span></code></a>, default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="docutils literal notranslate"><span class="pre">None</span></code></a></span></dt><dd><p>Earliest date and time to run the job. If no date and time are
+provided, the job begins as soon as possible.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ansys.grantami.jobqueue.ExcelExportJobRequest">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ExcelExportJobRequest</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">description</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">template_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">database_key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">records</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scheduled_execution_date</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ansys.grantami.jobqueue.ExcelExportJobRequest" title="Link to this definition">#</a></dt>
+<dd><p>Represents an Excel export job request.</p>
+<p>An Excel template and references to the records to export
+are required.</p>
+<p>Subclass of <a class="reference internal" href="#ansys.grantami.jobqueue.JobRequest" title="ansys.grantami.jobqueue.JobRequest"><code class="xref py py-class docutils literal notranslate"><span class="pre">JobRequest</span></code></a>.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>name</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a></span></dt><dd><p>Name of the job as shown in the job queue.</p>
+</dd>
+<dt><strong>description</strong><span class="classifier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Optional</span></code>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a>]</span></dt><dd><p>Description of the job as shown in the job queue.</p>
+</dd>
+<dt><strong>template_file</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pathlib.Path</span></code></a></span></dt><dd><p>Excel template file.</p>
+</dd>
+<dt><strong>database_key</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a></span></dt><dd><p>Database key for the records to export.</p>
+</dd>
+<dt><strong>records</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><code class="docutils literal notranslate"><span class="pre">list</span></code></a> of <a class="reference internal" href="#ansys.grantami.jobqueue.ExportRecord" title="ansys.grantami.jobqueue.ExportRecord"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ExportRecord</span></code></a></span></dt><dd><p>List of objects representing the records to export.</p>
+</dd>
+<dt><strong>scheduled_execution_date</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">datetime.datetime</span></code></a>, default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="docutils literal notranslate"><span class="pre">None</span></code></a></span></dt><dd><p>Earliest date and time to run the job. If no date and time are provided,
+the job begins as soon as possible.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">template_file</span><span class="p">:</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span>  <span class="c1"># pathlib Path object for the template</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">record_history_identities</span> <span class="o">=</span> <span class="p">[</span><span class="mi">12345</span><span class="p">,</span> <span class="mi">23456</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">job_request</span> <span class="o">=</span> <span class="n">ExcelExportJobRequest</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Excel export job&quot;</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">description</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">template_file</span><span class="o">=</span><span class="n">template_file</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">database_key</span><span class="o">=</span><span class="s2">&quot;MI_Training&quot;</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">records</span><span class="o">=</span><span class="p">[</span><span class="n">ExportRecord</span><span class="p">(</span><span class="n">rhid</span><span class="p">)</span> <span class="k">for</span> <span class="n">rhid</span> <span class="ow">in</span> <span class="n">record_history_identities</span><span class="p">],</span>
+<span class="gp">... </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">job_request</span>
+<span class="go">&lt;ExcelExportJobRequest: name: &quot;Excel export job&quot;&gt;</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">tomorrow</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">UTC</span><span class="p">)</span> <span class="o">+</span> <span class="n">datetime</span><span class="o">.</span><span class="n">timedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">job_request</span> <span class="o">=</span> <span class="n">ExcelExportJobRequest</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Excel export job (future execution)&quot;</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Example job request to run in the future&quot;</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">template_file</span><span class="o">=</span><span class="n">template_file</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">database_key</span><span class="o">=</span><span class="s2">&quot;MI_Training&quot;</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">records</span><span class="o">=</span><span class="p">[</span><span class="n">ExportRecord</span><span class="p">(</span><span class="n">rhid</span><span class="p">)</span> <span class="k">for</span> <span class="n">rhid</span> <span class="ow">in</span> <span class="n">record_history_identities</span><span class="p">],</span>
+<span class="gp">... </span>    <span class="n">scheduled_execution_date</span><span class="o">=</span><span class="n">tomorrow</span><span class="p">,</span>
+<span class="gp">... </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">job_request</span>
+<span class="go">&lt;ExcelExportJobRequest: name: &quot;Excel export job (future execution)&quot;&gt;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ansys.grantami.jobqueue.ExcelImportJobRequest">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ExcelImportJobRequest</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">description</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">template_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_files</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">combined_files</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attachment_files</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scheduled_execution_date</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ansys.grantami.jobqueue.ExcelImportJobRequest" title="Link to this definition">#</a></dt>
+<dd><p>Represents an Excel import job request.</p>
+<p>This class supports either combined imports (with a template and data in the same file)
+or separate data and template imports.</p>
+<p>Subclass of <a class="reference internal" href="#ansys.grantami.jobqueue.JobRequest" title="ansys.grantami.jobqueue.JobRequest"><code class="xref py py-class docutils literal notranslate"><span class="pre">JobRequest</span></code></a>.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>name</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a></span></dt><dd><p>Name of the job as shown in the job queue.</p>
+</dd>
+<dt><strong>description</strong><span class="classifier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Optional</span></code>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a>]</span></dt><dd><p>Description of the job as shown in the job queue.</p>
+</dd>
+<dt><strong>template_file</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pathlib.Path</span></code></a>, or <a class="reference internal" href="#ansys.grantami.jobqueue.JobFile" title="ansys.grantami.jobqueue.JobFile"><code class="xref py py-obj docutils literal notranslate"><span class="pre">JobFile</span></code></a>, default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="docutils literal notranslate"><span class="pre">None</span></code></a></span></dt><dd><p>Excel template file.</p>
+</dd>
+<dt><strong>data_files</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><code class="docutils literal notranslate"><span class="pre">list</span></code></a> of <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pathlib.Path</span></code></a> or <a class="reference internal" href="#ansys.grantami.jobqueue.JobFile" title="ansys.grantami.jobqueue.JobFile"><code class="xref py py-obj docutils literal notranslate"><span class="pre">JobFile</span></code></a>, default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="docutils literal notranslate"><span class="pre">None</span></code></a></span></dt><dd><p>Excel files containing the data to import.</p>
+</dd>
+<dt><strong>combined_files</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><code class="docutils literal notranslate"><span class="pre">list</span></code></a> of <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pathlib.Path</span></code></a> or <a class="reference internal" href="#ansys.grantami.jobqueue.JobFile" title="ansys.grantami.jobqueue.JobFile"><code class="xref py py-obj docutils literal notranslate"><span class="pre">JobFile</span></code></a>, default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="docutils literal notranslate"><span class="pre">None</span></code></a></span></dt><dd><p>Excel files containing data and template information.</p>
+</dd>
+<dt><strong>attachment_files</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><code class="docutils literal notranslate"><span class="pre">list</span></code></a> of <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pathlib.Path</span></code></a> or <a class="reference internal" href="#ansys.grantami.jobqueue.JobFile" title="ansys.grantami.jobqueue.JobFile"><code class="xref py py-obj docutils literal notranslate"><span class="pre">JobFile</span></code></a>, default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="docutils literal notranslate"><span class="pre">None</span></code></a></span></dt><dd><p>Any other files referenced in the data or combined files.</p>
+</dd>
+<dt><strong>scheduled_execution_date</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">datetime.datetime</span></code></a>, default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="docutils literal notranslate"><span class="pre">None</span></code></a></span></dt><dd><p>Earliest date and time to run the job. If no date and time are
+provided, the job begins as soon as possible.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<div class="versionchanged">
+<p><span class="versionmodified changed">Changed in version 1.1: </span>Path parameters now accept <a class="reference internal" href="#ansys.grantami.jobqueue.JobFile" title="ansys.grantami.jobqueue.JobFile"><code class="xref py py-class docutils literal notranslate"><span class="pre">JobFile</span></code></a> inputs.</p>
+</div>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">template_file</span><span class="p">:</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span>  <span class="c1"># pathlib Path object for the template</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">job_request</span> <span class="o">=</span> <span class="n">ExcelImportJobRequest</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Excel import job&quot;</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">description</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">data_files</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;assets/data_file_1.xlsx&quot;</span><span class="p">,</span> <span class="s2">&quot;assets/data_file_2.xlsx&quot;</span><span class="p">],</span>
+<span class="gp">... </span>    <span class="n">template_file</span><span class="o">=</span><span class="n">template_file</span><span class="p">,</span>
+<span class="gp">... </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">job_request</span>
+<span class="go">&lt;ExcelImportJobRequest: name: &quot;Excel import job&quot;&gt;</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">tomorrow</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">UTC</span><span class="p">)</span> <span class="o">+</span> <span class="n">datetime</span><span class="o">.</span><span class="n">timedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">job_request</span> <span class="o">=</span> <span class="n">ExcelImportJobRequest</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Excel import job (future execution)&quot;</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Example job request to run in the future&quot;</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">data_files</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;assets/data_file_1.xlsx&quot;</span><span class="p">,</span> <span class="s2">&quot;assets/data_file_2.xlsx&quot;</span><span class="p">],</span>
+<span class="gp">... </span>    <span class="n">template_file</span><span class="o">=</span><span class="n">template_file</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">scheduled_execution_date</span><span class="o">=</span><span class="n">tomorrow</span><span class="p">,</span>
+<span class="gp">... </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">job_request</span>
+<span class="go">&lt;ExcelImportJobRequest: name: &quot;Excel import job (future execution)&quot;&gt;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ansys.grantami.jobqueue.TextImportJobRequest">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">TextImportJobRequest</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">description</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">template_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_files</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attachment_files</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scheduled_execution_date</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ansys.grantami.jobqueue.TextImportJobRequest" title="Link to this definition">#</a></dt>
+<dd><p>Represents a text import job request.</p>
+<p>This class requires a template file and one or more data files.</p>
+<p>Subclass of <a class="reference internal" href="#ansys.grantami.jobqueue.JobRequest" title="ansys.grantami.jobqueue.JobRequest"><code class="xref py py-class docutils literal notranslate"><span class="pre">JobRequest</span></code></a>.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>name</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a></span></dt><dd><p>Name of the job as shown in the job queue.</p>
+</dd>
+<dt><strong>description</strong><span class="classifier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Optional</span></code>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a>]</span></dt><dd><p>Description of the job as shown in the job queue.</p>
+</dd>
+<dt><strong>template_file</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pathlib.Path</span></code></a> or <a class="reference internal" href="#ansys.grantami.jobqueue.JobFile" title="ansys.grantami.jobqueue.JobFile"><code class="xref py py-obj docutils literal notranslate"><span class="pre">JobFile</span></code></a>, default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="docutils literal notranslate"><span class="pre">None</span></code></a></span></dt><dd><p>Text import template file.</p>
+</dd>
+<dt><strong>data_files</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><code class="docutils literal notranslate"><span class="pre">list</span></code></a> of <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pathlib.Path</span></code></a> or <a class="reference internal" href="#ansys.grantami.jobqueue.JobFile" title="ansys.grantami.jobqueue.JobFile"><code class="xref py py-obj docutils literal notranslate"><span class="pre">JobFile</span></code></a>, default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="docutils literal notranslate"><span class="pre">None</span></code></a></span></dt><dd><p>Text files containing the data to import.</p>
+</dd>
+<dt><strong>attachment_files</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><code class="docutils literal notranslate"><span class="pre">list</span></code></a> of <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pathlib.Path</span></code></a> or <a class="reference internal" href="#ansys.grantami.jobqueue.JobFile" title="ansys.grantami.jobqueue.JobFile"><code class="xref py py-obj docutils literal notranslate"><span class="pre">JobFile</span></code></a>, default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="docutils literal notranslate"><span class="pre">None</span></code></a></span></dt><dd><p>Any other files referenced in the data files.</p>
+</dd>
+<dt><strong>scheduled_execution_date</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">datetime.datetime</span></code></a>, default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="docutils literal notranslate"><span class="pre">None</span></code></a></span></dt><dd><p>Earliest date and time to run the job. If no date and time are
+provided, the job begins as soon as possible.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<div class="versionchanged">
+<p><span class="versionmodified changed">Changed in version 1.1: </span>Path parameters now accept <a class="reference internal" href="#ansys.grantami.jobqueue.JobFile" title="ansys.grantami.jobqueue.JobFile"><code class="xref py py-class docutils literal notranslate"><span class="pre">JobFile</span></code></a> inputs.</p>
+</div>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">template_file</span><span class="p">:</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span>  <span class="c1"># pathlib Path object for the template</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">job_request</span> <span class="o">=</span> <span class="n">TextImportJobRequest</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Text import job&quot;</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">description</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">template_file</span><span class="o">=</span><span class="n">template_file</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">data_files</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;Data_File_1.txt&quot;</span><span class="p">,</span> <span class="s2">&quot;Data_File_2.txt&quot;</span><span class="p">],</span>  <span class="c1"># Relative paths</span>
+<span class="gp">... </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">job_request</span>
+<span class="go">&lt;TextImportJobRequest: name: &quot;Text import job&quot;&gt;</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">tomorrow</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">UTC</span><span class="p">)</span> <span class="o">+</span> <span class="n">datetime</span><span class="o">.</span><span class="n">timedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">job_request</span> <span class="o">=</span> <span class="n">TextImportJobRequest</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Text import job (future execution)&quot;</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Example job request to run in the future&quot;</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">template_file</span><span class="o">=</span><span class="n">template_file</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">data_files</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;Data_File_1.txt&quot;</span><span class="p">,</span> <span class="s2">&quot;Data_File_2.txt&quot;</span><span class="p">],</span>
+<span class="gp">... </span>    <span class="n">scheduled_execution_date</span><span class="o">=</span><span class="n">tomorrow</span><span class="p">,</span>
+<span class="gp">... </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">job_request</span>
+<span class="go">&lt;TextImportJobRequest: name: &quot;Text import job (future execution)&quot;&gt;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
+<section id="jobs">
+<h2>Jobs<a class="headerlink" href="#jobs" title="Link to this heading">#</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="ansys.grantami.jobqueue.AsyncJob">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">AsyncJob</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">job_obj</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">job_queue_api</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ansys.grantami.jobqueue.AsyncJob" title="Link to this definition">#</a></dt>
+<dd><p>Base class that represents a job on the server.</p>
+<p>This class provides information on the current status of the job and any
+job-specific outputs. It allows modification of job metadata, such as the job
+name, description, and scheduled execution date.</p>
+<dl class="field-list simple">
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.grantami.jobqueue.AsyncJob.create_job">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">create_job</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">job_obj</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">job_queue_api</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ansys.grantami.jobqueue.AsyncJob.create_job" title="Link to this definition">#</a></dt>
+<dd><p>Create an instance of a JobQueue AsyncJob subclass.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><a class="reference internal" href="#ansys.grantami.jobqueue.AsyncJob" title="ansys.grantami.jobqueue.AsyncJob"><code class="xref py py-obj docutils literal notranslate"><span class="pre">AsyncJob</span></code></a></dt><dd><p>The appropriate AsyncJob subclass based on the response from the server.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Do not use this method to create an <a class="reference internal" href="#ansys.grantami.jobqueue.AsyncJob" title="ansys.grantami.jobqueue.AsyncJob"><code class="xref py py-class docutils literal notranslate"><span class="pre">AsyncJob</span></code></a> object. The
+<a class="reference internal" href="connection.html#ansys.grantami.jobqueue.JobQueueApiClient.create_job" title="ansys.grantami.jobqueue.JobQueueApiClient.create_job"><code class="xref py py-meth docutils literal notranslate"><span class="pre">create_job()</span></code></a> and
+<a class="reference internal" href="connection.html#ansys.grantami.jobqueue.JobQueueApiClient.create_job_and_wait" title="ansys.grantami.jobqueue.JobQueueApiClient.create_job_and_wait"><code class="xref py py-meth docutils literal notranslate"><span class="pre">create_job_and_wait()</span></code></a> methods should be used instead, which
+will return correctly-instantiated <a class="reference internal" href="#ansys.grantami.jobqueue.AsyncJob" title="ansys.grantami.jobqueue.AsyncJob"><code class="xref py py-class docutils literal notranslate"><span class="pre">AsyncJob</span></code></a> objects.</p>
+</div>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.grantami.jobqueue.AsyncJob.id">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><a class="headerlink" href="#ansys.grantami.jobqueue.AsyncJob.id" title="Link to this definition">#</a></dt>
+<dd><p>Unique job ID, which is the tecommended way to refer to individual jobs.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Unique ID of the job.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.grantami.jobqueue.AsyncJob.name">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></em><a class="headerlink" href="#ansys.grantami.jobqueue.AsyncJob.name" title="Link to this definition">#</a></dt>
+<dd><p>Display name of the job, which does not have to be unique.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a></dt><dd><p>Display name of the job.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.grantami.jobqueue.AsyncJob.update_name">
+<span class="sig-name descname"><span class="pre">update_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ansys.grantami.jobqueue.AsyncJob.update_name" title="Link to this definition">#</a></dt>
+<dd><p>Update the display name of the job on the server.</p>
+<p>This method performs an HTTP request against the Granta MI Server API.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>value</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a></span></dt><dd><p>New name for the job.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ValueError</span></code></a></dt><dd><p>If the job has been deleted from the server.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.grantami.jobqueue.AsyncJob.description">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">description</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></em><a class="headerlink" href="#ansys.grantami.jobqueue.AsyncJob.description" title="Link to this definition">#</a></dt>
+<dd><p>Description of the job as shown in Granta MI.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="docutils literal notranslate"><span class="pre">None</span></code></a></dt><dd><p>Description of the job.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.grantami.jobqueue.AsyncJob.update_description">
+<span class="sig-name descname"><span class="pre">update_description</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ansys.grantami.jobqueue.AsyncJob.update_description" title="Link to this definition">#</a></dt>
+<dd><p>Update the job description on the server.</p>
+<p>This method performs an HTTP request against the Granta MI Server API.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>value</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a></span></dt><dd><p>New description for the job.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ValueError</span></code></a></dt><dd><p>If the job has been deleted from the server.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.grantami.jobqueue.AsyncJob.status">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">status</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#ansys.grantami.jobqueue.JobStatus" title="ansys.grantami.jobqueue._models.JobStatus"><span class="pre">JobStatus</span></a></em><a class="headerlink" href="#ansys.grantami.jobqueue.AsyncJob.status" title="Link to this definition">#</a></dt>
+<dd><p>Job status of the job on the server.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><a class="reference internal" href="#ansys.grantami.jobqueue.JobStatus" title="ansys.grantami.jobqueue.JobStatus"><code class="xref py py-obj docutils literal notranslate"><span class="pre">JobStatus</span></code></a></dt><dd><p>Status of the job.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>A return value of <a class="reference internal" href="#ansys.grantami.jobqueue.JobStatus.Succeeded" title="ansys.grantami.jobqueue.JobStatus.Succeeded"><code class="xref py py-enum docutils literal notranslate"><span class="pre">JobStatus.Succeeded</span></code></a> does not mean that the import or export
+operation itself was successful, it only means that the job was successfully
+attempted. For more detailed information on the job status, check the contents of the
+<a class="reference internal" href="#ansys.grantami.jobqueue.AsyncJob.output_information" title="ansys.grantami.jobqueue.AsyncJob.output_information"><code class="xref py py-attr docutils literal notranslate"><span class="pre">AsyncJob.output_information</span></code></a> property.</p>
+</div>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.grantami.jobqueue.AsyncJob.type">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#ansys.grantami.jobqueue.JobType" title="ansys.grantami.jobqueue._models.JobType"><span class="pre">JobType</span></a></em><a class="headerlink" href="#ansys.grantami.jobqueue.AsyncJob.type" title="Link to this definition">#</a></dt>
+<dd><p>Type of the job on the server.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><a class="reference internal" href="#ansys.grantami.jobqueue.JobType" title="ansys.grantami.jobqueue.JobType"><code class="xref py py-obj docutils literal notranslate"><span class="pre">JobType</span></code></a></dt><dd><p>Type of the job.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.grantami.jobqueue.AsyncJob.position">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">position</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></em><a class="headerlink" href="#ansys.grantami.jobqueue.AsyncJob.position" title="Link to this definition">#</a></dt>
+<dd><p>Position of the job in the job queue.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><code class="docutils literal notranslate"><span class="pre">int</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="docutils literal notranslate"><span class="pre">None</span></code></a></dt><dd><p>Position of the job in the job queue or <code class="docutils literal notranslate"><span class="pre">None</span></code> if the job is not
+currently pending.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.grantami.jobqueue.AsyncJob.move_to_top">
+<span class="sig-name descname"><span class="pre">move_to_top</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ansys.grantami.jobqueue.AsyncJob.move_to_top" title="Link to this definition">#</a></dt>
+<dd><p>Promote the job to the top of the job queue.</p>
+<p>To use this method, you must have <code class="docutils literal notranslate"><span class="pre">MI_ADMIN</span></code> permission.</p>
+<dl class="field-list simple">
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.grantami.jobqueue.AsyncJob.submitter_information">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">submitter_information</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.14)"><span class="pre">Dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.14)"><span class="pre">datetime</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.14)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#ansys.grantami.jobqueue.AsyncJob.submitter_information" title="Link to this definition">#</a></dt>
+<dd><p>Information about the job submission.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><code class="docutils literal notranslate"><span class="pre">dict</span></code></a></dt><dd><p>Dictionary of job submission information with the username of the submitter,
+date and time of submission, and the roles that the submitter belongs to
+(indexed by name).</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.grantami.jobqueue.AsyncJob.completion_date_time">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">completion_date_time</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.14)"><span class="pre">datetime</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></em><a class="headerlink" href="#ansys.grantami.jobqueue.AsyncJob.completion_date_time" title="Link to this definition">#</a></dt>
+<dd><p>Date and time of job completion.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">datetime.datetime</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="docutils literal notranslate"><span class="pre">None</span></code></a></dt><dd><p>Date and time of job completion or <code class="docutils literal notranslate"><span class="pre">None</span></code> if the job is pending.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.grantami.jobqueue.AsyncJob.execution_date_time">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">execution_date_time</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.14)"><span class="pre">datetime</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></em><a class="headerlink" href="#ansys.grantami.jobqueue.AsyncJob.execution_date_time" title="Link to this definition">#</a></dt>
+<dd><p>Date and time that the job was run.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">datetime.datetime</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="docutils literal notranslate"><span class="pre">None</span></code></a></dt><dd><p>Date and time that the job was run or <code class="docutils literal notranslate"><span class="pre">None</span></code> if the job is pending.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.grantami.jobqueue.AsyncJob.scheduled_execution_date_time">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">scheduled_execution_date_time</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.14)"><span class="pre">datetime</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></em><a class="headerlink" href="#ansys.grantami.jobqueue.AsyncJob.scheduled_execution_date_time" title="Link to this definition">#</a></dt>
+<dd><p>Date and time that the job is scheduled to run.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">datetime.datetime</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="docutils literal notranslate"><span class="pre">None</span></code></a></dt><dd><p>Date and time that the job is scheduled to run or <code class="docutils literal notranslate"><span class="pre">None</span></code> if the job is not scheduled.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.grantami.jobqueue.AsyncJob.update_scheduled_execution_date_time">
+<span class="sig-name descname"><span class="pre">update_scheduled_execution_date_time</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ansys.grantami.jobqueue.AsyncJob.update_scheduled_execution_date_time" title="Link to this definition">#</a></dt>
+<dd><p>Update the date and time that the job is scheduled to run on the server.</p>
+<p>Performs an HTTP request against the Granta MI Server API.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>value</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">datetime.datetime</span></code></a></span></dt><dd><p>New date and time that the job is scheduled to run.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ValueError</span></code></a></dt><dd><p>If the job has been deleted from the server.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.grantami.jobqueue.AsyncJob.output_information">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">output_information</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.14)"><span class="pre">Dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.14)"><span class="pre">Any</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></em><a class="headerlink" href="#ansys.grantami.jobqueue.AsyncJob.output_information" title="Link to this definition">#</a></dt>
+<dd><p>Additional output information provided by the job (if supported by the job type).</p>
+<p>Additional output information typically includes record placement, a summary of the
+success of the job, and more verbose logging. The additional information supported is
+dependent on the job.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><code class="docutils literal notranslate"><span class="pre">dict</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="docutils literal notranslate"><span class="pre">None</span></code></a></dt><dd><p>Additional output information provided by the job.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.grantami.jobqueue.AsyncJob.output_file_names">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">output_file_names</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.14)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></em><a class="headerlink" href="#ansys.grantami.jobqueue.AsyncJob.output_file_names" title="Link to this definition">#</a></dt>
+<dd><p>List of names of the job’s output files.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><code class="docutils literal notranslate"><span class="pre">list</span></code></a> of <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="docutils literal notranslate"><span class="pre">None</span></code></a></dt><dd><p>List of the job’s output files or <code class="docutils literal notranslate"><span class="pre">None</span></code> if the job has no output files.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>The files generated by a job are not included in the underlying API definition, and so are not considered
+stable. Possible variations include:</p>
+<ul class="simple">
+<li><p>The list varying in length, or expected files not appearing in the list.</p></li>
+<li><p>Files appearing in a different order between runs.</p></li>
+</ul>
+<p>In addition, a JSON data file containing job summary information is included for jobs running on Granta MI 2025
+R1 and earlier. The information this file contains is also available in <a class="reference internal" href="#ansys.grantami.jobqueue.AsyncJob.output_information" title="ansys.grantami.jobqueue.AsyncJob.output_information"><code class="xref py py-attr docutils literal notranslate"><span class="pre">AsyncJob.output_information</span></code></a> for
+all supported Granta MI versions.</p>
+</div>
+<p class="rubric">Notes</p>
+<p>The files returned are:</p>
+<p>Import jobs:</p>
+<ul class="simple">
+<li><p>A log of the job execution as a text file with the name as the value of <a class="reference internal" href="#ansys.grantami.jobqueue.AsyncJob.name" title="ansys.grantami.jobqueue.AsyncJob.name"><code class="xref py py-attr docutils literal notranslate"><span class="pre">AsyncJob.name</span></code></a> and
+the extension <code class="docutils literal notranslate"><span class="pre">.log</span></code>.</p></li>
+</ul>
+<p>Export jobs:</p>
+<ul class="simple">
+<li><p>The exported data as a file with the name as the value of <a class="reference internal" href="#ansys.grantami.jobqueue.AsyncJob.name" title="ansys.grantami.jobqueue.AsyncJob.name"><code class="xref py py-attr docutils literal notranslate"><span class="pre">AsyncJob.name</span></code></a>. The extension, and therefore
+the file type, depends on the exported data:</p>
+<ul>
+<li><p>If a single file is generated, the file type depends on the type of the Export template. For example, an
+<code class="docutils literal notranslate"><span class="pre">.xlsm</span></code> template will result in an <code class="docutils literal notranslate"><span class="pre">.xlsm</span></code> exported file.</p></li>
+<li><p>If multiple files are generated, the file is a <code class="docutils literal notranslate"><span class="pre">.zip</span></code> archive. An export job may generate multiple files
+because files and pictures were included in the export, or because multiple records were exported to
+individual output files.</p></li>
+</ul>
+</li>
+<li><p>A log of the job execution with the filename <code class="docutils literal notranslate"><span class="pre">&lt;job</span> <span class="pre">name&gt;.log</span></code>, where <code class="docutils literal notranslate"><span class="pre">&lt;job</span> <span class="pre">name&gt;</span></code> is the value of
+<a class="reference internal" href="#ansys.grantami.jobqueue.AsyncJob.name" title="ansys.grantami.jobqueue.AsyncJob.name"><code class="xref py py-attr docutils literal notranslate"><span class="pre">AsyncJob.name</span></code></a>.</p></li>
+</ul>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.grantami.jobqueue.AsyncJob.download_file">
+<span class="sig-name descname"><span class="pre">download_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">remote_file_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ansys.grantami.jobqueue.AsyncJob.download_file" title="Link to this definition">#</a></dt>
+<dd><p>Download an output file from the server by name and save it to a specified location.</p>
+<p>Performs an HTTP request against the Granta MI Server API.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>remote_file_name</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a></span></dt><dd><p>Filename provided by the <a class="reference internal" href="#ansys.grantami.jobqueue.AsyncJob.output_file_names" title="ansys.grantami.jobqueue.AsyncJob.output_file_names"><code class="xref py py-meth docutils literal notranslate"><span class="pre">output_file_names()</span></code></a> method.</p>
+</dd>
+<dt><strong>file_path</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pathlib.Path</span></code></a></span></dt><dd><p>Path to save the file to.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#KeyError" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">KeyError</span></code></a></dt><dd><p>If the filename does not exist for this job.</p>
+</dd>
+<dt><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ValueError</span></code></a></dt><dd><p>If the job has been deleted from the server.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">job</span><span class="p">:</span> <span class="n">AsyncJob</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">folder</span> <span class="o">=</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;C:\path\to\folder&quot;</span><span class="p">)</span>  <span class="c1"># or Linux equivalent</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">file_name</span> <span class="ow">in</span> <span class="n">job</span><span class="o">.</span><span class="n">output_file_names</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="n">job</span><span class="o">.</span><span class="n">download_file</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="n">folder</span> <span class="o">/</span> <span class="n">file_name</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">folder</span><span class="o">.</span><span class="n">iterdir</span><span class="p">()))</span>
+<span class="go">[Path(C:/path/to/folder/output_1.json), Path(C:/path/to/folder/output_...</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.grantami.jobqueue.AsyncJob.get_file_content">
+<span class="sig-name descname"><span class="pre">get_file_content</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">remote_file_name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ansys.grantami.jobqueue.AsyncJob.get_file_content" title="Link to this definition">#</a></dt>
+<dd><p>Download an output file from the server by name and return the file contents.</p>
+<p>Performs an HTTP request against the Granta MI Server API.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>remote_file_name</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a></span></dt><dd><p>Filename provided by the <a class="reference internal" href="#ansys.grantami.jobqueue.AsyncJob.output_file_names" title="ansys.grantami.jobqueue.AsyncJob.output_file_names"><code class="xref py py-meth docutils literal notranslate"><span class="pre">output_file_names()</span></code></a> method.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><dl class="simple">
+<dt><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#bytes" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">bytes</span></code></a></dt><dd><p>Content of the specified file.</p>
+</dd>
+</dl>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#KeyError" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">KeyError</span></code></a></dt><dd><p>If the filename does not exist for this job.</p>
+</dd>
+<dt><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ValueError</span></code></a></dt><dd><p>If the job has been deleted from the server.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">job</span><span class="p">:</span> <span class="n">AsyncJob</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">file_content</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">file_name</span> <span class="ow">in</span> <span class="n">job</span><span class="o">.</span><span class="n">output_file_names</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="n">file_content</span><span class="p">[</span><span class="n">file_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">job</span><span class="o">.</span><span class="n">get_file_content</span><span class="p">(</span><span class="n">file_name</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">file_content</span><span class="p">)</span>
+<span class="go">{&#39;output_1.log&#39;: b&#39;2024-03-11 17:24:16,342 [396] INFO  Task started:...</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ansys.grantami.jobqueue.AsyncJob.update">
+<span class="sig-name descname"><span class="pre">update</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ansys.grantami.jobqueue.AsyncJob.update" title="Link to this definition">#</a></dt>
+<dd><p>Update the job from the server.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ValueError</span></code></a></dt><dd><p>If the job has been deleted from the server.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ansys.grantami.jobqueue.ImportJob">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ImportJob</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">job_obj</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">job_queue_api</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ansys.grantami.jobqueue.ImportJob" title="Link to this definition">#</a></dt>
+<dd><p>Represents an import job on the server. Subclass of <a class="reference internal" href="#ansys.grantami.jobqueue.AsyncJob" title="ansys.grantami.jobqueue.AsyncJob"><code class="xref py py-class docutils literal notranslate"><span class="pre">AsyncJob</span></code></a>.</p>
+<p>Objects of this type are returned from the <a class="reference internal" href="connection.html#ansys.grantami.jobqueue.JobQueueApiClient.create_job" title="ansys.grantami.jobqueue.JobQueueApiClient.create_job"><code class="xref py py-meth docutils literal notranslate"><span class="pre">create_job()</span></code></a> and
+<a class="reference internal" href="connection.html#ansys.grantami.jobqueue.JobQueueApiClient.create_job_and_wait" title="ansys.grantami.jobqueue.JobQueueApiClient.create_job_and_wait"><code class="xref py py-meth docutils literal notranslate"><span class="pre">create_job_and_wait()</span></code></a> methods after submitting a
+<a class="reference internal" href="#ansys.grantami.jobqueue.ExcelImportJobRequest" title="ansys.grantami.jobqueue.ExcelImportJobRequest"><code class="xref py py-class docutils literal notranslate"><span class="pre">ExcelImportJobRequest</span></code></a> or <a class="reference internal" href="#ansys.grantami.jobqueue.TextImportJobRequest" title="ansys.grantami.jobqueue.TextImportJobRequest"><code class="xref py py-class docutils literal notranslate"><span class="pre">TextImportJobRequest</span></code></a> to the server.</p>
+<p class="rubric">Notes</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Do not instantiate this class directly.</p>
+</div>
+<div class="versionadded">
+<p><span class="versionmodified added">Added in version 1.0.1.</span></p>
+</div>
+<dl class="field-list simple">
+</dl>
+<dl class="py property">
+<dt class="sig sig-object py" id="ansys.grantami.jobqueue.ImportJob.status">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">status</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#ansys.grantami.jobqueue.JobStatus" title="ansys.grantami.jobqueue._models.JobStatus"><span class="pre">JobStatus</span></a></em><a class="headerlink" href="#ansys.grantami.jobqueue.ImportJob.status" title="Link to this definition">#</a></dt>
+<dd><p>Job status of the job on the server.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><dl class="simple">
+<dt><a class="reference internal" href="#ansys.grantami.jobqueue.JobStatus" title="ansys.grantami.jobqueue.JobStatus"><code class="xref py py-obj docutils literal notranslate"><span class="pre">JobStatus</span></code></a></dt><dd><p>Status of the job.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>A return value of <a class="reference internal" href="#ansys.grantami.jobqueue.JobStatus.Succeeded" title="ansys.grantami.jobqueue.JobStatus.Succeeded"><code class="xref py py-enum docutils literal notranslate"><span class="pre">JobStatus.Succeeded</span></code></a> does not mean that the import or export
+operation itself was successful, it only means that the job was successfully
+attempted. For more detailed information on the job status, check the contents of the
+<a class="reference internal" href="#ansys.grantami.jobqueue.AsyncJob.output_information" title="ansys.grantami.jobqueue.AsyncJob.output_information"><code class="xref py py-attr docutils literal notranslate"><span class="pre">AsyncJob.output_information</span></code></a> property.</p>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ansys.grantami.jobqueue.ExportJob">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ExportJob</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">job_obj</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">job_queue_api</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ansys.grantami.jobqueue.ExportJob" title="Link to this definition">#</a></dt>
+<dd><p>Represents an export job on the server. Subclass of <a class="reference internal" href="#ansys.grantami.jobqueue.AsyncJob" title="ansys.grantami.jobqueue.AsyncJob"><code class="xref py py-class docutils literal notranslate"><span class="pre">AsyncJob</span></code></a>.</p>
+<p>Objects of this type are returned from the <a class="reference internal" href="connection.html#ansys.grantami.jobqueue.JobQueueApiClient.create_job" title="ansys.grantami.jobqueue.JobQueueApiClient.create_job"><code class="xref py py-meth docutils literal notranslate"><span class="pre">create_job()</span></code></a> and
+<a class="reference internal" href="connection.html#ansys.grantami.jobqueue.JobQueueApiClient.create_job_and_wait" title="ansys.grantami.jobqueue.JobQueueApiClient.create_job_and_wait"><code class="xref py py-meth docutils literal notranslate"><span class="pre">create_job_and_wait()</span></code></a> methods after submitting a
+<a class="reference internal" href="#ansys.grantami.jobqueue.ExcelExportJobRequest" title="ansys.grantami.jobqueue.ExcelExportJobRequest"><code class="xref py py-class docutils literal notranslate"><span class="pre">ExcelExportJobRequest</span></code></a> to the server.</p>
+<p class="rubric">Notes</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Do not instantiate this class directly.</p>
+</div>
+<div class="versionadded">
+<p><span class="versionmodified added">Added in version 1.0.1.</span></p>
+</div>
+<dl class="field-list simple">
+</dl>
+</dd></dl>
+
+</section>
+<section id="other-models">
+<h2>Other models<a class="headerlink" href="#other-models" title="Link to this heading">#</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="ansys.grantami.jobqueue.JobFile">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">JobFile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">virtual_path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ansys.grantami.jobqueue.JobFile" title="Link to this definition">#</a></dt>
+<dd><p>Represents a file associated with a JobRequest.</p>
+<p>JobFile can be used instead of paths in import requests. This allows building a virtual file structure for the
+import, to work around some path limitations and makes working with attachments easier.</p>
+<div class="versionadded">
+<p><span class="versionmodified added">Added in version 1.1.</span></p>
+</div>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>path</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pathlib.Path</span></code></a></span></dt><dd><p>Path to the local file to use in a JobRequest. Can be absolute or relative.</p>
+</dd>
+<dt><strong>virtual_path</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="docutils literal notranslate"><span class="pre">str</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pathlib.Path</span></code></a></span></dt><dd><p>Virtual path to use to refer to the file in the JobRequest. Must be relative.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<p>Using an import template from a shared network location and placing it at the root of the isolated job environment.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">template_file</span> <span class="o">=</span> <span class="n">JobFile</span><span class="p">(</span><span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;</span><span class="se">\\</span><span class="s2">server\share\Tensile_Import_Template_v1.xslx&quot;</span><span class="p">),</span> <span class="s2">&quot;template.xslx&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>JobFiles can be used to set up a file structure that matches the expectation of the import, without moving or
+copying files to the client machine or requiring the script to run in a specific location. For example, if the Excel
+or text import template is configured to import a picture to a Picture attribute, the data file includes a reference
+to the picture by relative path, e.g. <code class="docutils literal notranslate"><span class="pre">/assets/panel_front.jpg</span></code>.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">data_file</span> <span class="o">=</span> <span class="n">JobFile</span><span class="p">(</span><span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;C:\test_results\tensile\sample_001\data.xslx&quot;</span><span class="p">),</span> <span class="s2">&quot;data.xslx&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">attachment_file</span> <span class="o">=</span> <span class="n">JobFile</span><span class="p">(</span><span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;C:\test_results\pictures\sample_001\panel_front.png&quot;</span><span class="p">),</span> <span class="s2">&quot;./assets/panel_front.png&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ansys.grantami.jobqueue.ExportRecord">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ExportRecord</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">record_history_identity</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">record_version</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ansys.grantami.jobqueue.ExportRecord" title="Link to this definition">#</a></dt>
+<dd><p>Defines a record to include in an export job.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>record_history_identity</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><code class="docutils literal notranslate"><span class="pre">int</span></code></a></span></dt><dd><p>History identities of a record to export. You can find history identities
+in the Granta MI Viewer or using the Scripting Toolkit.</p>
+</dd>
+<dt><strong>record_version</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><code class="docutils literal notranslate"><span class="pre">int</span></code></a>, default: <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="docutils literal notranslate"><span class="pre">None</span></code></a></span></dt><dd><p>Specific version of the record to export. If no version is specified for
+version-controlled records, the latest available version for the current
+user is exported.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="ansys.grantami.jobqueue.JobQueueProcessingConfiguration">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">JobQueueProcessingConfiguration</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">purge_job_age_in_milliseconds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">purge_interval_in_milliseconds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">polling_interval_in_milliseconds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">concurrency</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ansys.grantami.jobqueue.JobQueueProcessingConfiguration" title="Link to this definition">#</a></dt>
+<dd><p>Provides a read-only configuration of the job queue on the server.</p>
+<dl class="field-list">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><dl>
+<dt><strong>purge_job_age_in_milliseconds</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><code class="docutils literal notranslate"><span class="pre">int</span></code></a></span></dt><dd><p>Age at which to automatically remove jobs from the queue.</p>
+</dd>
+<dt><strong>purge_interval_in_milliseconds</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><code class="docutils literal notranslate"><span class="pre">int</span></code></a></span></dt><dd><p>Time between purge operations.</p>
+</dd>
+<dt><strong>polling_interval_in_milliseconds</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><code class="docutils literal notranslate"><span class="pre">int</span></code></a></span></dt><dd><p>Idle time before executing the next job in the queue.</p>
+</dd>
+<dt><strong>concurrency</strong><span class="classifier"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><code class="docutils literal notranslate"><span class="pre">int</span></code></a></span></dt><dd><p>Maximum number of jobs to process concurrently.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class enum">
+<dt class="sig sig-object py" id="ansys.grantami.jobqueue.JobStatus">
+<em class="property"><span class="k"><span class="pre">enum</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">JobStatus</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ansys.grantami.jobqueue.JobStatus" title="Link to this definition">#</a></dt>
+<dd><p>Provides possible states of a job in the job queue.</p>
+<p>Valid values are as follows:</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ansys.grantami.jobqueue.JobStatus.Pending">
+<span class="sig-name descname"><span class="pre">Pending</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;JobStatus.Pending:</span> <span class="pre">'Pending'&gt;</span></em><a class="headerlink" href="#ansys.grantami.jobqueue.JobStatus.Pending" title="Link to this definition">#</a></dt>
+<dd><p>Job is in the queue.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ansys.grantami.jobqueue.JobStatus.Running">
+<span class="sig-name descname"><span class="pre">Running</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;JobStatus.Running:</span> <span class="pre">'Running'&gt;</span></em><a class="headerlink" href="#ansys.grantami.jobqueue.JobStatus.Running" title="Link to this definition">#</a></dt>
+<dd><p>Job is currently executing.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ansys.grantami.jobqueue.JobStatus.Succeeded">
+<span class="sig-name descname"><span class="pre">Succeeded</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;JobStatus.Succeeded:</span> <span class="pre">'Succeeded'&gt;</span></em><a class="headerlink" href="#ansys.grantami.jobqueue.JobStatus.Succeeded" title="Link to this definition">#</a></dt>
+<dd><p>Job has completed (does not guarantee that no errors occurred).</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ansys.grantami.jobqueue.JobStatus.Failed">
+<span class="sig-name descname"><span class="pre">Failed</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;JobStatus.Failed:</span> <span class="pre">'Failed'&gt;</span></em><a class="headerlink" href="#ansys.grantami.jobqueue.JobStatus.Failed" title="Link to this definition">#</a></dt>
+<dd><p>Job could not complete.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ansys.grantami.jobqueue.JobStatus.Cancelled">
+<span class="sig-name descname"><span class="pre">Cancelled</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;JobStatus.Cancelled:</span> <span class="pre">'Cancelled'&gt;</span></em><a class="headerlink" href="#ansys.grantami.jobqueue.JobStatus.Cancelled" title="Link to this definition">#</a></dt>
+<dd><p>Job was cancelled by the user.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ansys.grantami.jobqueue.JobStatus.Deleted">
+<span class="sig-name descname"><span class="pre">Deleted</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;JobStatus.Deleted:</span> <span class="pre">'Deleted'&gt;</span></em><a class="headerlink" href="#ansys.grantami.jobqueue.JobStatus.Deleted" title="Link to this definition">#</a></dt>
+<dd><p>Job was deleted on the server.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class enum">
+<dt class="sig sig-object py" id="ansys.grantami.jobqueue.JobType">
+<em class="property"><span class="k"><span class="pre">enum</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">JobType</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ansys.grantami.jobqueue.JobType" title="Link to this definition">#</a></dt>
+<dd><p>Provides possible job types.</p>
+<p>Valid values are as follows:</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ansys.grantami.jobqueue.JobType.ExcelImportJob">
+<span class="sig-name descname"><span class="pre">ExcelImportJob</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;JobType.ExcelImportJob:</span> <span class="pre">'ExcelImportJob'&gt;</span></em><a class="headerlink" href="#ansys.grantami.jobqueue.JobType.ExcelImportJob" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ansys.grantami.jobqueue.JobType.ExcelExportJob">
+<span class="sig-name descname"><span class="pre">ExcelExportJob</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;JobType.ExcelExportJob:</span> <span class="pre">'ExcelExportJob'&gt;</span></em><a class="headerlink" href="#ansys.grantami.jobqueue.JobType.ExcelExportJob" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ansys.grantami.jobqueue.JobType.TextImportJob">
+<span class="sig-name descname"><span class="pre">TextImportJob</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;JobType.TextImportJob:</span> <span class="pre">'TextImportJob'&gt;</span></em><a class="headerlink" href="#ansys.grantami.jobqueue.JobType.TextImportJob" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#job-requests">Job requests</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.grantami.jobqueue.JobRequest"><code class="docutils literal notranslate"><span class="pre">JobRequest</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.grantami.jobqueue.ExcelExportJobRequest"><code class="docutils literal notranslate"><span class="pre">ExcelExportJobRequest</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.grantami.jobqueue.ExcelImportJobRequest"><code class="docutils literal notranslate"><span class="pre">ExcelImportJobRequest</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.grantami.jobqueue.TextImportJobRequest"><code class="docutils literal notranslate"><span class="pre">TextImportJobRequest</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#jobs">Jobs</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.grantami.jobqueue.AsyncJob"><code class="docutils literal notranslate"><span class="pre">AsyncJob</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.grantami.jobqueue.AsyncJob.create_job"><code class="docutils literal notranslate"><span class="pre">AsyncJob.create_job()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.grantami.jobqueue.AsyncJob.id"><code class="docutils literal notranslate"><span class="pre">AsyncJob.id</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.grantami.jobqueue.AsyncJob.name"><code class="docutils literal notranslate"><span class="pre">AsyncJob.name</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.grantami.jobqueue.AsyncJob.update_name"><code class="docutils literal notranslate"><span class="pre">AsyncJob.update_name()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.grantami.jobqueue.AsyncJob.description"><code class="docutils literal notranslate"><span class="pre">AsyncJob.description</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.grantami.jobqueue.AsyncJob.update_description"><code class="docutils literal notranslate"><span class="pre">AsyncJob.update_description()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.grantami.jobqueue.AsyncJob.status"><code class="docutils literal notranslate"><span class="pre">AsyncJob.status</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.grantami.jobqueue.AsyncJob.type"><code class="docutils literal notranslate"><span class="pre">AsyncJob.type</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.grantami.jobqueue.AsyncJob.position"><code class="docutils literal notranslate"><span class="pre">AsyncJob.position</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.grantami.jobqueue.AsyncJob.move_to_top"><code class="docutils literal notranslate"><span class="pre">AsyncJob.move_to_top()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.grantami.jobqueue.AsyncJob.submitter_information"><code class="docutils literal notranslate"><span class="pre">AsyncJob.submitter_information</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.grantami.jobqueue.AsyncJob.completion_date_time"><code class="docutils literal notranslate"><span class="pre">AsyncJob.completion_date_time</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.grantami.jobqueue.AsyncJob.execution_date_time"><code class="docutils literal notranslate"><span class="pre">AsyncJob.execution_date_time</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.grantami.jobqueue.AsyncJob.scheduled_execution_date_time"><code class="docutils literal notranslate"><span class="pre">AsyncJob.scheduled_execution_date_time</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.grantami.jobqueue.AsyncJob.update_scheduled_execution_date_time"><code class="docutils literal notranslate"><span class="pre">AsyncJob.update_scheduled_execution_date_time()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.grantami.jobqueue.AsyncJob.output_information"><code class="docutils literal notranslate"><span class="pre">AsyncJob.output_information</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.grantami.jobqueue.AsyncJob.output_file_names"><code class="docutils literal notranslate"><span class="pre">AsyncJob.output_file_names</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.grantami.jobqueue.AsyncJob.download_file"><code class="docutils literal notranslate"><span class="pre">AsyncJob.download_file()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.grantami.jobqueue.AsyncJob.get_file_content"><code class="docutils literal notranslate"><span class="pre">AsyncJob.get_file_content()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.grantami.jobqueue.AsyncJob.update"><code class="docutils literal notranslate"><span class="pre">AsyncJob.update()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.grantami.jobqueue.ImportJob"><code class="docutils literal notranslate"><span class="pre">ImportJob</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.grantami.jobqueue.ImportJob.status"><code class="docutils literal notranslate"><span class="pre">ImportJob.status</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.grantami.jobqueue.ExportJob"><code class="docutils literal notranslate"><span class="pre">ExportJob</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#other-models">Other models</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.grantami.jobqueue.JobFile"><code class="docutils literal notranslate"><span class="pre">JobFile</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.grantami.jobqueue.ExportRecord"><code class="docutils literal notranslate"><span class="pre">ExportRecord</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.grantami.jobqueue.JobQueueProcessingConfiguration"><code class="docutils literal notranslate"><span class="pre">JobQueueProcessingConfiguration</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.grantami.jobqueue.JobStatus"><code class="docutils literal notranslate"><span class="pre">JobStatus</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.grantami.jobqueue.JobStatus.Pending"><code class="docutils literal notranslate"><span class="pre">JobStatus.Pending</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.grantami.jobqueue.JobStatus.Running"><code class="docutils literal notranslate"><span class="pre">JobStatus.Running</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.grantami.jobqueue.JobStatus.Succeeded"><code class="docutils literal notranslate"><span class="pre">JobStatus.Succeeded</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.grantami.jobqueue.JobStatus.Failed"><code class="docutils literal notranslate"><span class="pre">JobStatus.Failed</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.grantami.jobqueue.JobStatus.Cancelled"><code class="docutils literal notranslate"><span class="pre">JobStatus.Cancelled</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.grantami.jobqueue.JobStatus.Deleted"><code class="docutils literal notranslate"><span class="pre">JobStatus.Deleted</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.grantami.jobqueue.JobType"><code class="docutils literal notranslate"><span class="pre">JobType</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.grantami.jobqueue.JobType.ExcelImportJob"><code class="docutils literal notranslate"><span class="pre">JobType.ExcelImportJob</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.grantami.jobqueue.JobType.ExcelExportJob"><code class="docutils literal notranslate"><span class="pre">JobType.ExcelExportJob</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ansys.grantami.jobqueue.JobType.TextImportJob"><code class="docutils literal notranslate"><span class="pre">JobType.TextImportJob</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+<!-- If there is no fix edit button function, use the PyData edit-this-button-->
+</div>
+
+  <div class="sidebar-secondary-item">
+  <div role="note" aria-label="source link">
+    <ul class="this-page-menu">
+      <li><a href="../_sources/api/models.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+
+  <!-- Include desired assets -->
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.7/require.min.js"></script>
+
+<script>
+// Passing the search options to the search.js file
+const SEARCH_OPTIONS = JSON.parse('{"keys": ["title", "text", "objectID"], "limit": 10, "threshold": 0.2}');
+const SEARCH_FILE = "../_static/search.json";
+const ADVANCE_SEARCH_PATH = "../search.html";
+const EXTRA_SOURCES = JSON.parse('""');
+</script>
+
+
+<script src="../_static/js/search.js"></script>
+
+  
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright (c) 2025 ANSYS, Inc. All rights reserved.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item"><p class="theme-version">
+  Built with the
+  <a href="https://sphinxdocs.ansys.com/version/stable/index.html"
+    >Ansys Sphinx Theme</a
+  >
+  1.6.4. <br />Last updated on
+  <span id="ast_build_date"></span>
+</p>
+<script>
+  var options = { day: "numeric", month: "long", year: "numeric" };
+  var ast_lastModifiedDate = new Date(document.lastModified);
+  var ast_build_date = ast_lastModifiedDate.toLocaleDateString("en-US", options);
+  document.getElementById("ast_build_date").innerHTML = ast_build_date;
+</script></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>
