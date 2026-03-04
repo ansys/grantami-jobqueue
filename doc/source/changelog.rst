@@ -9,6 +9,125 @@ This document contains the release notes for the project.
 
 .. towncrier release notes start
 
+`1.3.0rc1 <https://github.com/ansys/grantami-jobqueue/releases/tag/v1.3.0rc1>`_ - March 04, 2026
+================================================================================================
+
+.. tab-set::
+
+
+  .. tab-item:: Added
+
+    .. list-table::
+        :header-rows: 0
+        :widths: auto
+
+        * - Add examples extra
+          - `#313 <https://github.com/ansys/grantami-jobqueue/pull/313>`_
+
+
+  .. tab-item:: Dependencies
+
+    .. list-table::
+        :header-rows: 0
+        :widths: auto
+
+        * - Update tornado to v6.5
+          - `#229 <https://github.com/ansys/grantami-jobqueue/pull/229>`_
+
+        * - Update serverapi-openapi to 5.1.0rc0
+          - `#309 <https://github.com/ansys/grantami-jobqueue/pull/309>`_
+
+        * - Update ansys-grantami-serverapi-openapi to 5.1.0
+          - `#312 <https://github.com/ansys/grantami-jobqueue/pull/312>`_
+
+        * - Bump pyparsing to 3.3.1
+          - `#320 <https://github.com/ansys/grantami-jobqueue/pull/320>`_
+
+        * - Bump nbconvert to v7.17.0
+          - `#340 <https://github.com/ansys/grantami-jobqueue/pull/340>`_
+
+
+  .. tab-item:: Miscellaneous
+
+    .. list-table::
+        :header-rows: 0
+        :widths: auto
+
+        * - Update lock file
+          - `#250 <https://github.com/ansys/grantami-jobqueue/pull/250>`_
+
+        * - Add security.md file
+          - `#253 <https://github.com/ansys/grantami-jobqueue/pull/253>`_
+
+        * - Prepare 1.3rc0 release
+          - `#319 <https://github.com/ansys/grantami-jobqueue/pull/319>`_
+
+        * - Replace dev test server with 2026 R1 release server
+          - `#335 <https://github.com/ansys/grantami-jobqueue/pull/335>`_
+
+        * - Revert 1.3.0rc0 changelog
+          - `#337 <https://github.com/ansys/grantami-jobqueue/pull/337>`_
+
+        * - Prepare 1.3.0rc1 release
+          - `#359 <https://github.com/ansys/grantami-jobqueue/pull/359>`_
+
+
+  .. tab-item:: Documentation
+
+    .. list-table::
+        :header-rows: 0
+        :widths: auto
+
+        * - Update changelog for v1.2.0
+          - `#257 <https://github.com/ansys/grantami-jobqueue/pull/257>`_
+
+        * - Fix changelog fragments
+          - `#355 <https://github.com/ansys/grantami-jobqueue/pull/355>`_
+
+
+  .. tab-item:: Maintenance
+
+    .. list-table::
+        :header-rows: 0
+        :widths: auto
+
+        * - Bump version to 1.3.0.dev0
+          - `#223 <https://github.com/ansys/grantami-jobqueue/pull/223>`_
+
+        * - Add 2025 R2 stable test VM
+          - `#225 <https://github.com/ansys/grantami-jobqueue/pull/225>`_
+
+        * - Fix version number on main branch
+          - `#234 <https://github.com/ansys/grantami-jobqueue/pull/234>`_
+
+        * - Remove migrated changes from changelog.md
+          - `#258 <https://github.com/ansys/grantami-jobqueue/pull/258>`_
+
+        * - Update CONTRIBUTORS.md
+          - `#262 <https://github.com/ansys/grantami-jobqueue/pull/262>`_
+
+        * - Handle trailing slash on test server URL during test VM warmup
+          - `#274 <https://github.com/ansys/grantami-jobqueue/pull/274>`_
+
+        * - Add support for python 3.14
+          - `#306 <https://github.com/ansys/grantami-jobqueue/pull/306>`_
+
+        * - Add code vulnerability check
+          - `#314 <https://github.com/ansys/grantami-jobqueue/pull/314>`_
+
+        * - Add actions security check
+          - `#315 <https://github.com/ansys/grantami-jobqueue/pull/315>`_
+
+        * - Migrate Poetry to UV for Package Management and CI
+          - `#327 <https://github.com/ansys/grantami-jobqueue/pull/327>`_
+
+        * - Fix test step name
+          - `#332 <https://github.com/ansys/grantami-jobqueue/pull/332>`_
+
+        * - Restore uv packages in frozen mode
+          - `#339 <https://github.com/ansys/grantami-jobqueue/pull/339>`_
+
+
 `1.2.0 <https://github.com/ansys/grantami-jobqueue/releases/tag/v1.2.0>`_ - July 10, 2025
 =========================================================================================
 
