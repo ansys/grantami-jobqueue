@@ -116,7 +116,7 @@ jobs:
 
       - name: "Start VM with Azure CLI"
         id: azure_cli
-        uses: azure/CLI@9f7ce6f37c31b777ec6c6b6d1dfe7db79f497956  #v2.2.0
+        uses: azure/CLI@9eb25b8360668fb0ecbafa808d40e2197b2f5f52  #v3.0.0
         if:   ${{ !(inputs.skip-vm-management)}}
         env:
           APP_ID: ${{ secrets.AZURE_APP_ID }}
@@ -131,7 +131,7 @@ jobs:
             az vm start -g ${RESOURCE_GROUP} -n ${SERVER_NAME}
 
       - name: Install uv
-        uses: astral-sh/setup-uv@37802adc94f370d6bfd71619e3f0bf239e1f3b78  # v7.6.0
+        uses: astral-sh/setup-uv@cec208311dfd045dd5311c1add060b2062131d57  # v8.0.0
         with:
           python-version: ${{ inputs.python-version }}
 
@@ -177,7 +177,7 @@ jobs:
           persist-credentials: false
 
       - name: Install uv
-        uses: astral-sh/setup-uv@37802adc94f370d6bfd71619e3f0bf239e1f3b78  # v7.6.0
+        uses: astral-sh/setup-uv@cec208311dfd045dd5311c1add060b2062131d57  # v8.0.0
         with:
           python-version: ${{ inputs.python-version }}
 
@@ -193,7 +193,7 @@ jobs:
           TEST_MI_VERSION: ${{ matrix.server.version }}
 
       - name: "Upload coverage to Codecov"
-        uses: codecov/codecov-action@671740ac38dd9b0130fbe1cec585b89eea48d3de  # v5.5.2
+        uses: codecov/codecov-action@57e3a136b779b570ffcdbf80b3bdc90e7fab3de2  # v6.0.0
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
         with:
@@ -207,7 +207,7 @@ jobs:
     needs: integration-tests
     steps:
       - name: "Run Ansys documentation building action"
-        uses: ansys/actions/doc-build@1f4f0896a8e49d3aec2f02ced215b04a32c85f28  # v10.2.7
+        uses: ansys/actions/doc-build@7d55ff0b9f67c77dae50a286d711ee1ae27b0a25  # v10.2.12
         env:
           TEST_SL_URL: ${{secrets.TEST_SERVER_DEV_URL}}
           TEST_USER: ${{secrets.TEST_SERVER_ADMIN_USER}}
@@ -241,7 +241,7 @@ jobs:
           - "AZURE_VM_NAME_24R2"
           - "AZURE_VM_NAME_24R1"
     steps:
-      - uses: azure/CLI@9f7ce6f37c31b777ec6c6b6d1dfe7db79f497956  #v2.2.0
+      - uses: azure/CLI@9eb25b8360668fb0ecbafa808d40e2197b2f5f52  #v3.0.0
         env:
           APP_ID: ${{ secrets.AZURE_APP_ID }}
           TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
