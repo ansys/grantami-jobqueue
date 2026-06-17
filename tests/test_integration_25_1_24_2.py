@@ -333,30 +333,35 @@ class TestPaths:
     attachment_filename = "picture.bmp"
 
     @pytest.fixture(scope="class")
-    def directory(self, tmp_path_factory):
+    @classmethod
+    def directory(cls, tmp_path_factory):
         yield tmp_path_factory.mktemp("directory")
 
     @pytest.fixture(scope="class")
-    def template_path_absolute(self, directory):
-        template_path = Path(directory, self.template_filename)
+    @classmethod
+    def template_path_absolute(cls, directory):
+        template_path = Path(directory, cls.template_filename)
         shutil.copy(TEXT_IMPORT_TEMPLATE_FILE, template_path)
         yield template_path.absolute()
 
     @pytest.fixture(scope="class")
-    def datafile_path_absolute(self, directory):
-        datafile_path = Path(directory, self.datafile_filename)
+    @classmethod
+    def datafile_path_absolute(cls, directory):
+        datafile_path = Path(directory, cls.datafile_filename)
         shutil.copy(TEXT_IMPORT_DATA_FILE, datafile_path)
         yield datafile_path.absolute()
 
     @pytest.fixture(scope="class")
-    def attachment_path_absolute(self, directory):
-        attachment_path = Path(directory, self.attachment_filename)
+    @classmethod
+    def attachment_path_absolute(cls, directory):
+        attachment_path = Path(directory, cls.attachment_filename)
         shutil.copy(ATTACHMENT, attachment_path)
         yield attachment_path.absolute()
 
     @pytest.fixture(scope="class")
+    @classmethod
     def populated_directory(
-        self, directory, template_path_absolute, datafile_path_absolute, attachment_path_absolute
+        cls, directory, template_path_absolute, datafile_path_absolute, attachment_path_absolute
     ):
         yield directory
 
