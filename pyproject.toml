@@ -92,9 +92,11 @@ show_missing = true
 filterwarnings = "error"
 addopts = ["--cov=ansys.grantami.jobqueue", "--cov-report=term", "--cov-report=xml:.cov/xml", "--cov-report=html:.cov/html"]
 markers = [
-    """integration(*, mi_versions: None | list[tuple[int, int]] = None): The test requires a real database.
+    """integration(*, mi_versions: None | list[tuple[int, int]] = None, minimum_mi_version: None | tuple[int, int] = None): The test requires a real database.
     The optional keyword-only argument \"mi_versions\" represents a MAJOR, MINOR version of Granta MI. The test will \
-    be skipped if run against an incompatible Granta MI version. Deselect all integration tests with \
+    be skipped if run against an incompatible Granta MI version. The optional keyword-only argument \
+    \"minimum_mi_version\" skips the test when the Granta MI version is older than the specified MAJOR.MINOR version. \
+    Deselect all integration tests with \
     'pytest -m \"not integration\"'.  Specify MI version with '--mi-version MAJOR.MINOR'.""",
 ]
 
