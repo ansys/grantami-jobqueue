@@ -889,8 +889,7 @@ class ExcelImportDryRunJobRequest(ExcelImportJobRequest):
 
     Notes
     -----
-    .. versionchanged:: 1.1
-       Path parameters now accept :class:`JobFile` inputs.
+    .. versionadded:: 1.4
 
     Examples
     --------
