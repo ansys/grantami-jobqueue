@@ -28,7 +28,6 @@ from ._connection import Connection, JobQueueApiClient
 from ._models import (
     AsyncJob,
     ExcelExportJobRequest,
-    ExcelImportDryRunJobRequest,
     ExcelImportJobRequest,
     ExportJob,
     ExportRecord,
@@ -45,7 +44,6 @@ __all__ = [
     "AsyncJob",
     "Connection",
     "ExcelExportJobRequest",
-    "ExcelImportDryRunJobRequest",
     "ExcelImportJobRequest",
     "ExportJob",
     "ExportRecord",
