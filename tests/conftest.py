@@ -199,6 +199,6 @@ def process_integration_marks(request, mi_version):
             minimum_version = ".".join(str(v) for v in minimum_mi_version)
             skip_message = (
                 f'Test skipped for Granta MI release version "{formatted_version}". '
-                f'Requires Granta MI {minimum_version} or newer.'
+                f"Requires Granta MI {minimum_version} or newer."
             )
             pytest.skip(skip_message)
