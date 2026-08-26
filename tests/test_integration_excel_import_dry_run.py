@@ -1,4 +1,4 @@
-# Copyright (C) 2024 - 2026 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2024 - 2026 Synopsys, Inc. and ANSYS, Inc. All rights reserved.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -63,9 +63,7 @@ class TestExcelImportDryRunJob:
         job_req = ExcelImportDryRunJobRequest(
             name="ExcelImportDryRunTest",
             description="Dry-run import test",
-            combined_files=[
-                JobFile(str(EXCEL_IMPORT_COMBINED_FILE), EXCEL_IMPORT_DATA_FILE.name)
-            ],
+            combined_files=[JobFile(str(EXCEL_IMPORT_COMBINED_FILE), EXCEL_IMPORT_DATA_FILE.name)],
         )
         job = empty_job_queue_api_client.create_job_and_wait(job_req)
         check_success(job)
@@ -76,9 +74,7 @@ class TestExcelImportDryRunJob:
         job_req = ExcelImportDryRunJobRequest(
             name="ExcelImportDryRunTest output files",
             description="Dry-run import test",
-            combined_files=[
-                JobFile(str(EXCEL_IMPORT_COMBINED_FILE), EXCEL_IMPORT_DATA_FILE.name)
-            ],
+            combined_files=[JobFile(str(EXCEL_IMPORT_COMBINED_FILE), EXCEL_IMPORT_DATA_FILE.name)],
         )
         job = empty_job_queue_api_client.create_job_and_wait(job_req)
         check_success(job)
@@ -92,9 +88,7 @@ class TestExcelImportDryRunJob:
         job_req = ExcelImportDryRunJobRequest(
             name="ExcelImportDryRunTest download report",
             description="Dry-run import test",
-            combined_files=[
-                JobFile(str(EXCEL_IMPORT_COMBINED_FILE), EXCEL_IMPORT_DATA_FILE.name)
-            ],
+            combined_files=[JobFile(str(EXCEL_IMPORT_COMBINED_FILE), EXCEL_IMPORT_DATA_FILE.name)],
         )
         job = empty_job_queue_api_client.create_job_and_wait(job_req)
         check_success(job)
@@ -112,9 +106,7 @@ class TestExcelImportDryRunJob:
         job_req = ExcelImportDryRunJobRequest(
             name="ExcelImportDryRunTest no db changes",
             description="Dry-run import test",
-            combined_files=[
-                JobFile(str(EXCEL_IMPORT_COMBINED_FILE), EXCEL_IMPORT_DATA_FILE.name)
-            ],
+            combined_files=[JobFile(str(EXCEL_IMPORT_COMBINED_FILE), EXCEL_IMPORT_DATA_FILE.name)],
         )
         job = empty_job_queue_api_client.create_job_and_wait(job_req)
         check_success(job)
