@@ -26,7 +26,13 @@ import sys
 
 import pytest
 
-from ansys.grantami.jobqueue import ExcelImportJobRequest, JobFile, TextImportJobRequest
+from ansys.grantami.jobqueue import (
+    ExcelImportDryRunJobRequest,
+    ExcelImportJobRequest,
+    JobFile,
+    JobType,
+    TextImportJobRequest,
+)
 from common import (
     ATTACHMENT,
     EXCEL_IMPORT_COMBINED_FILE,
@@ -44,6 +50,10 @@ EXCEL_MISSING_FILES_ERROR_MESSAGE = (
 )
 
 
+@pytest.mark.parametrize(
+    "request_class",
+    [ExcelImportJobRequest, ExcelImportDryRunJobRequest],
+)
 @pytest.mark.parametrize(
     "combined, data, template, message",
     [
@@ -86,9 +96,11 @@ EXCEL_MISSING_FILES_ERROR_MESSAGE = (
     ],
 )
 @pytest.mark.parametrize("attachment", [[ATTACHMENT], None])
-def test_excel_invalid_files_raise_exception(combined, data, template, attachment, message):
+def test_excel_invalid_files_raise_exception(
+    request_class, combined, data, template, attachment, message
+):
     with pytest.raises(ValueError, match=message):
-        ExcelImportJobRequest(
+        request_class(
             name="ExcelImportTest",
             description="Import test 1",
             data_files=data,
@@ -121,6 +133,20 @@ def test_text_invalid_files_raise_exception(data, template, attachment):
         )
 
 
+def test_excel_import_dry_run_job_type():
+    job_request = ExcelImportDryRunJobRequest(
+        name="ExcelImportDryRunTest",
+        description=None,
+        combined_files=[EXCEL_IMPORT_COMBINED_FILE],
+    )
+    assert job_request._job_type == JobType.ExcelImportDryRunJob
+    assert job_request._job_type.value == "ExcelImportDryRunJob"
+
+
+@pytest.mark.parametrize(
+    "request_class",
+    [ExcelImportJobRequest, ExcelImportDryRunJobRequest],
+)
 @pytest.mark.parametrize(
     ["template_file", "data_files", "combined_files", "attachment_files"],
     [
@@ -179,10 +205,10 @@ def test_text_invalid_files_raise_exception(data, template, attachment):
     ],
 )
 def test_identical_paths_raise_exception(
-    template_file, data_files, combined_files, attachment_files
+    request_class, template_file, data_files, combined_files, attachment_files
 ):
     with pytest.raises(ValueError, match="are not unique"):
-        job = ExcelImportJobRequest(
+        job = request_class(
             name="TestIdenticalPaths",
             description=None,
             template_file=template_file,
