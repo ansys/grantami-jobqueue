@@ -884,25 +884,8 @@ class ExcelImportDryRunJobRequest(ExcelImportJobRequest):
     job validates import data without committing changes to the database. A report file is
     produced as job output that can be downloaded after the job completes.
 
-    Subclass of :class:`~ExcelImportJobRequest`.
-
-    Parameters
-    ----------
-    name : str
-        Name of the job as shown in the job queue.
-    description : Optional[str]
-        Description of the job as shown in the job queue.
-    template_file : str, pathlib.Path, or JobFile, default: None
-        Excel template file.
-    data_files : list of str or pathlib.Path or JobFile, default: None
-        Excel files containing the data to import.
-    combined_files : list of str or pathlib.Path or JobFile, default: None
-        Excel files containing data and template information.
-    attachment_files : list of str or pathlib.Path or JobFile, default: None
-        Any other files referenced in the data or combined files.
-    scheduled_execution_date : datetime.datetime, default: None
-        Earliest date and time to run the job. If no date and time are
-        provided, the job begins as soon as possible.
+    Subclass of :class:`~ExcelImportJobRequest`. See that class for constructor
+    parameters and file combination rules.
 
     Notes
     -----
