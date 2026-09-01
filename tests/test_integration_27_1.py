@@ -40,7 +40,7 @@ from common import (
     search_for_records_by_name,
 )
 
-pytestmark = pytest.mark.integration(minimum_mi_version=(27, 1))
+pytestmark = pytest.mark.integration(mi_versions=[(27, 1)])
 
 
 def check_success(job: AsyncJob) -> None:
