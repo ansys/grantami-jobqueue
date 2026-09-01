@@ -157,10 +157,6 @@ def process_integration_marks(request, mi_version):
     the tuples contain compatible major and minor release versions of Granta MI. If the version is specified for a test
     case and the Granta MI version being tested against is not in the provided list, the test case is skipped.
 
-    If the mark is initialized with the kwarg ``minimum_mi_version``, the value must be a tuple[int, int] containing
-    the minimum compatible major and minor release versions of Granta MI. If the Granta MI version being tested against
-    is older than this version, the test case is skipped.
-
     Also handles test-specific behavior, for example if a certain Granta MI version and test are incompatible and need
     to be skipped or xfailed.
     """
@@ -182,23 +178,11 @@ def process_integration_marks(request, mi_version):
         # Mark not initialized with any keyword arguments
         return
     allowed_versions = mark.kwargs.get("mi_versions")
-    if allowed_versions is not None:
-        if not isinstance(allowed_versions, list):
-            raise TypeError("mi_versions argument type must be of type 'list'")
-        if mi_version not in allowed_versions:
-            formatted_version = ".".join(str(v) for v in mi_version)
-            skip_message = f'Test skipped for Granta MI release version "{formatted_version}"'
-            pytest.skip(skip_message)
-
-    minimum_mi_version = mark.kwargs.get("minimum_mi_version")
-    if minimum_mi_version is not None:
-        if not isinstance(minimum_mi_version, tuple):
-            raise TypeError("minimum_mi_version argument type must be of type 'tuple'")
-        if mi_version < minimum_mi_version:
-            formatted_version = ".".join(str(v) for v in mi_version)
-            minimum_version = ".".join(str(v) for v in minimum_mi_version)
-            skip_message = (
-                f'Test skipped for Granta MI release version "{formatted_version}". '
-                f"Requires Granta MI {minimum_version} or newer."
-            )
-            pytest.skip(skip_message)
+    if allowed_versions is None:
+        return
+    if not isinstance(allowed_versions, list):
+        raise TypeError("mi_versions argument type must be of type 'list'")
+    if mi_version not in allowed_versions:
+        formatted_version = ".".join(str(v) for v in mi_version)
+        skip_message = f'Test skipped for Granta MI release version "{formatted_version}"'
+        pytest.skip(skip_message)
