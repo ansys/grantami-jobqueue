@@ -256,7 +256,7 @@ def test_job_with_no_output(job_model, job_specific_outputs):
 
 
 def test_create_job_maps_excel_import_dry_run_to_import_job(job_model):
-    job_model.type = "ExcelImportDryRunJob"
+    job_model.type = "ExcelValidateJob"
     job = AsyncJob.create_job(job_model, api.JobQueueApi(Mock()))
     assert isinstance(job, ImportJob)
-    assert job.type == JobType.ExcelImportDryRunJob
+    assert job.type == JobType.ExcelValidateJob

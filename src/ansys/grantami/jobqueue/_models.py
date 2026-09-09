@@ -70,7 +70,7 @@ class JobType(Enum):
     """Provides possible job types."""
 
     ExcelImportJob = "ExcelImportJob"
-    ExcelImportDryRunJob = "ExcelImportDryRunJob"
+    ExcelValidateJob = "ExcelImportDryRunJob"
     ExcelExportJob = "ExcelExportJob"
     TextImportJob = "TextImportJob"
 
@@ -876,9 +876,9 @@ class ExcelImportJobRequest(ImportJobRequest):
         return JobType.ExcelImportJob
 
 
-class ExcelImportDryRunJobRequest(ExcelImportJobRequest):
+class ExcelValidateJobRequest(ExcelImportJobRequest):
     """
-    Represents an Excel import dry-run job request.
+    Represents an Excel import validate job request.
 
     This class supports the same file combinations as :class:`~ExcelImportJobRequest`, but the
     job validates import data without committing changes to the database. A report file is
@@ -894,14 +894,14 @@ class ExcelImportDryRunJobRequest(ExcelImportJobRequest):
     Examples
     --------
     >>> template_file: pathlib.Path  # pathlib Path object for the template
-    >>> job_request = ExcelImportDryRunJobRequest(
-    ...     name="Excel import dry-run job",
+    >>> job_request = ExcelValidateJobRequest(
+    ...     name="Excel validate job",
     ...     description=None,
     ...     data_files=["assets/data_file_1.xlsx", "assets/data_file_2.xlsx"],
     ...     template_file=template_file,
     ... )
     >>> job_request
-    <ExcelImportDryRunJobRequest: name: "Excel import dry-run job">
+    <ExcelValidateJobRequest: name: "Excel import dry-run job">
     """
 
     @property
@@ -914,7 +914,7 @@ class ExcelImportDryRunJobRequest(ExcelImportJobRequest):
         JobType
             Type of job that the request represents.
         """
-        return JobType.ExcelImportDryRunJob
+        return JobType.ExcelValidateJob
 
 
 class TextImportJobRequest(ImportJobRequest):
@@ -1569,7 +1569,7 @@ class ImportJob(AsyncJob):
 
     Objects of this type are returned from the :meth:`~JobQueueApiClient.create_job` and
     :meth:`~JobQueueApiClient.create_job_and_wait` methods after submitting a
-    :class:`~ExcelImportJobRequest`, :class:`~ExcelImportDryRunJobRequest`, or
+    :class:`~ExcelImportJobRequest`, :class:`~ExcelImportValidateRequest`, or
     :class:`~TextImportJobRequest` to the server.
 
     Notes
@@ -1580,7 +1580,7 @@ class ImportJob(AsyncJob):
     .. versionadded:: 1.0.1
     """
 
-    _job_types = ["TextImportJob", "ExcelImportJob", "ExcelImportDryRunJob"]
+    _job_types = ["TextImportJob", "ExcelImportJob", "ExcelValidateJob"]
 
     @property
     def status(self) -> JobStatus:

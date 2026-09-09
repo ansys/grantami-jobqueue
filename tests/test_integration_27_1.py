@@ -27,7 +27,7 @@ import pytest
 
 from ansys.grantami.jobqueue import (
     AsyncJob,
-    ExcelImportDryRunJobRequest,
+    ExcelValidateJobRequest,
     ImportJob,
     JobFile,
     JobStatus,
@@ -46,6 +46,7 @@ pytestmark = pytest.mark.integration(mi_versions=[(27, 1)])
 def check_success(job: AsyncJob) -> None:
     assert job.status == JobStatus.Succeeded
     assert isinstance(job, ImportJob)
+    assert job.output_information is not None
     assert job.output_information["summary"]["FinishedSuccessfully"]
     assert job.output_information["summary"]["NumberOfErrors"] == 0
 
@@ -59,21 +60,21 @@ def get_dry_run_report_file_name(output_file_names: list[str]) -> str:
 
 
 class TestExcelImportDryRunJob:
-    def test_create_excel_import_dry_run_combined_file(self, empty_job_queue_api_client):
-        job_req = ExcelImportDryRunJobRequest(
-            name="ExcelImportDryRunTest",
-            description="Dry-run import test",
+    def test_create_validate_dry_run_combined_file(self, empty_job_queue_api_client):
+        job_req = ExcelValidateJobRequest(
+            name="ExcelValidateJobRequest",
+            description="Excel validation test",
             combined_files=[JobFile(str(EXCEL_IMPORT_COMBINED_FILE), EXCEL_IMPORT_DATA_FILE.name)],
         )
         job = empty_job_queue_api_client.create_job_and_wait(job_req)
         check_success(job)
-        assert job.type == JobType.ExcelImportDryRunJob
+        assert job.type == JobType.ExcelValidateJob
         assert isinstance(job, ImportJob)
 
-    def test_excel_import_dry_run_output_files(self, empty_job_queue_api_client):
-        job_req = ExcelImportDryRunJobRequest(
-            name="ExcelImportDryRunTest output files",
-            description="Dry-run import test",
+    def test_excel_validate_dry_run_output_files(self, empty_job_queue_api_client):
+        job_req = ExcelValidateJobRequest(
+            name="ExcelValidateJobRequest output files",
+            description="Excel validation test",
             combined_files=[JobFile(str(EXCEL_IMPORT_COMBINED_FILE), EXCEL_IMPORT_DATA_FILE.name)],
         )
         job = empty_job_queue_api_client.create_job_and_wait(job_req)
@@ -84,10 +85,10 @@ class TestExcelImportDryRunJob:
         report_file_name = get_dry_run_report_file_name(job.output_file_names)
         assert report_file_name in job.output_file_names
 
-    def test_excel_import_dry_run_download_report(self, empty_job_queue_api_client):
-        job_req = ExcelImportDryRunJobRequest(
-            name="ExcelImportDryRunTest download report",
-            description="Dry-run import test",
+    def test_excel_validate_download_report(self, empty_job_queue_api_client):
+        job_req = ExcelValidateJobRequest(
+            name="ExcelValidateJobRequest download report",
+            description="Excel validation test",
             combined_files=[JobFile(str(EXCEL_IMPORT_COMBINED_FILE), EXCEL_IMPORT_DATA_FILE.name)],
         )
         job = empty_job_queue_api_client.create_job_and_wait(job_req)
@@ -102,10 +103,10 @@ class TestExcelImportDryRunJob:
             job.download_file(report_file_name, output_file)
             assert os.path.exists(output_file)
 
-    def test_excel_import_dry_run_no_db_changes(self, empty_job_queue_api_client):
-        job_req = ExcelImportDryRunJobRequest(
-            name="ExcelImportDryRunTest no db changes",
-            description="Dry-run import test",
+    def test_excel_validate_no_db_changes(self, empty_job_queue_api_client):
+        job_req = ExcelValidateJobRequest(
+            name="ExcelValidateJobRequest no db changes",
+            description="Excel validation test",
             combined_files=[JobFile(str(EXCEL_IMPORT_COMBINED_FILE), EXCEL_IMPORT_DATA_FILE.name)],
         )
         job = empty_job_queue_api_client.create_job_and_wait(job_req)
