@@ -901,7 +901,7 @@ class ExcelValidateJobRequest(ExcelImportJobRequest):
     ...     template_file=template_file,
     ... )
     >>> job_request
-    <ExcelValidateJobRequest: name: "Excel import dry-run job">
+    <ExcelValidateJobRequest: name: "Excel validate job">
     """
 
     @property
@@ -1430,11 +1430,11 @@ class AsyncJob:
         * A log of the job execution as a text file with the name as the value of :attr:`.AsyncJob.name` and
           the extension ``.log``.
 
-        Excel import dry-run jobs:
+        Excel validate jobs:
 
         * A log of the job execution with the filename ``<job name>.log``, where ``<job name>`` is the value of
           :attr:`.AsyncJob.name`.
-        * A report file containing the results of the dry-run validation. The extension depends on the import
+        * A report file containing the results of the validation. The extension depends on the import
           template.
 
         Export jobs:
