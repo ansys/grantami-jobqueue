@@ -18,11 +18,11 @@ Job requests
    :members:
 
 
-.. autoclass:: ansys.grantami.jobqueue.ExcelImportDryRunJobRequest
+.. autoclass:: ansys.grantami.jobqueue.TextImportJobRequest
    :members:
 
 
-.. autoclass:: ansys.grantami.jobqueue.TextImportJobRequest
+.. autoclass:: ansys.grantami.jobqueue.ExcelValidateJobRequest
    :members:
 
 
