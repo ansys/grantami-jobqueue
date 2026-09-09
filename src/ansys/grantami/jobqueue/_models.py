@@ -1270,7 +1270,7 @@ class AsyncJob:
         JobType
             Type of the job.
         """
-        return JobType[self._type]
+        return JobType(self._type)
 
     @property
     def position(self) -> Union[int, None]:
@@ -1580,7 +1580,7 @@ class ImportJob(AsyncJob):
     .. versionadded:: 1.0.1
     """
 
-    _job_types = ["TextImportJob", "ExcelImportJob", "ExcelValidateJob"]
+    _job_types = ["TextImportJob", "ExcelImportJob", "ExcelImportDryRunJob"]
 
     @property
     def status(self) -> JobStatus:
