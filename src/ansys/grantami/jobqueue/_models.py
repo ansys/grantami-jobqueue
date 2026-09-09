@@ -1569,7 +1569,7 @@ class ImportJob(AsyncJob):
 
     Objects of this type are returned from the :meth:`~JobQueueApiClient.create_job` and
     :meth:`~JobQueueApiClient.create_job_and_wait` methods after submitting a
-    :class:`~ExcelImportJobRequest`, :class:`~ExcelImportValidateRequest`, or
+    :class:`~ExcelImportJobRequest`, :class:`~ExcelValidateJobRequest`, or
     :class:`~TextImportJobRequest` to the server.
 
     Notes
