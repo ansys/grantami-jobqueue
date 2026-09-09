@@ -27,8 +27,8 @@ import sys
 import pytest
 
 from ansys.grantami.jobqueue import (
-    ExcelValidateJobRequest,
     ExcelImportJobRequest,
+    ExcelValidateJobRequest,
     JobFile,
     JobType,
     TextImportJobRequest,

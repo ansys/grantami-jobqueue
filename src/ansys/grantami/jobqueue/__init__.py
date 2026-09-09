@@ -28,8 +28,8 @@ from ._connection import Connection, JobQueueApiClient
 from ._models import (
     AsyncJob,
     ExcelExportJobRequest,
-    ExcelValidateJobRequest,
     ExcelImportJobRequest,
+    ExcelValidateJobRequest,
     ExportJob,
     ExportRecord,
     ImportJob,
