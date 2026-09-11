@@ -22,6 +22,10 @@ Job requests
    :members:
 
 
+.. autoclass:: ansys.grantami.jobqueue.ExcelValidateJobRequest
+   :members:
+
+
 Jobs
 ----
 

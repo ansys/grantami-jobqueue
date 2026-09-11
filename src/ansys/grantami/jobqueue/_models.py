@@ -70,6 +70,7 @@ class JobType(Enum):
     """Provides possible job types."""
 
     ExcelImportJob = "ExcelImportJob"
+    ExcelValidateJob = "ExcelImportDryRunJob"
     ExcelExportJob = "ExcelExportJob"
     TextImportJob = "TextImportJob"
 
@@ -875,6 +876,47 @@ class ExcelImportJobRequest(ImportJobRequest):
         return JobType.ExcelImportJob
 
 
+class ExcelValidateJobRequest(ExcelImportJobRequest):
+    """
+    Represents an Excel import validate job request.
+
+    This class supports the same file combinations as :class:`~ExcelImportJobRequest`, but the
+    job validates import data without committing changes to the database. A report file is
+    produced as job output that can be downloaded after the job completes.
+
+    Subclass of :class:`~ExcelImportJobRequest`. See that class for constructor
+    parameters and file combination rules.
+
+    Notes
+    -----
+    .. versionadded:: 1.4
+
+    Examples
+    --------
+    >>> template_file: pathlib.Path  # pathlib Path object for the template
+    >>> job_request = ExcelValidateJobRequest(
+    ...     name="Excel validate job",
+    ...     description=None,
+    ...     data_files=["assets/data_file_1.xlsx", "assets/data_file_2.xlsx"],
+    ...     template_file=template_file,
+    ... )
+    >>> job_request
+    <ExcelValidateJobRequest: name: "Excel validate job">
+    """
+
+    @property
+    def _job_type(self) -> JobType:
+        """
+        Job type for the job request.
+
+        Returns
+        -------
+        JobType
+            Type of job that the request represents.
+        """
+        return JobType.ExcelValidateJob
+
+
 class TextImportJobRequest(ImportJobRequest):
     """
     Represents a text import job request.
@@ -1228,7 +1270,7 @@ class AsyncJob:
         JobType
             Type of the job.
         """
-        return JobType[self._type]
+        return JobType(self._type)
 
     @property
     def position(self) -> Union[int, None]:
@@ -1388,6 +1430,13 @@ class AsyncJob:
         * A log of the job execution as a text file with the name as the value of :attr:`.AsyncJob.name` and
           the extension ``.log``.
 
+        Excel validate jobs:
+
+        * A log of the job execution with the filename ``<job name>.log``, where ``<job name>`` is the value of
+          :attr:`.AsyncJob.name`.
+        * A report file containing the results of the validation. The extension depends on the import
+          template.
+
         Export jobs:
 
         * The exported data as a file with the name as the value of :attr:`.AsyncJob.name`. The extension, and therefore
@@ -1520,7 +1569,8 @@ class ImportJob(AsyncJob):
 
     Objects of this type are returned from the :meth:`~JobQueueApiClient.create_job` and
     :meth:`~JobQueueApiClient.create_job_and_wait` methods after submitting a
-    :class:`~ExcelImportJobRequest` or :class:`~TextImportJobRequest` to the server.
+    :class:`~ExcelImportJobRequest`, :class:`~ExcelValidateJobRequest`, or
+    :class:`~TextImportJobRequest` to the server.
 
     Notes
     -----
@@ -1530,7 +1580,7 @@ class ImportJob(AsyncJob):
     .. versionadded:: 1.0.1
     """
 
-    _job_types = ["TextImportJob", "ExcelImportJob"]
+    _job_types = ["TextImportJob", "ExcelImportJob", "ExcelImportDryRunJob"]
 
     @property
     def status(self) -> JobStatus:
