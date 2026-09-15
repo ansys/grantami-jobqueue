@@ -39,7 +39,7 @@ from ansys.openapi.common import UndefinedObjectWarning, Unset
 class _DocumentedEnum(Enum):
     """Provides the base class for documented enums."""
 
-    def __new__(cls, value: int, doc: str) -> "_DocumentedEnum":
+    def __new__(cls, value: object, doc: str) -> "_DocumentedEnum":
         obj: _DocumentedEnum = object.__new__(cls)
         obj._value_ = value
         obj.__doc__ = " ".join(doc.split())
@@ -66,13 +66,16 @@ class JobStatus(_DocumentedEnum):
     Deleted = "Deleted", """Job was deleted on the server."""
 
 
-class JobType(Enum):
+class JobType(_DocumentedEnum):
     """Provides possible job types."""
 
-    ExcelImportJob = "ExcelImportJob"
-    ExcelValidateJob = "ExcelImportDryRunJob"
-    ExcelExportJob = "ExcelExportJob"
-    TextImportJob = "TextImportJob"
+    ExcelImportJob = "ExcelImportJob", """Imports data from Excel files."""
+    ExcelValidateJob = (
+        "ExcelImportDryRunJob",
+        """Validates Excel import data without importing it.""",
+    )
+    ExcelExportJob = "ExcelExportJob", """Exports data to Excel files."""
+    TextImportJob = "TextImportJob", """Imports data from text files."""
 
 
 class _FileType(Enum):
