@@ -47,7 +47,7 @@ class _DocumentedEnum(Enum):
 
 
 class JobStatus(_DocumentedEnum):
-    """:class:`Enum` class that provides possible states of a job in the job queue."""
+    """:class:`~enum.Enum` class that provides possible states of a job in the job queue."""
 
     Pending = models.GsaJobStatus.PENDING.value, """Job is in the queue."""
     Running = (
@@ -67,7 +67,7 @@ class JobStatus(_DocumentedEnum):
 
 
 class JobType(_DocumentedEnum):
-    """:class:`Enum` class that provides possible job types."""
+    """:class:`~enum.Enum` class that provides possible job types."""
 
     ExcelImportJob = "ExcelImportJob", """Imports data from Excel files."""
     ExcelValidateJob = (
