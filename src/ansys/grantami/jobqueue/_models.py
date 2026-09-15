@@ -37,7 +37,7 @@ from ansys.openapi.common import UndefinedObjectWarning, Unset
 
 
 class _DocumentedEnum(Enum):
-    """Provides the base class for documented enums."""
+    """Base :class:`Enum` class for documented enums."""
 
     def __new__(cls, value: object, doc: str) -> "_DocumentedEnum":
         obj: _DocumentedEnum = object.__new__(cls)
@@ -47,7 +47,7 @@ class _DocumentedEnum(Enum):
 
 
 class JobStatus(_DocumentedEnum):
-    """Provides possible states of a job in the job queue."""
+    """:class:`Enum` class that provides possible states of a job in the job queue."""
 
     Pending = models.GsaJobStatus.PENDING.value, """Job is in the queue."""
     Running = (
@@ -67,7 +67,7 @@ class JobStatus(_DocumentedEnum):
 
 
 class JobType(_DocumentedEnum):
-    """Provides possible job types."""
+    """:class:`Enum` class that provides possible job types."""
 
     ExcelImportJob = "ExcelImportJob", """Imports data from Excel files."""
     ExcelValidateJob = (
@@ -79,7 +79,7 @@ class JobType(_DocumentedEnum):
 
 
 class _FileType(Enum):
-    """Provides possible file types."""
+    """:class:`Enum` class that provides possible file types."""
 
     Template = "Template"
     Attachment = "Attachment"
