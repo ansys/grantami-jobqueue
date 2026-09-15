@@ -1251,7 +1251,8 @@ class AsyncJob:
         Notes
         -----
         .. note::
-            A return value of :enum:`JobStatus.Succeeded` does not mean that the import or export
+            A return value of :attr:`JobStatus.Succeeded <ansys.grantami.jobqueue.JobStatus.Succeeded>`
+            does not mean that the import or export
             operation itself was successful, it only means that the job was successfully
             attempted. For more detailed information on the job status, check the contents of the
             :attr:`AsyncJob.output_information` property.
@@ -1595,7 +1596,8 @@ class ImportJob(AsyncJob):
         Notes
         -----
         .. note::
-            A return value of :enum:`JobStatus.Succeeded` does not mean that the import or export
+            A return value of :attr:`JobStatus.Succeeded <ansys.grantami.jobqueue.JobStatus.Succeeded>`
+            does not mean that the import or export
             operation itself was successful, it only means that the job was successfully
             attempted. For more detailed information on the job status, check the contents of the
             :attr:`AsyncJob.output_information` property.

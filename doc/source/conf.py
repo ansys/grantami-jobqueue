@@ -60,7 +60,6 @@ extensions = [
     "sphinx_jinja",
     "nbsphinx",
     "sphinx_design",
-    "enum_tools.autoenum",
     "sphinx.ext.extlinks",
 ]
 

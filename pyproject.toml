@@ -62,7 +62,6 @@ doc = [
     "nbsphinx>=0.9.0",
     "ipykernel>=7.0.0",
     "sphinx-jinja>=2.0.2",
-    "enum-tools>=0.13.0",
     "sphinx-toolbox>=4.0.0",
     "sphinx-design>=0.6.0",
     "sphinx-autoapi>=3.1.0a2",
