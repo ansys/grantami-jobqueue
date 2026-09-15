@@ -54,21 +54,11 @@ Other models
    :members:
 
 
-.. autoclass:: ansys.grantami.jobqueue.JobStatus
-   :exclude-members: Pending, Running, Succeeded, Failed, Cancelled, Deleted
-
-.. autodata:: ansys.grantami.jobqueue.JobStatus.Pending
-
-.. autodata:: ansys.grantami.jobqueue.JobStatus.Running
-
-.. autodata:: ansys.grantami.jobqueue.JobStatus.Succeeded
-
-.. autodata:: ansys.grantami.jobqueue.JobStatus.Failed
-
-.. autodata:: ansys.grantami.jobqueue.JobStatus.Cancelled
-
-.. autodata:: ansys.grantami.jobqueue.JobStatus.Deleted
-
-
-.. autoclass:: ansys.grantami.jobqueue.JobType
+.. autoclass:: ansys.grantami.jobqueue.JobStatus(value)
    :members:
+   :member-order: bysource
+
+
+.. autoclass:: ansys.grantami.jobqueue.JobType(value)
+   :members:
+   :member-order: bysource
