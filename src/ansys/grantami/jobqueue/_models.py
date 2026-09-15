@@ -39,7 +39,7 @@ from ansys.openapi.common import UndefinedObjectWarning, Unset
 class _DocumentedEnum(Enum):
     """Base :class:`Enum` class for documented enums."""
 
-    def __new__(cls, value: object, doc: str) -> "_DocumentedEnum":
+    def __new__(cls, value: object, doc: str = "") -> "_DocumentedEnum":
         obj: _DocumentedEnum = object.__new__(cls)
         obj._value_ = value
         obj.__doc__ = " ".join(doc.split())
