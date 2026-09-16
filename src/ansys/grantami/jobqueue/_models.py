@@ -37,9 +37,9 @@ from ansys.openapi.common import UndefinedObjectWarning, Unset
 
 
 class _DocumentedEnum(Enum):
-    """Provides the base class for documented enums."""
+    """Base :class:`Enum` class for documented enums."""
 
-    def __new__(cls, value: int, doc: str) -> "_DocumentedEnum":
+    def __new__(cls, value: object, doc: str = "") -> "_DocumentedEnum":
         obj: _DocumentedEnum = object.__new__(cls)
         obj._value_ = value
         obj.__doc__ = " ".join(doc.split())
@@ -47,7 +47,7 @@ class _DocumentedEnum(Enum):
 
 
 class JobStatus(_DocumentedEnum):
-    """Provides possible states of a job in the job queue."""
+    """:class:`~enum.Enum` class that provides possible states of a job in the job queue."""
 
     Pending = models.GsaJobStatus.PENDING.value, """Job is in the queue."""
     Running = (
@@ -66,17 +66,20 @@ class JobStatus(_DocumentedEnum):
     Deleted = "Deleted", """Job was deleted on the server."""
 
 
-class JobType(Enum):
-    """Provides possible job types."""
+class JobType(_DocumentedEnum):
+    """:class:`~enum.Enum` class that provides possible job types."""
 
-    ExcelImportJob = "ExcelImportJob"
-    ExcelValidateJob = "ExcelImportDryRunJob"
-    ExcelExportJob = "ExcelExportJob"
-    TextImportJob = "TextImportJob"
+    ExcelImportJob = "ExcelImportJob", """Imports data from Excel files."""
+    ExcelValidateJob = (
+        "ExcelImportDryRunJob",
+        """Validates Excel import data without importing it.""",
+    )
+    ExcelExportJob = "ExcelExportJob", """Exports data to Excel files."""
+    TextImportJob = "TextImportJob", """Imports data from text files."""
 
 
 class _FileType(Enum):
-    """Provides possible file types."""
+    """:class:`Enum` class that provides possible file types."""
 
     Template = "Template"
     Attachment = "Attachment"
@@ -1251,7 +1254,8 @@ class AsyncJob:
         Notes
         -----
         .. note::
-            A return value of :enum:`JobStatus.Succeeded` does not mean that the import or export
+            A return value of :attr:`JobStatus.Succeeded <ansys.grantami.jobqueue.JobStatus.Succeeded>`
+            does not mean that the import or export
             operation itself was successful, it only means that the job was successfully
             attempted. For more detailed information on the job status, check the contents of the
             :attr:`AsyncJob.output_information` property.
@@ -1595,7 +1599,8 @@ class ImportJob(AsyncJob):
         Notes
         -----
         .. note::
-            A return value of :enum:`JobStatus.Succeeded` does not mean that the import or export
+            A return value of :attr:`JobStatus.Succeeded <ansys.grantami.jobqueue.JobStatus.Succeeded>`
+            does not mean that the import or export
             operation itself was successful, it only means that the job was successfully
             attempted. For more detailed information on the job status, check the contents of the
             :attr:`AsyncJob.output_information` property.

@@ -54,9 +54,11 @@ Other models
    :members:
 
 
-.. autoenum:: ansys.grantami.jobqueue.JobStatus
+.. autoclass:: ansys.grantami.jobqueue.JobStatus(value)
+   :members:
+   :member-order: bysource
 
 
-.. autoenum:: ansys.grantami.jobqueue.JobType
-
-
+.. autoclass:: ansys.grantami.jobqueue.JobType(value)
+   :members:
+   :member-order: bysource

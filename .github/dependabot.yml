@@ -30,7 +30,6 @@ updates:
         - "numpydoc"
         - "jupytext"
         - "ipykernel"
-        - "enum-tools"
       dev-deps:
         patterns:
         - "pytest*"
