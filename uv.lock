@@ -66,7 +66,7 @@ examples = [
 
 [package.metadata]
 requires-dist = [
-    { name = "ansys-grantami-serverapi-openapi", specifier = "==6.0.0rc0", index = "https://pkgs.dev.azure.com/pyansys/_packaging/pyansys/pypi/simple/" },
+    { name = "ansys-grantami-serverapi-openapi", specifier = ">=5.1,<7.0", index = "https://pkgs.dev.azure.com/pyansys/_packaging/pyansys/pypi/simple/" },
     { name = "ansys-openapi-common", specifier = ">=2.0.0,<3.0.0" },
 ]
 
@@ -96,16 +96,16 @@ examples = [{ name = "jupyterlab", specifier = ">=4.0.0" }]
 
 [[package]]
 name = "ansys-grantami-serverapi-openapi"
-version = "6.0.0rc0"
+version = "6.0.0"
 source = { registry = "https://pkgs.dev.azure.com/pyansys/_packaging/pyansys/pypi/simple/" }
 dependencies = [
     { name = "ansys-openapi-common" },
     { name = "python-dateutil" },
     { name = "requests" },
 ]
-sdist = { url = "https://pkgs.dev.azure.com/pyansys/_packaging/705e121a-9631-49f5-8aaf-c7142856f923/pypi/download/ansys-grantami-serverapi-openapi/6rc0/ansys_grantami_serverapi_openapi-6.0.0rc0.tar.gz", hash = "sha256:941fcc721a9ffddade4723196c2dfe62ed8f48b07f2f0c244c9c4bd32522b77f", size = 2442307, upload-time = "2026-09-17T09:13:19Z" }
+sdist = { url = "https://pkgs.dev.azure.com/pyansys/_packaging/705e121a-9631-49f5-8aaf-c7142856f923/pypi/download/ansys-grantami-serverapi-openapi/6/ansys_grantami_serverapi_openapi-6.0.0.tar.gz", hash = "sha256:d2f7f353d5680fe2a43c9dadec4bdcc5c764822ce9e81d5e243bd2d64326c9fd", size = 2447003, upload-time = "2026-10-06T12:24:31Z" }
 wheels = [
-    { url = "https://pkgs.dev.azure.com/pyansys/_packaging/705e121a-9631-49f5-8aaf-c7142856f923/pypi/download/ansys-grantami-serverapi-openapi/6rc0/ansys_grantami_serverapi_openapi-6.0.0rc0-py3-none-any.whl", hash = "sha256:096732d9443f8e58191351ba1413555e1e7cf3d7a4016dde7c37db0dbdaf7c86", size = 10707848, upload-time = "2026-09-17T09:13:17Z" },
+    { url = "https://pkgs.dev.azure.com/pyansys/_packaging/705e121a-9631-49f5-8aaf-c7142856f923/pypi/download/ansys-grantami-serverapi-openapi/6/ansys_grantami_serverapi_openapi-6.0.0-py3-none-any.whl", hash = "sha256:57b042f9c7e5b62eeb4672e1f87890e25239182f9f3f6615d1d9b9beb4303762", size = 10715140, upload-time = "2026-10-06T12:24:29Z" },
 ]
 
 [[package]]
