@@ -9,6 +9,109 @@ This document contains the release notes for the project.
 
 .. towncrier release notes start
 
+`1.4.0rc0 <https://github.com/ansys/grantami-jobqueue/releases/tag/v1.4.0rc0>`_ - October 07, 2026
+==================================================================================================
+
+.. tab-set::
+
+
+  .. tab-item:: Added
+
+    .. list-table::
+        :header-rows: 0
+        :widths: auto
+
+        * - Add ExcelValidateJob support
+          - `#450 <https://github.com/ansys/grantami-jobqueue/pull/450>`_
+
+
+  .. tab-item:: Fixed
+
+    .. list-table::
+        :header-rows: 0
+        :widths: auto
+
+        * - Convert class-scoped fixtures to class methods
+          - `#415 <https://github.com/ansys/grantami-jobqueue/pull/415>`_
+
+        * - Remove enum-tools dependency
+          - `#460 <https://github.com/ansys/grantami-jobqueue/pull/460>`_
+
+
+  .. tab-item:: Documentation
+
+    .. list-table::
+        :header-rows: 0
+        :widths: auto
+
+        * - Chore: update CHANGELOG for v1.3.0
+          - `#363 <https://github.com/ansys/grantami-jobqueue/pull/363>`_
+
+
+  .. tab-item:: Maintenance
+
+    .. list-table::
+        :header-rows: 0
+        :widths: auto
+
+        * - Add 2026 R1 release server to CI
+          - `#336 <https://github.com/ansys/grantami-jobqueue/pull/336>`_
+
+        * - Configure dependabot to use uv
+          - `#341 <https://github.com/ansys/grantami-jobqueue/pull/341>`_
+
+        * - Update ansys/actions to v10.2.7
+          - `#358 <https://github.com/ansys/grantami-jobqueue/pull/358>`_
+
+        * - Bump version number on main to 1.4.0.dev0
+          - `#364 <https://github.com/ansys/grantami-jobqueue/pull/364>`_
+
+        * - Fix server_check.py call in CI
+          - `#382 <https://github.com/ansys/grantami-jobqueue/pull/382>`_
+
+        * - Run tests on 2027 R1
+          - `#437 <https://github.com/ansys/grantami-jobqueue/pull/437>`_
+
+        * - Update ansys actions to 10.3.6
+          - `#438 <https://github.com/ansys/grantami-jobqueue/pull/438>`_
+
+        * - Drop support for python 3.10 and 3.11
+          - `#454 <https://github.com/ansys/grantami-jobqueue/pull/454>`_
+
+        * - Update to ServerAPI 27R1 bindings
+          - `#456 <https://github.com/ansys/grantami-jobqueue/pull/456>`_
+
+        * - Disable version verification on internal dev build publication
+          - `#457 <https://github.com/ansys/grantami-jobqueue/pull/457>`_
+
+        * - Bump serverapi-openapi to 6.0.0rc0
+          - `#461 <https://github.com/ansys/grantami-jobqueue/pull/461>`_
+
+        * - Update authors/maintainers to Synopsys, Inc. and ANSYS, Inc.
+          - `#462 <https://github.com/ansys/grantami-jobqueue/pull/462>`_
+
+        * - Update LICENSE copyright holder to Synopsys, Inc. and ANSYS, Inc.
+          - `#463 <https://github.com/ansys/grantami-jobqueue/pull/463>`_
+
+        * - Conditionally skip integration tests via actions variable
+          - `#475 <https://github.com/ansys/grantami-jobqueue/pull/475>`_
+
+        * - Run post-build actions if integration checks are skipped
+          - `#476 <https://github.com/ansys/grantami-jobqueue/pull/476>`_
+
+        * - Bump serverapi-openapi to stable 6.0.0
+          - `#478 <https://github.com/ansys/grantami-jobqueue/pull/478>`_
+
+        * - Source serverapi-openapi from public PyPI
+          - `#480 <https://github.com/ansys/grantami-jobqueue/pull/480>`_
+
+        * - Prepare release 1.4.0rc0
+          - `#481 <https://github.com/ansys/grantami-jobqueue/pull/481>`_
+
+        * - Allow Release job to run despite skipped server checks
+          - `#484 <https://github.com/ansys/grantami-jobqueue/pull/484>`_
+
+
 `1.3.0 <https://github.com/ansys/grantami-jobqueue/releases/tag/v1.3.0>`_ - March 05, 2026
 ==========================================================================================
 
