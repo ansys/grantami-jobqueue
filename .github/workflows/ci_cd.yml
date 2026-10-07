@@ -281,7 +281,6 @@ jobs:
 
       - uses: ansys/actions/release-github@7410037bfb276c79ae91eb3617b9f5d2876f0c94  # v11.0.8
         name: "Release to GitHub"
-        if:
         with:
           library-name: ${{ env.LIBRARY_NAME }}
           token: ${{ secrets.GITHUB_TOKEN }}
