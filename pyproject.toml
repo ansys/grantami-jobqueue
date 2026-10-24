@@ -95,9 +95,6 @@ markers = [
     'pytest -m \"not integration\"'.  Specify MI version with '--mi-version MAJOR.MINOR'.""",
 ]
 
-[tool.pydocstyle]
-convention = "numpy"
-
 [tool.codespell]
 ignore-words-list = ["Synopsys"]
 
