@@ -29,13 +29,6 @@ repos:
   - id: check-merge-conflict
   - id: trailing-whitespace
 
-- repo: https://github.com/pycqa/pydocstyle
-  rev: 6.3.0
-  hooks:
-  - id: pydocstyle
-    additional_dependencies: [tomli]
-    files: "^(src/)"
-
 - repo: local
   hooks:
   - id: localhost-examples
