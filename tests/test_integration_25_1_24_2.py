@@ -411,7 +411,7 @@ class TestPaths:
         }
         kwargs[argument_name] = Path(kwargs[argument_name]).absolute()
         with pytest.raises(ApiException, match="not safe relative paths"):
-            job = self.make_request(
+            self.make_request(
                 queue=empty_job_queue_api_client,
                 **kwargs,
             )
