@@ -92,8 +92,8 @@ class TestUpdateAsyncJob:
         for arg in unset_values:
             assert getattr(patch_obj, arg) is Unset
 
-    @staticmethod
     @pytest.fixture
+    @staticmethod
     def mocked_patch_method(asyncjob, job_model, monkeypatch):
         mocked_method = Mock(return_value=job_model)
         monkeypatch.setattr(asyncjob._job_queue_api, "update_job", mocked_method)
