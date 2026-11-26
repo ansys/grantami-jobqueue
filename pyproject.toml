@@ -41,6 +41,9 @@ name = "private-pypi"
 url = "https://pkgs.dev.azure.com/pyansys/_packaging/pyansys/pypi/simple/"
 explicit = true
 
+[tool.uv.sources]
+ansys-openapi-common = { git = "https://github.com/ansys/openapi-common", branch = "lsteinba/configuration-mutability" }
+
 [dependency-groups]
 dev = [
     "pytest>=9.0.0",
